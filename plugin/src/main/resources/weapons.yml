@@ -1,0 +1,90 @@
+# =====================================================================
+#  FNations - Armes à feu
+#  type : balle (hitscan instantané) ou roquette (projectile explosif)
+#  cadence-ticks : délai entre deux tirs (20 ticks = 1 s)
+#  dispersion / dispersion-visee : imprécision (accroupi = visée)
+#  zoom : niveau de zoom en visée (0 = aucun)
+#  son : identifiant de son Minecraft (ou son du resource pack)
+# =====================================================================
+armes:
+  pistol:
+    munition: ammo_9mm
+    type: balle
+    degats: 5
+    cadence-ticks: 6
+    chargeur: 12
+    rechargement-ticks: 30
+    portee: 50
+    dispersion: 0.025
+    dispersion-visee: 0.008
+    multiplicateur-tete: 1.8
+    son: "minecraft:entity.firework_rocket.blast"
+    son-hauteur: 1.8
+  smg:
+    munition: ammo_9mm
+    type: balle
+    degats: 3.5
+    cadence-ticks: 2
+    chargeur: 30
+    rechargement-ticks: 40
+    portee: 40
+    dispersion: 0.05
+    dispersion-visee: 0.025
+    multiplicateur-tete: 1.5
+    son: "minecraft:entity.firework_rocket.blast"
+    son-hauteur: 2.0
+  assault_rifle:
+    munition: ammo_762
+    type: balle
+    degats: 6
+    cadence-ticks: 3
+    chargeur: 30
+    rechargement-ticks: 45
+    portee: 90
+    dispersion: 0.035
+    dispersion-visee: 0.008
+    multiplicateur-tete: 1.6
+    son: "minecraft:entity.firework_rocket.large_blast"
+    son-hauteur: 1.6
+  shotgun:
+    munition: ammo_shotgun
+    type: balle
+    degats: 3
+    plombs: 8
+    cadence-ticks: 18
+    chargeur: 6
+    rechargement-ticks: 60
+    portee: 20
+    dispersion: 0.12
+    dispersion-visee: 0.09
+    multiplicateur-tete: 1.2
+    son: "minecraft:entity.generic.explode"
+    son-hauteur: 1.7
+  sniper:
+    munition: ammo_sniper
+    type: balle
+    degats: 22
+    cadence-ticks: 30
+    chargeur: 5
+    rechargement-ticks: 70
+    portee: 220
+    dispersion: 0.08
+    dispersion-visee: 0.0
+    multiplicateur-tete: 2.5
+    zoom: 6
+    son: "minecraft:entity.generic.explode"
+    son-hauteur: 1.3
+  rpg:
+    munition: rpg_rocket
+    type: roquette
+    degats: 16
+    explosion: 3.0
+    vitesse: 1.6
+    cadence-ticks: 40
+    chargeur: 1
+    rechargement-ticks: 80
+    portee: 120
+    dispersion: 0.01
+    dispersion-visee: 0.0
+    son: "minecraft:entity.firework_rocket.launch"
+    son-hauteur: 0.6

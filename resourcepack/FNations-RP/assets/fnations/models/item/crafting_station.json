@@ -1,0 +1,145 @@
+{
+ "parent": "minecraft:block/block",
+ "textures": {
+  "b": "fnations:block/blueprint",
+  "s": "fnations:block/machine_side",
+  "d": "fnations:block/dark_steel",
+  "w": "fnations:block/wood",
+  "c": "fnations:block/screen",
+  "particle": "fnations:block/blueprint"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    12,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#s"
+    },
+    "south": {
+     "texture": "#s"
+    },
+    "east": {
+     "texture": "#s"
+    },
+    "west": {
+     "texture": "#s"
+    },
+    "up": {
+     "texture": "#s"
+    },
+    "down": {
+     "texture": "#s"
+    }
+   },
+   "name": "établi"
+  },
+  {
+   "from": [
+    -1,
+    12,
+    -1
+   ],
+   "to": [
+    17,
+    14,
+    17
+   ],
+   "faces": {
+    "north": {
+     "texture": "#w"
+    },
+    "south": {
+     "texture": "#w"
+    },
+    "east": {
+     "texture": "#w"
+    },
+    "west": {
+     "texture": "#w"
+    },
+    "up": {
+     "texture": "#b"
+    },
+    "down": {
+     "texture": "#w"
+    }
+   },
+   "name": "plateau"
+  },
+  {
+   "from": [
+    2,
+    14,
+    11
+   ],
+   "to": [
+    14,
+    22,
+    13
+   ],
+   "faces": {
+    "north": {
+     "texture": "#c"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "écran"
+  },
+  {
+   "from": [
+    2,
+    14,
+    2
+   ],
+   "to": [
+    5,
+    16,
+    5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "étau"
+  }
+ ]
+}

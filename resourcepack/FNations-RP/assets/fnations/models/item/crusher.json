@@ -1,0 +1,111 @@
+{
+ "parent": "minecraft:block/block",
+ "textures": {
+  "side": "fnations:block/machine_side",
+  "top": "fnations:block/crusher_top",
+  "bottom": "fnations:block/machine_bottom",
+  "front": "fnations:block/machine_side",
+  "hazard": "fnations:block/hazard",
+  "particle": "fnations:block/machine_side"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    16,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#front"
+    },
+    "south": {
+     "texture": "#side"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#top"
+    },
+    "down": {
+     "texture": "#bottom"
+    }
+   }
+  },
+  {
+   "from": [
+    -0.01,
+    0,
+    -0.01
+   ],
+   "to": [
+    16.01,
+    3,
+    16.01
+   ],
+   "faces": {
+    "north": {
+     "texture": "#hazard"
+    },
+    "south": {
+     "texture": "#hazard"
+    },
+    "east": {
+     "texture": "#hazard"
+    },
+    "west": {
+     "texture": "#hazard"
+    },
+    "up": {
+     "texture": "#hazard"
+    },
+    "down": {
+     "texture": "#hazard"
+    }
+   },
+   "name": "bande danger"
+  },
+  {
+   "from": [
+    1,
+    16,
+    1
+   ],
+   "to": [
+    15,
+    18,
+    15
+   ],
+   "faces": {
+    "north": {
+     "texture": "#side"
+    },
+    "south": {
+     "texture": "#side"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#top"
+    },
+    "down": {
+     "texture": "#side"
+    }
+   },
+   "name": "trémie"
+  }
+ ]
+}

@@ -1,0 +1,586 @@
+{
+ "textures": {
+  "w": "fnations:block/white_paint",
+  "r": "fnations:block/red_paint",
+  "d": "fnations:block/dark_steel",
+  "g": "fnations:block/glass",
+  "f": "fnations:block/flame",
+  "h": "fnations:block/hazard",
+  "particle": "fnations:block/white_paint"
+ },
+ "elements": [
+  {
+   "from": [
+    4,
+    -10,
+    4
+   ],
+   "to": [
+    12,
+    22,
+    12
+   ],
+   "faces": {
+    "north": {
+     "texture": "#w"
+    },
+    "south": {
+     "texture": "#w"
+    },
+    "east": {
+     "texture": "#w"
+    },
+    "west": {
+     "texture": "#w"
+    },
+    "up": {
+     "texture": "#w"
+    },
+    "down": {
+     "texture": "#w"
+    }
+   },
+   "name": "corps"
+  },
+  {
+   "from": [
+    4.5,
+    22,
+    4.5
+   ],
+   "to": [
+    11.5,
+    26,
+    11.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#w"
+    },
+    "south": {
+     "texture": "#w"
+    },
+    "east": {
+     "texture": "#w"
+    },
+    "west": {
+     "texture": "#w"
+    },
+    "up": {
+     "texture": "#w"
+    },
+    "down": {
+     "texture": "#w"
+    }
+   },
+   "name": "coiffe 1"
+  },
+  {
+   "from": [
+    5.5,
+    26,
+    5.5
+   ],
+   "to": [
+    10.5,
+    29,
+    10.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#r"
+    },
+    "south": {
+     "texture": "#r"
+    },
+    "east": {
+     "texture": "#r"
+    },
+    "west": {
+     "texture": "#r"
+    },
+    "up": {
+     "texture": "#r"
+    },
+    "down": {
+     "texture": "#r"
+    }
+   },
+   "name": "coiffe 2"
+  },
+  {
+   "from": [
+    6.5,
+    29,
+    6.5
+   ],
+   "to": [
+    9.5,
+    31,
+    9.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#r"
+    },
+    "south": {
+     "texture": "#r"
+    },
+    "east": {
+     "texture": "#r"
+    },
+    "west": {
+     "texture": "#r"
+    },
+    "up": {
+     "texture": "#r"
+    },
+    "down": {
+     "texture": "#r"
+    }
+   },
+   "name": "coiffe 3"
+  },
+  {
+   "from": [
+    7.5,
+    31,
+    7.5
+   ],
+   "to": [
+    8.5,
+    32,
+    8.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "pointe"
+  },
+  {
+   "from": [
+    4,
+    12,
+    3.5
+   ],
+   "to": [
+    12,
+    14,
+    4
+   ],
+   "faces": {
+    "north": {
+     "texture": "#h"
+    },
+    "south": {
+     "texture": "#h"
+    },
+    "east": {
+     "texture": "#h"
+    },
+    "west": {
+     "texture": "#h"
+    },
+    "up": {
+     "texture": "#h"
+    },
+    "down": {
+     "texture": "#h"
+    }
+   },
+   "name": "bande"
+  },
+  {
+   "from": [
+    6,
+    16,
+    3.5
+   ],
+   "to": [
+    10,
+    19,
+    4
+   ],
+   "faces": {
+    "north": {
+     "texture": "#g"
+    },
+    "south": {
+     "texture": "#g"
+    },
+    "east": {
+     "texture": "#g"
+    },
+    "west": {
+     "texture": "#g"
+    },
+    "up": {
+     "texture": "#g"
+    },
+    "down": {
+     "texture": "#g"
+    }
+   },
+   "name": "hublot"
+  },
+  {
+   "from": [
+    4,
+    0,
+    4
+   ],
+   "to": [
+    12,
+    2,
+    12
+   ],
+   "faces": {
+    "north": {
+     "texture": "#r"
+    },
+    "south": {
+     "texture": "#r"
+    },
+    "east": {
+     "texture": "#r"
+    },
+    "west": {
+     "texture": "#r"
+    },
+    "up": {
+     "texture": "#r"
+    },
+    "down": {
+     "texture": "#r"
+    }
+   },
+   "name": "anneau"
+  },
+  {
+   "from": [
+    1,
+    -16,
+    7
+   ],
+   "to": [
+    4,
+    -6,
+    9
+   ],
+   "faces": {
+    "north": {
+     "texture": "#r"
+    },
+    "south": {
+     "texture": "#r"
+    },
+    "east": {
+     "texture": "#r"
+    },
+    "west": {
+     "texture": "#r"
+    },
+    "up": {
+     "texture": "#r"
+    },
+    "down": {
+     "texture": "#r"
+    }
+   },
+   "name": "aileron 1"
+  },
+  {
+   "from": [
+    12,
+    -16,
+    7
+   ],
+   "to": [
+    15,
+    -6,
+    9
+   ],
+   "faces": {
+    "north": {
+     "texture": "#r"
+    },
+    "south": {
+     "texture": "#r"
+    },
+    "east": {
+     "texture": "#r"
+    },
+    "west": {
+     "texture": "#r"
+    },
+    "up": {
+     "texture": "#r"
+    },
+    "down": {
+     "texture": "#r"
+    }
+   },
+   "name": "aileron 2"
+  },
+  {
+   "from": [
+    7,
+    -16,
+    1
+   ],
+   "to": [
+    9,
+    -6,
+    4
+   ],
+   "faces": {
+    "north": {
+     "texture": "#r"
+    },
+    "south": {
+     "texture": "#r"
+    },
+    "east": {
+     "texture": "#r"
+    },
+    "west": {
+     "texture": "#r"
+    },
+    "up": {
+     "texture": "#r"
+    },
+    "down": {
+     "texture": "#r"
+    }
+   },
+   "name": "aileron 3"
+  },
+  {
+   "from": [
+    7,
+    -16,
+    12
+   ],
+   "to": [
+    9,
+    -6,
+    15
+   ],
+   "faces": {
+    "north": {
+     "texture": "#r"
+    },
+    "south": {
+     "texture": "#r"
+    },
+    "east": {
+     "texture": "#r"
+    },
+    "west": {
+     "texture": "#r"
+    },
+    "up": {
+     "texture": "#r"
+    },
+    "down": {
+     "texture": "#r"
+    }
+   },
+   "name": "aileron 4"
+  },
+  {
+   "from": [
+    5,
+    -14,
+    5
+   ],
+   "to": [
+    11,
+    -10,
+    11
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "tuyère"
+  },
+  {
+   "from": [
+    6,
+    -16,
+    6
+   ],
+   "to": [
+    10,
+    -14,
+    10
+   ],
+   "faces": {
+    "north": {
+     "texture": "#f"
+    },
+    "south": {
+     "texture": "#f"
+    },
+    "east": {
+     "texture": "#f"
+    },
+    "west": {
+     "texture": "#f"
+    },
+    "up": {
+     "texture": "#f"
+    },
+    "down": {
+     "texture": "#f"
+    }
+   },
+   "name": "flamme"
+  }
+ ],
+ "display": {
+  "gui": {
+   "rotation": [
+    30,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.292,
+    0.292,
+    0.292
+   ]
+  },
+  "ground": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.1752,
+    0.1752,
+    0.1752
+   ]
+  },
+  "fixed": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.292,
+    0.292,
+    0.292
+   ]
+  },
+  "thirdperson_righthand": {
+   "rotation": [
+    75,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    0
+   ],
+   "scale": [
+    0.1752,
+    0.1752,
+    0.1752
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.20439999999999997,
+    0.20439999999999997,
+    0.20439999999999997
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.20439999999999997,
+    0.20439999999999997,
+    0.20439999999999997
+   ]
+  },
+  "head": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.292,
+    0.292,
+    0.292
+   ]
+  }
+ }
+}

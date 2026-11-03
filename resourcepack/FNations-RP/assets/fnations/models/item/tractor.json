@@ -1,0 +1,486 @@
+{
+ "textures": {
+  "r": "fnations:block/red_paint",
+  "t": "fnations:block/rubber",
+  "d": "fnations:block/dark_steel",
+  "g": "fnations:block/glass",
+  "y": "fnations:block/yellow_paint",
+  "particle": "fnations:block/red_paint"
+ },
+ "elements": [
+  {
+   "from": [
+    3,
+    5,
+    -10
+   ],
+   "to": [
+    13,
+    11,
+    8
+   ],
+   "faces": {
+    "north": {
+     "texture": "#r"
+    },
+    "south": {
+     "texture": "#r"
+    },
+    "east": {
+     "texture": "#r"
+    },
+    "west": {
+     "texture": "#r"
+    },
+    "up": {
+     "texture": "#r"
+    },
+    "down": {
+     "texture": "#r"
+    }
+   },
+   "name": "capot"
+  },
+  {
+   "from": [
+    2,
+    5,
+    6
+   ],
+   "to": [
+    14,
+    17,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#r"
+    },
+    "south": {
+     "texture": "#r"
+    },
+    "east": {
+     "texture": "#r"
+    },
+    "west": {
+     "texture": "#r"
+    },
+    "up": {
+     "texture": "#r"
+    },
+    "down": {
+     "texture": "#r"
+    }
+   },
+   "name": "cabine"
+  },
+  {
+   "from": [
+    3,
+    11,
+    6.5
+   ],
+   "to": [
+    13,
+    16,
+    7
+   ],
+   "faces": {
+    "north": {
+     "texture": "#g"
+    },
+    "south": {
+     "texture": "#g"
+    },
+    "east": {
+     "texture": "#g"
+    },
+    "west": {
+     "texture": "#g"
+    },
+    "up": {
+     "texture": "#g"
+    },
+    "down": {
+     "texture": "#g"
+    }
+   },
+   "name": "pare-brise"
+  },
+  {
+   "from": [
+    1.5,
+    17,
+    5
+   ],
+   "to": [
+    14.5,
+    18,
+    17
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "toit"
+  },
+  {
+   "from": [
+    -3,
+    0,
+    8
+   ],
+   "to": [
+    2,
+    12,
+    18
+   ],
+   "faces": {
+    "north": {
+     "texture": "#t"
+    },
+    "south": {
+     "texture": "#t"
+    },
+    "east": {
+     "texture": "#y"
+    },
+    "west": {
+     "texture": "#y"
+    },
+    "up": {
+     "texture": "#t"
+    },
+    "down": {
+     "texture": "#t"
+    }
+   },
+   "name": "roue arrière g"
+  },
+  {
+   "from": [
+    14,
+    0,
+    8
+   ],
+   "to": [
+    19,
+    12,
+    18
+   ],
+   "faces": {
+    "north": {
+     "texture": "#t"
+    },
+    "south": {
+     "texture": "#t"
+    },
+    "east": {
+     "texture": "#y"
+    },
+    "west": {
+     "texture": "#y"
+    },
+    "up": {
+     "texture": "#t"
+    },
+    "down": {
+     "texture": "#t"
+    }
+   },
+   "name": "roue arrière d"
+  },
+  {
+   "from": [
+    0,
+    0,
+    -9
+   ],
+   "to": [
+    3,
+    6,
+    -3
+   ],
+   "faces": {
+    "north": {
+     "texture": "#t"
+    },
+    "south": {
+     "texture": "#t"
+    },
+    "east": {
+     "texture": "#y"
+    },
+    "west": {
+     "texture": "#y"
+    },
+    "up": {
+     "texture": "#t"
+    },
+    "down": {
+     "texture": "#t"
+    }
+   },
+   "name": "roue avant g"
+  },
+  {
+   "from": [
+    13,
+    0,
+    -9
+   ],
+   "to": [
+    16,
+    6,
+    -3
+   ],
+   "faces": {
+    "north": {
+     "texture": "#t"
+    },
+    "south": {
+     "texture": "#t"
+    },
+    "east": {
+     "texture": "#y"
+    },
+    "west": {
+     "texture": "#y"
+    },
+    "up": {
+     "texture": "#t"
+    },
+    "down": {
+     "texture": "#t"
+    }
+   },
+   "name": "roue avant d"
+  },
+  {
+   "from": [
+    10,
+    11,
+    -6
+   ],
+   "to": [
+    11,
+    17,
+    -5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "échappement"
+  },
+  {
+   "from": [
+    4,
+    6,
+    -11
+   ],
+   "to": [
+    12,
+    10,
+    -10
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "calandre"
+  },
+  {
+   "from": [
+    1,
+    2,
+    18
+   ],
+   "to": [
+    15,
+    4,
+    22
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "attelage / charrue"
+  }
+ ],
+ "display": {
+  "gui": {
+   "rotation": [
+    30,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.412,
+    0.412,
+    0.412
+   ]
+  },
+  "ground": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.24719999999999998,
+    0.24719999999999998,
+    0.24719999999999998
+   ]
+  },
+  "fixed": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.412,
+    0.412,
+    0.412
+   ]
+  },
+  "thirdperson_righthand": {
+   "rotation": [
+    75,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    0
+   ],
+   "scale": [
+    0.24719999999999998,
+    0.24719999999999998,
+    0.24719999999999998
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.2884,
+    0.2884,
+    0.2884
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.2884,
+    0.2884,
+    0.2884
+   ]
+  },
+  "head": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.412,
+    0.412,
+    0.412
+   ]
+  }
+ }
+}

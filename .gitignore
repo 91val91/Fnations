@@ -1,0 +1,15 @@
+build/
+.gradle/
+*.class
+.idea/
+*.iml
+out/
+dist/
+server/paper.jar
+server/plugins/
+server/world*/
+server/logs/
+server/cache/
+server/libraries/
+server/versions/
+__pycache__/

@@ -1,0 +1,240 @@
+# =====================================================================
+#  FNations - Arbre de Recherche & Développement
+#  cout : prélevé sur le trésor national   | duree-secondes : temps réel
+#  requiert : technologies prérequises     | debloque : items fabricables à la Station de Craft
+#  bonus-territoire : chunks supplémentaires
+# =====================================================================
+technologies:
+  # ---------------- Économie ----------------
+  administration:
+    nom: "<gold>Administration"
+    categorie: economie
+    icone: WRITABLE_BOOK
+    cout: 2000
+    duree-secondes: 300
+    bonus-territoire: 5
+    description: ["<gray>Une bureaucratie efficace", "<gray>pour gérer plus de terres."]
+  expansion_1:
+    nom: "<gold>Expansion territoriale I"
+    categorie: economie
+    icone: MAP
+    cout: 8000
+    duree-secondes: 900
+    requiert: [administration]
+    bonus-territoire: 15
+    description: ["<gray>Agrandit le territoire maximal."]
+  expansion_2:
+    nom: "<gold>Expansion territoriale II"
+    categorie: economie
+    icone: FILLED_MAP
+    cout: 25000
+    duree-secondes: 2700
+    requiert: [expansion_1]
+    bonus-territoire: 40
+    description: ["<gray>Un véritable empire."]
+  doctrine_militaire:
+    nom: "<gold>Doctrine militaire"
+    categorie: economie
+    icone: IRON_SWORD
+    cout: 5000
+    duree-secondes: 600
+    requiert: [administration]
+    description: ["<gray>Nécessaire pour déclarer", "<gray>une guerre à une autre nation."]
+
+  # ---------------- Industrie ----------------
+  metallurgie:
+    nom: "<yellow>Métallurgie"
+    categorie: industrie
+    icone: IRON_INGOT
+    cout: 1500
+    duree-secondes: 180
+    debloque: [steel_ingot, steel_plate, compressed_iron, carbon_plate, iron_dust, gold_dust, compressor, coal_generator]
+    description: ["<gray>Production d'acier, compresseur", "<gray>et générateur à charbon."]
+  electricite:
+    nom: "<yellow>Électricité"
+    categorie: industrie
+    icone: REDSTONE
+    cout: 3000
+    duree-secondes: 300
+    requiert: [metallurgie]
+    debloque: [copper_wire, circuit, battery, electric_furnace, switch]
+    description: ["<gray>Générateurs, câblage et", "<gray>premiers circuits."]
+  solaire_1:
+    nom: "<yellow>Énergie solaire I"
+    categorie: industrie
+    icone: DAYLIGHT_DETECTOR
+    cout: 4000
+    duree-secondes: 420
+    requiert: [electricite]
+    debloque: [solar_cell, solar_panel_t1]
+    description: ["<gray>Panneaux solaires de tier 1."]
+  electronique:
+    nom: "<yellow>Électronique avancée"
+    categorie: industrie
+    icone: COMPARATOR
+    cout: 7000
+    duree-secondes: 600
+    requiert: [electricite]
+    debloque: [advanced_circuit]
+    description: ["<gray>Circuits avancés pour l'armement", "<gray>et l'aérospatiale."]
+  solaire_2:
+    nom: "<yellow>Énergie solaire II"
+    categorie: industrie
+    icone: DAYLIGHT_DETECTOR
+    cout: 9000
+    duree-secondes: 900
+    requiert: [solaire_1, electronique]
+    debloque: [solar_panel_t2]
+    description: ["<gray>Panneaux solaires de tier 2."]
+  solaire_3:
+    nom: "<yellow>Énergie solaire III"
+    categorie: industrie
+    icone: BEACON
+    cout: 20000
+    duree-secondes: 1800
+    requiert: [solaire_2]
+    debloque: [solar_panel_t3]
+    description: ["<gray>Panneaux solaires de tier 3", "<gray>(produisent aussi la nuit)."]
+  recyclage:
+    nom: "<yellow>Recyclage industriel"
+    categorie: industrie
+    icone: GRINDSTONE
+    cout: 5000
+    duree-secondes: 480
+    requiert: [electricite]
+    debloque: [crusher]
+    description: ["<gray>Concasseur : double les minerais", "<gray>et démonte les missiles."]
+
+  # ---------------- Armement ----------------
+  armes_legeres:
+    nom: "<red>Armes légères"
+    categorie: militaire
+    icone: IRON_HORSE_ARMOR
+    cout: 2500
+    duree-secondes: 300
+    requiert: [metallurgie]
+    debloque: [gun_parts, gun_barrel, pistol, smg, ammo_9mm]
+    description: ["<gray>Pistolets et pistolets-mitrailleurs."]
+  armes_automatiques:
+    nom: "<red>Armes automatiques"
+    categorie: militaire
+    icone: CROSSBOW
+    cout: 6000
+    duree-secondes: 600
+    requiert: [armes_legeres]
+    debloque: [assault_rifle, ammo_762, shotgun, ammo_shotgun]
+    description: ["<gray>Fusils d'assaut et fusils à pompe."]
+  armes_precision:
+    nom: "<red>Tir de précision"
+    categorie: militaire
+    icone: SPYGLASS
+    cout: 8000
+    duree-secondes: 780
+    requiert: [armes_automatiques]
+    debloque: [sniper, ammo_sniper]
+    description: ["<gray>Fusils de précision longue portée."]
+  armes_lourdes:
+    nom: "<red>Armes lourdes"
+    categorie: militaire
+    icone: TNT
+    cout: 12000
+    duree-secondes: 1200
+    requiert: [armes_automatiques, electricite]
+    debloque: [explosive_charge, rpg, rpg_rocket]
+    description: ["<gray>Explosifs et lance-roquettes."]
+
+  # ---------------- Véhicules ----------------
+  mecanique:
+    nom: "<green>Mécanique"
+    categorie: vehicules
+    icone: PISTON
+    cout: 4000
+    duree-secondes: 420
+    requiert: [metallurgie]
+    debloque: [motor, tire, fuel_canister, tractor]
+    description: ["<gray>Moteurs à combustion, tracteurs."]
+  blindes:
+    nom: "<green>Blindés"
+    categorie: vehicules
+    icone: IRON_CHESTPLATE
+    cout: 15000
+    duree-secondes: 1500
+    requiert: [mecanique, armes_lourdes]
+    debloque: [track, tank, tank_shell]
+    description: ["<gray>Chars d'assaut et leurs obus."]
+  aviation:
+    nom: "<green>Aviation"
+    categorie: vehicules
+    icone: ELYTRA
+    cout: 18000
+    duree-secondes: 1800
+    requiert: [mecanique, electronique]
+    debloque: [jet_engine, cockpit, plane]
+    description: ["<gray>Avions de chasse à réaction."]
+  voilure_tournante:
+    nom: "<green>Voilure tournante"
+    categorie: vehicules
+    icone: FEATHER
+    cout: 14000
+    duree-secondes: 1500
+    requiert: [mecanique, electronique]
+    debloque: [rotor, helicopter]
+    description: ["<gray>Hélicoptères de transport", "<gray>et d'attaque."]
+
+  # ---------------- Missiles ----------------
+  balistique_1:
+    nom: "<dark_red>Missiles tactiques"
+    categorie: missiles
+    icone: FIREWORK_ROCKET
+    cout: 15000
+    duree-secondes: 1500
+    requiert: [armes_lourdes, electronique]
+    debloque: [warhead, guidance_system, missile_launcher, missile_tactical]
+    description: ["<gray>Lanceur et missiles courte portée."]
+  balistique_2:
+    nom: "<dark_red>Missiles de croisière"
+    categorie: missiles
+    icone: FIREWORK_ROCKET
+    cout: 25000
+    duree-secondes: 2400
+    requiert: [balistique_1]
+    debloque: [missile_cruise]
+    description: ["<gray>Portée de 2 000 blocs."]
+  balistique_3:
+    nom: "<dark_red>Missiles balistiques"
+    categorie: missiles
+    icone: FIREWORK_ROCKET
+    cout: 40000
+    duree-secondes: 3600
+    requiert: [balistique_2, propulsion]
+    debloque: [missile_ballistic]
+    description: ["<gray>Portée intercontinentale."]
+  nucleaire:
+    nom: "<dark_green>Programme nucléaire"
+    categorie: missiles
+    icone: NETHER_STAR
+    cout: 100000
+    duree-secondes: 7200
+    requiert: [balistique_3, solaire_3]
+    debloque: [nuclear_core, missile_nuclear]
+    description: ["<gray>L'arme ultime.", "<red>Utilisez-la avec sagesse."]
+
+  # ---------------- Spatial ----------------
+  propulsion:
+    nom: "<light_purple>Propulsion chimique"
+    categorie: spatial
+    icone: BLAZE_POWDER
+    cout: 20000
+    duree-secondes: 1800
+    requiert: [aviation]
+    debloque: [rocket_engine, rocket_fuel, heat_shield]
+    description: ["<gray>Moteurs-fusées et ergols."]
+  conquete_spatiale:
+    nom: "<light_purple>Conquête spatiale"
+    categorie: spatial
+    icone: END_CRYSTAL
+    cout: 60000
+    duree-secondes: 3600
+    requiert: [propulsion, solaire_2]
+    debloque: [rocket]
+    description: ["<gray>Fusée habitée vers l'orbite", "<gray>et la Lune."]

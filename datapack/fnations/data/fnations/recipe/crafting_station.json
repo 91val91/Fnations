@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IRI",
+    "CSC",
+    "IRI"
+  ],
+  "key": {
+    "I": "minecraft:iron_block",
+    "R": "minecraft:redstone",
+    "C": "minecraft:crafting_table",
+    "S": "minecraft:smithing_table"
+  },
+  "result": {
+    "id": "minecraft:smithing_table",
+    "count": 1,
+    "components": {
+      "minecraft:custom_data": {
+        "PublicBukkitValues": {
+          "fnations:item": "crafting_station"
+        }
+      },
+      "minecraft:item_model": "fnations:crafting_station"
+    }
+  }
+}

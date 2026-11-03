@@ -1,0 +1,110 @@
+{
+ "parent": "minecraft:block/block",
+ "textures": {
+  "side": "fnations:block/machine_side",
+  "top": "fnations:block/machine_top",
+  "bottom": "fnations:block/machine_bottom",
+  "front": "fnations:block/compressor_front",
+  "particle": "fnations:block/machine_side"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    16,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#front"
+    },
+    "south": {
+     "texture": "#side"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#top"
+    },
+    "down": {
+     "texture": "#bottom"
+    }
+   }
+  },
+  {
+   "from": [
+    3,
+    16,
+    3
+   ],
+   "to": [
+    7,
+    20,
+    7
+   ],
+   "faces": {
+    "north": {
+     "texture": "#side"
+    },
+    "south": {
+     "texture": "#side"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#side"
+    },
+    "down": {
+     "texture": "#side"
+    }
+   },
+   "name": "vérin"
+  },
+  {
+   "from": [
+    9,
+    16,
+    9
+   ],
+   "to": [
+    13,
+    19,
+    13
+   ],
+   "faces": {
+    "north": {
+     "texture": "#side"
+    },
+    "south": {
+     "texture": "#side"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#side"
+    },
+    "down": {
+     "texture": "#side"
+    }
+   },
+   "name": "réservoir"
+  }
+ ]
+}

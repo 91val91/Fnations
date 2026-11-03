@@ -1,0 +1,9 @@
+{
+  "pack": {
+    "pack_format": 61,
+    "supported_formats": {"min_inclusive": 61, "max_inclusive": 99},
+    "min_format": 61,
+    "max_format": 99,
+    "description": "FNations — recettes de base, progrès et fonctions"
+  }
+}

@@ -1,0 +1,103 @@
+# =====================================================================
+#  FNations - Recettes
+#  Ingrédients : MATERIAU:quantité (vanilla) ou fnations:id:quantité (item custom)
+#  Les technologies requises sont définies dans research.yml (debloque)
+# =====================================================================
+
+# ------------------------------------------------ Station de Craft
+station:
+  # --- Composants ---
+  steel_ingot:      {resultat: steel_ingot, ingredients: ["fnations:compressed_iron:1", "COAL:2"]}
+  circuit:          {resultat: circuit, nombre: 2, ingredients: ["fnations:copper_wire:3", "REDSTONE:2", "GOLD_NUGGET:2", "fnations:carbon_plate:1"]}
+  advanced_circuit: {resultat: advanced_circuit, ingredients: ["fnations:circuit:2", "DIAMOND:1", "fnations:gold_dust:2", "QUARTZ:4"]}
+  battery:          {resultat: battery, ingredients: ["COPPER_INGOT:4", "REDSTONE:4", "fnations:steel_plate:1"]}
+  solar_cell:       {resultat: solar_cell, ingredients: ["GLASS_PANE:2", "LAPIS_LAZULI:3", "fnations:circuit:1", "fnations:copper_wire:2"]}
+  motor:            {resultat: motor, ingredients: ["fnations:steel_plate:4", "PISTON:2", "fnations:copper_wire:4", "fnations:circuit:1"]}
+  jet_engine:       {resultat: jet_engine, ingredients: ["fnations:motor:2", "fnations:steel_plate:6", "fnations:advanced_circuit:1", "BLAZE_ROD:4"]}
+  rotor:            {resultat: rotor, ingredients: ["fnations:steel_plate:6", "fnations:motor:1", "fnations:carbon_plate:4"]}
+  tire:             {resultat: tire, nombre: 2, ingredients: ["fnations:carbon_plate:2", "SLIME_BALL:1", "fnations:steel_plate:1"]}
+  track:            {resultat: track, ingredients: ["fnations:steel_plate:6", "fnations:tire:2", "IRON_BARS:4"]}
+  cockpit:          {resultat: cockpit, ingredients: ["GLASS:6", "fnations:circuit:2", "fnations:steel_plate:2"]}
+  gun_barrel:       {resultat: gun_barrel, ingredients: ["fnations:steel_ingot:3"]}
+  gun_parts:        {resultat: gun_parts, nombre: 2, ingredients: ["fnations:steel_plate:2", "IRON_NUGGET:6"]}
+  explosive_charge: {resultat: explosive_charge, ingredients: ["GUNPOWDER:6", "SAND:2", "fnations:carbon_plate:1"]}
+  warhead:          {resultat: warhead, ingredients: ["fnations:explosive_charge:4", "fnations:steel_plate:4", "fnations:circuit:1"]}
+  guidance_system:  {resultat: guidance_system, ingredients: ["fnations:advanced_circuit:2", "COMPASS:1", "ENDER_EYE:1"]}
+  heat_shield:      {resultat: heat_shield, ingredients: ["fnations:carbon_plate:6", "OBSIDIAN:2", "fnations:steel_plate:1"]}
+  nuclear_core:     {resultat: nuclear_core, ingredients: ["DIAMOND_BLOCK:2", "EMERALD_BLOCK:2", "fnations:advanced_circuit:4", "NETHER_STAR:1", "fnations:heat_shield:2"]}
+  rocket_engine:    {resultat: rocket_engine, ingredients: ["fnations:jet_engine:1", "fnations:heat_shield:2", "fnations:steel_plate:8", "BLAZE_POWDER:8"]}
+  fuel_canister:    {resultat: fuel_canister, nombre: 2, ingredients: ["fnations:steel_plate:1", "COAL:4", "GLASS_BOTTLE:1"]}
+  rocket_fuel:      {resultat: rocket_fuel, nombre: 2, ingredients: ["BLAZE_POWDER:4", "GUNPOWDER:4", "fnations:fuel_canister:2", "REDSTONE:4"]}
+
+  # --- Munitions ---
+  ammo_9mm:     {resultat: ammo_9mm, nombre: 16, ingredients: ["GUNPOWDER:1", "IRON_NUGGET:4", "COPPER_INGOT:1"]}
+  ammo_762:     {resultat: ammo_762, nombre: 12, ingredients: ["GUNPOWDER:2", "IRON_NUGGET:4", "COPPER_INGOT:1"]}
+  ammo_sniper:  {resultat: ammo_sniper, nombre: 6, ingredients: ["GUNPOWDER:3", "fnations:steel_ingot:1", "COPPER_INGOT:1"]}
+  ammo_shotgun: {resultat: ammo_shotgun, nombre: 8, ingredients: ["GUNPOWDER:1", "IRON_NUGGET:6", "PAPER:1"]}
+  rpg_rocket:   {resultat: rpg_rocket, ingredients: ["fnations:explosive_charge:1", "fnations:steel_plate:1", "GUNPOWDER:2"]}
+  tank_shell:   {resultat: tank_shell, nombre: 2, ingredients: ["fnations:explosive_charge:2", "fnations:steel_plate:2", "COPPER_INGOT:2"]}
+
+  # --- Armes ---
+  pistol:        {resultat: pistol, ingredients: ["fnations:gun_parts:2", "fnations:gun_barrel:1", "fnations:steel_plate:1"]}
+  smg:           {resultat: smg, ingredients: ["fnations:gun_parts:3", "fnations:gun_barrel:1", "fnations:steel_plate:2"]}
+  assault_rifle: {resultat: assault_rifle, ingredients: ["fnations:gun_parts:4", "fnations:gun_barrel:2", "fnations:steel_plate:3", "fnations:carbon_plate:1"]}
+  shotgun:       {resultat: shotgun, ingredients: ["fnations:gun_parts:3", "fnations:gun_barrel:2", "OAK_LOG:2"]}
+  sniper:        {resultat: sniper, ingredients: ["fnations:gun_parts:4", "fnations:gun_barrel:3", "SPYGLASS:1", "fnations:carbon_plate:2"]}
+  rpg:           {resultat: rpg, ingredients: ["fnations:gun_parts:4", "fnations:steel_plate:6", "fnations:gun_barrel:2", "fnations:circuit:1"]}
+
+  # --- Véhicules ---
+  tractor:    {resultat: tractor, ingredients: ["fnations:motor:1", "fnations:tire:4", "fnations:steel_plate:8", "IRON_BLOCK:2"]}
+  tank:       {resultat: tank, ingredients: ["fnations:motor:2", "fnations:track:2", "fnations:steel_plate:24", "fnations:gun_barrel:4", "fnations:circuit:2", "IRON_BLOCK:8"]}
+  plane:      {resultat: plane, ingredients: ["fnations:jet_engine:2", "fnations:cockpit:1", "fnations:steel_plate:16", "fnations:carbon_plate:8", "fnations:advanced_circuit:2"]}
+  helicopter: {resultat: helicopter, ingredients: ["fnations:rotor:2", "fnations:motor:2", "fnations:cockpit:1", "fnations:steel_plate:12", "fnations:circuit:2"]}
+
+  # --- Machines ---
+  crafting_station: {resultat: crafting_station, ingredients: ["CRAFTING_TABLE:1", "SMITHING_TABLE:1", "IRON_BLOCK:2", "REDSTONE:8"]}
+  compressor:       {resultat: compressor, ingredients: ["IRON_BLOCK:2", "PISTON:4", "REDSTONE:8", "COPPER_INGOT:4"]}
+  coal_generator:   {resultat: coal_generator, ingredients: ["FURNACE:2", "IRON_BLOCK:1", "REDSTONE_BLOCK:1", "COPPER_INGOT:6"]}
+  electric_furnace: {resultat: electric_furnace, ingredients: ["BLAST_FURNACE:1", "fnations:compressed_iron:4", "REDSTONE:8", "COPPER_INGOT:4"]}
+  solar_panel_t1:   {resultat: solar_panel_t1, ingredients: ["fnations:solar_cell:3", "fnations:steel_plate:2", "fnations:circuit:1"]}
+  solar_panel_t2:   {resultat: solar_panel_t2, ingredients: ["fnations:solar_panel_t1:1", "fnations:solar_cell:4", "fnations:advanced_circuit:1"]}
+  solar_panel_t3:   {resultat: solar_panel_t3, ingredients: ["fnations:solar_panel_t2:1", "fnations:solar_cell:6", "fnations:advanced_circuit:2", "DIAMOND:2"]}
+  switch:           {resultat: switch, ingredients: ["LEVER:1", "fnations:steel_plate:2", "fnations:circuit:1", "REDSTONE:4"]}
+  crusher:          {resultat: crusher, ingredients: ["fnations:steel_plate:6", "fnations:motor:1", "DIAMOND:2", "GRINDSTONE:2"]}
+  missile_launcher: {resultat: missile_launcher, ingredients: ["fnations:steel_plate:16", "fnations:circuit:4", "fnations:motor:2", "NETHERITE_INGOT:1", "IRON_BLOCK:4"]}
+
+  # --- Missiles ---
+  missile_tactical:  {resultat: missile_tactical, ingredients: ["fnations:warhead:1", "fnations:guidance_system:1", "fnations:steel_plate:4", "fnations:fuel_canister:2"]}
+  missile_cruise:    {resultat: missile_cruise, ingredients: ["fnations:warhead:2", "fnations:guidance_system:1", "fnations:jet_engine:1", "fnations:steel_plate:8"]}
+  missile_ballistic: {resultat: missile_ballistic, ingredients: ["fnations:warhead:4", "fnations:guidance_system:2", "fnations:rocket_engine:1", "fnations:steel_plate:12"]}
+  missile_nuclear:   {resultat: missile_nuclear, ingredients: ["fnations:nuclear_core:1", "fnations:guidance_system:2", "fnations:rocket_engine:1", "fnations:heat_shield:4", "fnations:steel_plate:16"]}
+
+  # --- Spatial ---
+  rocket: {resultat: rocket, ingredients: ["fnations:rocket_engine:4", "fnations:heat_shield:6", "fnations:cockpit:1", "fnations:advanced_circuit:4", "fnations:battery:4", "fnations:steel_plate:32"]}
+
+# ------------------------------------------------ Machines
+# entree : ingrédient consommé (quantité) | sortie : un ou plusieurs résultats | duree : secondes
+machines:
+  compresseur:
+    - {entree: "IRON_INGOT:2", sortie: "fnations:compressed_iron:1", duree: 4}
+    - {entree: "fnations:steel_ingot:2", sortie: "fnations:steel_plate:1", duree: 5}
+    - {entree: "COAL:4", sortie: "fnations:carbon_plate:1", duree: 6}
+    - {entree: "COPPER_INGOT:1", sortie: "fnations:copper_wire:3", duree: 3}
+    - {entree: "SAND:4", sortie: "SANDSTONE:1", duree: 2}
+    - {entree: "SNOWBALL:4", sortie: "ICE:1", duree: 2}
+    - {entree: "ICE:9", sortie: "PACKED_ICE:1", duree: 4}
+  four-electrique:
+    # en plus de toutes les recettes de four vanilla
+    - {entree: "fnations:compressed_iron:1", sortie: "fnations:steel_ingot:1", duree: 6}
+    - {entree: "fnations:iron_dust:1", sortie: "IRON_INGOT:1", duree: 3}
+    - {entree: "fnations:gold_dust:1", sortie: "GOLD_INGOT:1", duree: 3}
+  concasseur:
+    - {entree: "RAW_IRON:1", sortie: "fnations:iron_dust:2", duree: 3}
+    - {entree: "IRON_ORE:1", sortie: "fnations:iron_dust:2", duree: 3}
+    - {entree: "DEEPSLATE_IRON_ORE:1", sortie: "fnations:iron_dust:2", duree: 3}
+    - {entree: "RAW_GOLD:1", sortie: "fnations:gold_dust:2", duree: 3}
+    - {entree: "GOLD_ORE:1", sortie: "fnations:gold_dust:2", duree: 3}
+    - {entree: "COBBLESTONE:1", sortie: "GRAVEL:1", duree: 2}
+    - {entree: "GRAVEL:1", sortie: "SAND:1", duree: 2}
+    # Recyclage des missiles en composants
+    - {entree: "fnations:missile_tactical:1", sortie: ["fnations:explosive_charge:2", "fnations:steel_plate:3", "fnations:circuit:1"], duree: 10}
+    - {entree: "fnations:missile_cruise:1", sortie: ["fnations:explosive_charge:4", "fnations:steel_plate:6", "fnations:motor:1", "fnations:advanced_circuit:1"], duree: 15}
+    - {entree: "fnations:missile_ballistic:1", sortie: ["fnations:explosive_charge:8", "fnations:steel_plate:10", "fnations:heat_shield:1", "fnations:advanced_circuit:2"], duree: 20}
+    - {entree: "fnations:missile_nuclear:1", sortie: ["fnations:nuclear_core:1", "fnations:steel_plate:12", "fnations:heat_shield:2"], duree: 40}

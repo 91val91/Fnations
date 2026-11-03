@@ -1,0 +1,195 @@
+{
+ "parent": "minecraft:block/block",
+ "textures": {
+  "h": "fnations:block/hazard",
+  "d": "fnations:block/dark_steel",
+  "s": "fnations:block/steel",
+  "c": "fnations:block/screen",
+  "particle": "fnations:block/hazard"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    6,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#h"
+    },
+    "south": {
+     "texture": "#h"
+    },
+    "east": {
+     "texture": "#h"
+    },
+    "west": {
+     "texture": "#h"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "socle"
+  },
+  {
+   "from": [
+    2,
+    6,
+    2
+   ],
+   "to": [
+    14,
+    8,
+    14
+   ],
+   "faces": {
+    "north": {
+     "texture": "#s"
+    },
+    "south": {
+     "texture": "#s"
+    },
+    "east": {
+     "texture": "#s"
+    },
+    "west": {
+     "texture": "#s"
+    },
+    "up": {
+     "texture": "#s"
+    },
+    "down": {
+     "texture": "#s"
+    }
+   },
+   "name": "plateau"
+  },
+  {
+   "from": [
+    3,
+    8,
+    6
+   ],
+   "to": [
+    5,
+    24,
+    10
+   ],
+   "faces": {
+    "north": {
+     "texture": "#s"
+    },
+    "south": {
+     "texture": "#s"
+    },
+    "east": {
+     "texture": "#s"
+    },
+    "west": {
+     "texture": "#s"
+    },
+    "up": {
+     "texture": "#s"
+    },
+    "down": {
+     "texture": "#s"
+    }
+   },
+   "name": "rail g",
+   "rotation": {
+    "axis": "x",
+    "angle": 22.5,
+    "origin": [
+     4,
+     8,
+     8
+    ]
+   }
+  },
+  {
+   "from": [
+    11,
+    8,
+    6
+   ],
+   "to": [
+    13,
+    24,
+    10
+   ],
+   "faces": {
+    "north": {
+     "texture": "#s"
+    },
+    "south": {
+     "texture": "#s"
+    },
+    "east": {
+     "texture": "#s"
+    },
+    "west": {
+     "texture": "#s"
+    },
+    "up": {
+     "texture": "#s"
+    },
+    "down": {
+     "texture": "#s"
+    }
+   },
+   "name": "rail d",
+   "rotation": {
+    "axis": "x",
+    "angle": 22.5,
+    "origin": [
+     12,
+     8,
+     8
+    ]
+   }
+  },
+  {
+   "from": [
+    5,
+    6,
+    -2
+   ],
+   "to": [
+    11,
+    12,
+    1
+   ],
+   "faces": {
+    "north": {
+     "texture": "#c"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "console"
+  }
+ ]
+}

@@ -1,0 +1,321 @@
+{
+ "textures": {
+  "b": "fnations:block/yellow_paint",
+  "t": "fnations:block/green_paint",
+  "d": "fnations:block/dark_steel",
+  "f": "fnations:block/flame",
+  "h": "fnations:block/hazard",
+  "particle": "fnations:block/yellow_paint"
+ },
+ "elements": [
+  {
+   "from": [
+    5.3,
+    5.3,
+    -11
+   ],
+   "to": [
+    10.7,
+    10.7,
+    30
+   ],
+   "faces": {
+    "north": {
+     "texture": "#b"
+    },
+    "south": {
+     "texture": "#b"
+    },
+    "east": {
+     "texture": "#b"
+    },
+    "west": {
+     "texture": "#b"
+    },
+    "up": {
+     "texture": "#b"
+    },
+    "down": {
+     "texture": "#b"
+    }
+   },
+   "name": "corps"
+  },
+  {
+   "from": [
+    5.8,
+    5.8,
+    -14
+   ],
+   "to": [
+    10.2,
+    10.2,
+    -11
+   ],
+   "faces": {
+    "north": {
+     "texture": "#t"
+    },
+    "south": {
+     "texture": "#t"
+    },
+    "east": {
+     "texture": "#t"
+    },
+    "west": {
+     "texture": "#t"
+    },
+    "up": {
+     "texture": "#t"
+    },
+    "down": {
+     "texture": "#t"
+    }
+   },
+   "name": "ogive"
+  },
+  {
+   "from": [
+    7.5,
+    7.5,
+    -15
+   ],
+   "to": [
+    8.5,
+    8.5,
+    -14
+   ],
+   "faces": {
+    "north": {
+     "texture": "#t"
+    },
+    "south": {
+     "texture": "#t"
+    },
+    "east": {
+     "texture": "#t"
+    },
+    "west": {
+     "texture": "#t"
+    },
+    "up": {
+     "texture": "#t"
+    },
+    "down": {
+     "texture": "#t"
+    }
+   },
+   "name": "pointe"
+  },
+  {
+   "from": [
+    2.8,
+    7.75,
+    26
+   ],
+   "to": [
+    13.2,
+    8.25,
+    30
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "ailettes h"
+  },
+  {
+   "from": [
+    7.75,
+    2.8,
+    26
+   ],
+   "to": [
+    8.25,
+    13.2,
+    30
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "ailettes v"
+  },
+  {
+   "from": [
+    5.29,
+    5.29,
+    2
+   ],
+   "to": [
+    10.709999999999999,
+    10.709999999999999,
+    4
+   ],
+   "faces": {
+    "north": {
+     "texture": "#h"
+    },
+    "south": {
+     "texture": "#h"
+    },
+    "east": {
+     "texture": "#h"
+    },
+    "west": {
+     "texture": "#h"
+    },
+    "up": {
+     "texture": "#h"
+    },
+    "down": {
+     "texture": "#h"
+    }
+   },
+   "name": "bande"
+  }
+ ],
+ "display": {
+  "gui": {
+   "rotation": [
+    30,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.304,
+    0.304,
+    0.304
+   ]
+  },
+  "ground": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.18239999999999998,
+    0.18239999999999998,
+    0.18239999999999998
+   ]
+  },
+  "fixed": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.304,
+    0.304,
+    0.304
+   ]
+  },
+  "thirdperson_righthand": {
+   "rotation": [
+    75,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    0
+   ],
+   "scale": [
+    0.18239999999999998,
+    0.18239999999999998,
+    0.18239999999999998
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.2128,
+    0.2128,
+    0.2128
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.2128,
+    0.2128,
+    0.2128
+   ]
+  },
+  "head": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.304,
+    0.304,
+    0.304
+   ]
+  }
+ }
+}

@@ -1,0 +1,288 @@
+{
+ "textures": {
+  "b": "fnations:block/white_paint",
+  "t": "fnations:block/dark_steel",
+  "d": "fnations:block/dark_steel",
+  "f": "fnations:block/flame",
+  "h": "fnations:block/hazard",
+  "particle": "fnations:block/white_paint"
+ },
+ "elements": [
+  {
+   "from": [
+    5.6,
+    5.6,
+    -9
+   ],
+   "to": [
+    10.4,
+    10.4,
+    28
+   ],
+   "faces": {
+    "north": {
+     "texture": "#b"
+    },
+    "south": {
+     "texture": "#b"
+    },
+    "east": {
+     "texture": "#b"
+    },
+    "west": {
+     "texture": "#b"
+    },
+    "up": {
+     "texture": "#b"
+    },
+    "down": {
+     "texture": "#b"
+    }
+   },
+   "name": "corps"
+  },
+  {
+   "from": [
+    6.1,
+    6.1,
+    -12
+   ],
+   "to": [
+    9.9,
+    9.9,
+    -9
+   ],
+   "faces": {
+    "north": {
+     "texture": "#t"
+    },
+    "south": {
+     "texture": "#t"
+    },
+    "east": {
+     "texture": "#t"
+    },
+    "west": {
+     "texture": "#t"
+    },
+    "up": {
+     "texture": "#t"
+    },
+    "down": {
+     "texture": "#t"
+    }
+   },
+   "name": "ogive"
+  },
+  {
+   "from": [
+    7.5,
+    7.5,
+    -13
+   ],
+   "to": [
+    8.5,
+    8.5,
+    -12
+   ],
+   "faces": {
+    "north": {
+     "texture": "#t"
+    },
+    "south": {
+     "texture": "#t"
+    },
+    "east": {
+     "texture": "#t"
+    },
+    "west": {
+     "texture": "#t"
+    },
+    "up": {
+     "texture": "#t"
+    },
+    "down": {
+     "texture": "#t"
+    }
+   },
+   "name": "pointe"
+  },
+  {
+   "from": [
+    3.0999999999999996,
+    7.75,
+    24
+   ],
+   "to": [
+    12.9,
+    8.25,
+    28
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "ailettes h"
+  },
+  {
+   "from": [
+    7.75,
+    3.0999999999999996,
+    24
+   ],
+   "to": [
+    8.25,
+    12.9,
+    28
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "ailettes v"
+  }
+ ],
+ "display": {
+  "gui": {
+   "rotation": [
+    30,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.333,
+    0.333,
+    0.333
+   ]
+  },
+  "ground": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.1998,
+    0.1998,
+    0.1998
+   ]
+  },
+  "fixed": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.333,
+    0.333,
+    0.333
+   ]
+  },
+  "thirdperson_righthand": {
+   "rotation": [
+    75,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    0
+   ],
+   "scale": [
+    0.1998,
+    0.1998,
+    0.1998
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.2331,
+    0.2331,
+    0.2331
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.2331,
+    0.2331,
+    0.2331
+   ]
+  },
+  "head": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.333,
+    0.333,
+    0.333
+   ]
+  }
+ }
+}

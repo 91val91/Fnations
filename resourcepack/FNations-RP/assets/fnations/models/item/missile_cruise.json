@@ -1,0 +1,321 @@
+{
+ "textures": {
+  "b": "fnations:block/sky_paint",
+  "t": "fnations:block/dark_steel",
+  "d": "fnations:block/dark_steel",
+  "f": "fnations:block/flame",
+  "h": "fnations:block/hazard",
+  "particle": "fnations:block/sky_paint"
+ },
+ "elements": [
+  {
+   "from": [
+    6.2,
+    6.2,
+    -5
+   ],
+   "to": [
+    9.8,
+    9.8,
+    24
+   ],
+   "faces": {
+    "north": {
+     "texture": "#b"
+    },
+    "south": {
+     "texture": "#b"
+    },
+    "east": {
+     "texture": "#b"
+    },
+    "west": {
+     "texture": "#b"
+    },
+    "up": {
+     "texture": "#b"
+    },
+    "down": {
+     "texture": "#b"
+    }
+   },
+   "name": "corps"
+  },
+  {
+   "from": [
+    6.7,
+    6.7,
+    -8
+   ],
+   "to": [
+    9.3,
+    9.3,
+    -5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#t"
+    },
+    "south": {
+     "texture": "#t"
+    },
+    "east": {
+     "texture": "#t"
+    },
+    "west": {
+     "texture": "#t"
+    },
+    "up": {
+     "texture": "#t"
+    },
+    "down": {
+     "texture": "#t"
+    }
+   },
+   "name": "ogive"
+  },
+  {
+   "from": [
+    7.5,
+    7.5,
+    -9
+   ],
+   "to": [
+    8.5,
+    8.5,
+    -8
+   ],
+   "faces": {
+    "north": {
+     "texture": "#t"
+    },
+    "south": {
+     "texture": "#t"
+    },
+    "east": {
+     "texture": "#t"
+    },
+    "west": {
+     "texture": "#t"
+    },
+    "up": {
+     "texture": "#t"
+    },
+    "down": {
+     "texture": "#t"
+    }
+   },
+   "name": "pointe"
+  },
+  {
+   "from": [
+    3.7,
+    7.75,
+    20
+   ],
+   "to": [
+    12.3,
+    8.25,
+    24
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "ailettes h"
+  },
+  {
+   "from": [
+    7.75,
+    3.7,
+    20
+   ],
+   "to": [
+    8.25,
+    12.3,
+    24
+   ],
+   "faces": {
+    "north": {
+     "texture": "#d"
+    },
+    "south": {
+     "texture": "#d"
+    },
+    "east": {
+     "texture": "#d"
+    },
+    "west": {
+     "texture": "#d"
+    },
+    "up": {
+     "texture": "#d"
+    },
+    "down": {
+     "texture": "#d"
+    }
+   },
+   "name": "ailettes v"
+  },
+  {
+   "from": [
+    1.2000000000000002,
+    7.6,
+    6
+   ],
+   "to": [
+    14.8,
+    8.4,
+    10
+   ],
+   "faces": {
+    "north": {
+     "texture": "#b"
+    },
+    "south": {
+     "texture": "#b"
+    },
+    "east": {
+     "texture": "#b"
+    },
+    "west": {
+     "texture": "#b"
+    },
+    "up": {
+     "texture": "#b"
+    },
+    "down": {
+     "texture": "#b"
+    }
+   },
+   "name": "ailes"
+  }
+ ],
+ "display": {
+  "gui": {
+   "rotation": [
+    30,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.412,
+    0.412,
+    0.412
+   ]
+  },
+  "ground": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.24719999999999998,
+    0.24719999999999998,
+    0.24719999999999998
+   ]
+  },
+  "fixed": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.412,
+    0.412,
+    0.412
+   ]
+  },
+  "thirdperson_righthand": {
+   "rotation": [
+    75,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    0
+   ],
+   "scale": [
+    0.24719999999999998,
+    0.24719999999999998,
+    0.24719999999999998
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.2884,
+    0.2884,
+    0.2884
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.2884,
+    0.2884,
+    0.2884
+   ]
+  },
+  "head": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.412,
+    0.412,
+    0.412
+   ]
+  }
+ }
+}
