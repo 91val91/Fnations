@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# Lance le serveur Paper (Java 21 requis)
+# Serveur Fabric 1.21.4 + FNations (Java 21 requis).
+set -e
 cd "$(dirname "$0")"
-exec java -Xms2G -Xmx6G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 \
-  -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 \
-  -jar paper.jar --nogui
+if [ ! -f fabric-server-launch.jar ]; then
+  echo "Téléchargement du lanceur de serveur Fabric..."
+  curl -fsSL -o fabric-server-launch.jar "https://meta.fabricmc.net/v2/versions/loader/1.21.4/0.16.14/1.1.2/server/jar"
+fi
+exec java -Xms2G -Xmx6G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -jar fabric-server-launch.jar nogui

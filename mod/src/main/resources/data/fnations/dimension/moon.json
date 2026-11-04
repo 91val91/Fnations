@@ -1,0 +1,26 @@
+{
+  "type": "fnations:moon",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "minecraft:the_end",
+      "lakes": false,
+      "features": false,
+      "structure_overrides": [],
+      "layers": [
+        {
+          "block": "minecraft:bedrock",
+          "height": 1
+        },
+        {
+          "block": "minecraft:end_stone",
+          "height": 60
+        },
+        {
+          "block": "minecraft:light_gray_concrete_powder",
+          "height": 3
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "id": "fnations:assault_rifle"
+    },
+    "title": {
+      "text": "FNations",
+      "color": "gold"
+    },
+    "description": {
+      "text": "Bâtissez votre nation",
+      "color": "gray"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "minecraft:textures/block/iron_block.png"
+  },
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}

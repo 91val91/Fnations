@@ -1,0 +1,32 @@
+{
+  "display": {
+    "icon": {
+      "id": "fnations:crafting_station"
+    },
+    "title": {
+      "text": "L'atelier",
+      "color": "gold"
+    },
+    "description": {
+      "text": "Fabriquer une Station de Craft",
+      "color": "gray"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "craft": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "fnations:crafting_station"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "fnations:root"
+}

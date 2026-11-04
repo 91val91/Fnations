@@ -1,0 +1,14 @@
+{
+  "values": [
+    "fnations:crafting_station",
+    "fnations:compressor",
+    "fnations:coal_generator",
+    "fnations:solar_panel_t1",
+    "fnations:solar_panel_t2",
+    "fnations:solar_panel_t3",
+    "fnations:electric_furnace",
+    "fnations:crusher",
+    "fnations:switch",
+    "fnations:missile_launcher"
+  ]
+}

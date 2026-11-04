@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>FNations Launcher</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="titlebar">
+  <div class="brand"><svg viewBox="0 0 24 24" class="logo"><path d="M12 2c3 2 5 6 5 10l-2 5H9l-2-5c0-4 2-8 5-10z" fill="#e8e8e8"/><path d="M12 2c1.6 1.1 2.8 2.8 3.6 4.6H8.4C9.2 4.8 10.4 3.1 12 2z" fill="#c0262b"/><path d="M10 18h4l-2 4z" fill="#ff8a1c"/></svg><span>FNations</span></div>
+  <div class="win-buttons"><button id="w-min" title="Réduire">—</button><button id="w-close" title="Fermer">✕</button></div>
+</header>
+
+<main id="view-login" class="view">
+  <section class="login-card">
+    <svg viewBox="0 0 24 24" class="hero-logo"><path d="M12 2c3 2 5 6 5 10l-2 5H9l-2-5c0-4 2-8 5-10z" fill="#e8e8e8"/><path d="M12 2c1.6 1.1 2.8 2.8 3.6 4.6H8.4C9.2 4.8 10.4 3.1 12 2z" fill="#c0262b"/><circle cx="12" cy="10" r="1.6" fill="#6fb7e0"/><path d="M10 18h4l-2 4z" fill="#ff8a1c"/></svg>
+    <h1>FNations</h1>
+    <p class="tagline">Nations, guerres, industrie et conquête spatiale</p>
+    <button id="btn-ms" class="btn-ms"><span class="ms-logo"><i></i><i></i><i></i><i></i></span>Se connecter avec Microsoft</button>
+    <button id="btn-device" class="link">Utiliser un code de connexion</button>
+    <div id="device-box" class="device hidden">
+      <p>Ouvrez <a id="device-link" href="#">microsoft.com/link</a> et entrez le code :</p>
+      <div id="device-code" class="code">———</div>
+      <div class="spinner"></div>
+      <button id="btn-device-cancel" class="link">Annuler</button>
+    </div>
+    <p id="login-error" class="error"></p>
+    <p class="fine">Connexion officielle Microsoft. Votre mot de passe n'est jamais vu par le launcher.</p>
+  </section>
+</main>
+
+<main id="view-main" class="view hidden">
+  <aside class="sidebar">
+    <div class="profile">
+      <canvas id="head" width="64" height="64"></canvas>
+      <div><div id="player-name" class="player-name">—</div><div class="account-type">Compte Microsoft</div></div>
+    </div>
+    <div id="accounts" class="accounts"></div>
+    <button id="btn-add" class="side-btn">＋ Ajouter un compte</button>
+    <nav>
+      <button id="btn-settings" class="side-btn">⚙ Paramètres</button>
+      <button id="btn-folder" class="side-btn">📁 Dossier du jeu</button>
+      <button id="btn-site" class="side-btn">🌐 Site web</button>
+      <button id="btn-discord" class="side-btn">💬 Discord</button>
+    </nav>
+    <button id="btn-logout" class="side-btn danger">Déconnexion</button>
+    <div id="version" class="version"></div>
+  </aside>
+
+  <section class="content">
+    <div class="hero">
+      <div>
+        <h2 id="server-name">FNations</h2>
+        <p>Fondez votre nation, recherchez de nouvelles technologies, construisez votre industrie et partez à la conquête de l'espace.</p>
+      </div>
+      <div id="status" class="status offline"><span class="dot"></span><span id="status-text">Recherche du serveur…</span></div>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="card-title">Joueurs</div><div id="players" class="card-value">—</div></div>
+      <div class="card"><div class="card-title">Version</div><div id="mc-version" class="card-value">—</div></div>
+      <div class="card"><div class="card-title">Latence</div><div id="latency" class="card-value">—</div></div>
+    </div>
+    <h3>Actualités</h3>
+    <div id="news" class="news"><div class="news-item"><b>Bienvenue !</b><p>Les actualités du serveur apparaîtront ici.</p></div></div>
+    <div id="console" class="console hidden"></div>
+    <footer class="play-bar">
+      <div class="progress-wrap">
+        <div id="progress-text" class="progress-text">Prêt à jouer</div>
+        <div class="progress"><div id="progress-bar"></div></div>
+      </div>
+      <button id="btn-console" class="ghost" title="Journal du jeu">≡</button>
+      <button id="btn-play" class="play">JOUER</button>
+    </footer>
+  </section>
+</main>
+
+<div id="settings" class="modal hidden">
+  <div class="modal-card">
+    <h3>Paramètres</h3>
+    <label>Mémoire allouée : <b id="ram-label">4 Go</b><input id="ram" type="range" min="2048" max="16384" step="512"></label>
+    <div class="row">
+      <label>Largeur<input id="res-w" type="number" min="640" max="7680"></label>
+      <label>Hauteur<input id="res-h" type="number" min="480" max="4320"></label>
+    </div>
+    <label class="check"><input id="auto-connect" type="checkbox"> Connexion automatique au serveur</label>
+    <label class="check"><input id="keep-open" type="checkbox"> Garder le launcher ouvert pendant le jeu</label>
+    <label>Java personnalisé (laisser vide = automatique)<input id="java" type="text" placeholder="Java 21 fourni automatiquement"></label>
+    <div class="modal-actions"><button id="set-cancel" class="ghost">Annuler</button><button id="set-save" class="play small">Enregistrer</button></div>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

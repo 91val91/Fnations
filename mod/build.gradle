@@ -1,0 +1,95 @@
+plugins {
+    id 'fabric-loom' version '1.10.5'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    maven { name = 'EngineHub'; url = 'https://maven.enginehub.org/repo/' }
+    mavenCentral()
+}
+
+loom {
+    splitEnvironmentSourceSets()
+}
+
+sourceSets {
+    // Mod de test automatique (jamais inclus dans le jar publié) : pilote un vrai client pour les tests.
+    autotest {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        compileClasspath += sourceSets.client.compileClasspath + sourceSets.client.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.client.runtimeClasspath + sourceSets.client.output
+    }
+}
+
+loom {
+    mods {
+        "fnations" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+        "fnations_autotest" {
+            sourceSet sourceSets.autotest
+        }
+    }
+    accessWidenerPath = file("src/main/resources/fnations.accesswidener")
+    runs {
+        server {
+            runDir "run-server"
+        }
+        client {
+            runDir "run-client"
+            programArgs "--username", "FnTester"
+        }
+        autotest {
+            client()
+            name "Autotest Client"
+            source sourceSets.autotest
+            runDir "run-client"
+            programArgs "--username", "FnTester"
+            vmArgs "-Dfnations.autotest=1"
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // Fichiers de configuration YAML (embarqué dans le jar du mod)
+    include(implementation("org.yaml:snakeyaml:2.3"))
+
+    // WorldEdit (optionnel) : sélections et schematics des chambres
+    modCompileOnly("com.sk89q.worldedit:worldedit-fabric-mc${project.minecraft_version}:${project.worldedit_version}") { transitive = false }
+    compileOnly("com.sk89q.worldedit:worldedit-core:${project.worldedit_version}") { transitive = false }
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+    it.options.encoding = "UTF-8"
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+    from("../LICENSE") { rename { "${it}_${project.base.archivesName.get()}" } }
+}

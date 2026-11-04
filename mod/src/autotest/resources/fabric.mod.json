@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "fnations_autotest",
+  "version": "1.0.0",
+  "name": "FNations Autotest",
+  "environment": "client",
+  "entrypoints": { "client": ["fr.fnations.autotest.AutoTest"] },
+  "depends": { "fnations": "*" }
+}

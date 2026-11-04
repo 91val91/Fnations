@@ -1,0 +1,34 @@
+{
+ "variants": {
+  "active=false,facing=north": {
+   "model": "fnations:block/crafting_station"
+  },
+  "active=true,facing=north": {
+   "model": "fnations:block/crafting_station"
+  },
+  "active=false,facing=east": {
+   "model": "fnations:block/crafting_station",
+   "y": 90
+  },
+  "active=true,facing=east": {
+   "model": "fnations:block/crafting_station",
+   "y": 90
+  },
+  "active=false,facing=south": {
+   "model": "fnations:block/crafting_station",
+   "y": 180
+  },
+  "active=true,facing=south": {
+   "model": "fnations:block/crafting_station",
+   "y": 180
+  },
+  "active=false,facing=west": {
+   "model": "fnations:block/crafting_station",
+   "y": 270
+  },
+  "active=true,facing=west": {
+   "model": "fnations:block/crafting_station",
+   "y": 270
+  }
+ }
+}

@@ -1,0 +1,137 @@
+# =====================================================================
+#                  FNations (mod Fabric) - Configuration serveur
+# =====================================================================
+sauvegarde-auto-minutes: 5
+
+# ------------------------------------------------------------ Économie / Banque
+economie:
+  argent-depart: 1000
+  interets-pourcent-par-heure: 0.5     # sur le compte personnel
+  interets-max: 500                    # plafond d'intérêts par heure
+
+# ------------------------------------------------------------ Nations
+nations:
+  cout-creation: 5000
+  cout-claim: 500
+  claims-base: 9
+  claims-par-membre: 4
+  claims-adjacents: true
+  membres-max: 50
+  nom-min: 3
+  nom-max: 16
+  impot-max: 200
+  protection-territoire: true
+  protection-explosions: true          # creepers/TNT hors guerre
+  allies-peuvent-construire: false
+  pvp-meme-nation: false
+  pvp-allies: false
+  mondes-interdits: ["fnations:orbit", "fnations:moon"]
+
+# ------------------------------------------------------------ Recherche & Développement
+recherche:
+  multiplicateur-duree: 1.0            # 0.5 = recherches 2x plus rapides
+  remboursement-annulation: 0.5
+
+# ------------------------------------------------------------ Guerres
+guerres:
+  recherche-requise: doctrine_militaire
+  cout-declaration: 10000
+  defenseurs-en-ligne-min: 1
+  preparation-minutes: 10
+  duree-max-heures: 72
+  score-victoire: 100
+  points-kill: 5
+  points-capture: 15
+  points-missile: 10
+  points-vehicule: 8
+  prime-kill: 100
+  capture-secondes: 60
+  reparations-pourcent: 30
+  destruction-territoire-ennemi: true
+
+# ------------------------------------------------------------ Chambres (WorldEdit)
+chambres:
+  max-par-joueur: 2
+  volume-max: 20000
+  location-max-jours: 30
+  revente-pourcent: 50
+  reinitialiser-a-la-liberation: true  # restaure le schematic WorldEdit
+
+# ------------------------------------------------------------ Armes à feu
+armes:
+  rechargement-auto: true
+  munitions-infinies-creatif: true
+  degats-vehicules: 0.3                # multiplicateur des balles sur les véhicules
+  roquettes-cassent-blocs: true
+
+# ------------------------------------------------------------ Véhicules
+vehicules-general:
+  carburant-par-jerrican: 50
+  degats-melee: 1
+  degats-destruction-passagers: 8
+  canon-cooldown-ms: 3000
+  canon-degats: 120
+  canon-explosion: 3.5
+vehicules:
+  mitrailleuse: {munition: ammo_762, degats: 6, portee: 120}
+  # Réglages serveur par véhicule (la physique de conduite est intégrée au mod)
+  tank:       {vie: 600, carburant-max: 200, consommation: 0.02}
+  plane:      {vie: 250, carburant-max: 300, consommation: 0.04}
+  helicopter: {vie: 300, carburant-max: 250, consommation: 0.03}
+  tractor:    {vie: 200, carburant-max: 150, consommation: 0.01}
+
+# ------------------------------------------------------------ Machines
+machines:
+  rayon-reseau: 16                     # rayon de connexion énergie / interrupteurs
+  debit-max: 200                       # E/s transférés par générateur et par machine
+  charge-lanceur: 40                   # E/s : le lanceur se recharge sur le surplus des générateurs
+  seuil-disjoncteur: 90                # °C : coupure auto des interrupteurs en mode auto
+  refroidissement-passif: 0.6          # °C/s
+  refroidissement-coupure: 5           # °C/s quand l'interrupteur est coupé
+  emballement: 1                       # °C/s gagnés en surchauffe tant que le circuit n'est pas coupé
+  explosion-surchauffe: 3
+  four-electrique-duree: 3             # s par recette vanilla
+
+# ------------------------------------------------------------ Missiles
+missiles:
+  compte-a-rebours: 5
+  casser-blocs: true
+  autoriser-zones-sauvages: true
+  altitude-max: 260
+  types:
+    missile_tactical:  {portee: 400, portee-min: 30, puissance: 4, vitesse: 2.0, arc: 0.35, energie: 500}
+    missile_cruise:    {portee: 2000, portee-min: 100, puissance: 6, vitesse: 3.0, arc: 0.08, energie: 1500}
+    missile_ballistic: {portee: 6000, portee-min: 300, puissance: 8, vitesse: 5.0, arc: 0.12, energie: 3000, explosions-secondaires: 4, rayon-souffle: 6}
+    missile_nuclear:   {portee: 12000, portee-min: 500, puissance: 10, vitesse: 6.0, arc: 0.1, energie: 5000, explosions-secondaires: 16, rayon-souffle: 22, rayon-radiation: 60, radiation-secondes: 600}
+
+# ------------------------------------------------------------ Fusée
+fusee:
+  ergol-requis: 16
+  compte-a-rebours: 10
+  altitude-sortie: 420
+  destinations:
+    orbite:
+      nom: "<aqua><b>Station orbitale"
+      icone: ENDER_PEARL
+      monde: "fnations:orbit"
+      x: 0
+      y: 100
+      z: 0
+      plateforme: true
+      gravite-faible: true
+      description: ["<gray>Plateforme en orbite basse.", "<gray>Gravité faible."]
+    lune:
+      nom: "<white><b>La Lune"
+      icone: END_STONE
+      monde: "fnations:moon"
+      x: 0
+      y: 70
+      z: 0
+      gravite-faible: true
+      description: ["<gray>Sol lunaire, gravité faible."]
+    terre:
+      nom: "<green><b>Retour sur Terre"
+      icone: GRASS_BLOCK
+      monde: "minecraft:overworld"
+      spawn-du-monde: true
+      description: ["<gray>Atterrissage au spawn du monde principal."]

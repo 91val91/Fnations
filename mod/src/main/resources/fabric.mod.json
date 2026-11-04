@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "fnations",
+  "version": "${version}",
+  "name": "FNations",
+  "description": "Nations, R&D, guerres, banque, chambres, armes à feu, véhicules, machines, missiles et conquête spatiale.",
+  "authors": ["FNations"],
+  "license": "Apache-2.0",
+  "icon": "assets/fnations/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["fr.fnations.FNations"],
+    "client": ["fr.fnations.client.FNationsClient"]
+  },
+  "mixins": [
+    "fnations.mixins.json",
+    { "config": "fnations.client.mixins.json", "environment": "client" }
+  ],
+  "accessWidener": "fnations.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "worldedit": "*"
+  }
+}

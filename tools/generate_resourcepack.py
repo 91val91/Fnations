@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Génère le resource pack FNations (Minecraft Java 1.21.4+) :
+Génère les assets du mod FNations (Minecraft Java 1.21.4, Fabric) :
   - textures pixel-art 16x16 (icônes d'items + textures de modèles)
   - modèles 3D en éléments JSON (armes, véhicules, machines, missiles, fusée)
   - définitions d'items (assets/fnations/items/*.json) utilisées via le composant item_model
 
-Usage : python3 tools/generate_resourcepack.py   (écrit dans resourcepack/FNations-RP)
+Usage : python3 tools/generate_resourcepack.py   (écrit dans mod/src/main/resources/assets/fnations)
 Les modèles peuvent ensuite être retouchés dans Blockbench.
 """
 import json
@@ -16,7 +16,7 @@ import shutil
 
 from PIL import Image, ImageDraw
 
-ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "resourcepack", "FNations-RP")
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "mod", "src", "main", "resources")
 ASSETS = os.path.join(ROOT, "assets", "fnations")
 random.seed(42)
 
@@ -500,13 +500,13 @@ def rot(axis, angle, origin):
 
 
 def gun_display(length, gui_scale=None):
-    gs = gui_scale or round(min(1.0, 15.0 / length), 2)
+    gs = gui_scale or round(min(1.25, 21.0 / length), 2)
     return {
         "firstperson_righthand": {"rotation": [0, 0, 0], "translation": [-3, 3.5, -2], "scale": [0.7, 0.7, 0.7]},
         "firstperson_lefthand": {"rotation": [0, 0, 0], "translation": [3, 3.5, -2], "scale": [0.7, 0.7, 0.7]},
         "thirdperson_righthand": {"rotation": [0, 0, 0], "translation": [0, 3, 1], "scale": [0.6, 0.6, 0.6]},
         "thirdperson_lefthand": {"rotation": [0, 0, 0], "translation": [0, 3, 1], "scale": [0.6, 0.6, 0.6]},
-        "gui": {"rotation": [0, 90, 0], "translation": [0, 0, 0], "scale": [gs, gs, gs]},
+        "gui": {"rotation": [0, 90, -35], "translation": [0, 0, 0], "scale": [gs, gs, gs]},
         "ground": {"rotation": [0, 0, 0], "translation": [0, 2, 0], "scale": [0.5, 0.5, 0.5]},
         "fixed": {"rotation": [0, 90, 0], "scale": [gs, gs, gs]},
         "head": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [0.6, 0.6, 0.6]},
@@ -780,28 +780,115 @@ def machines(T):
 # =====================================================================
 #  Assemblage
 # =====================================================================
-def main():
-    if os.path.exists(ROOT):
-        shutil.rmtree(ROOT)
-    os.makedirs(ROOT)
-    write_json(os.path.join(ROOT, "pack.mcmeta"), {
-        "pack": {
-            "pack_format": 46,
-            "supported_formats": {"min_inclusive": 46, "max_inclusive": 99},
-            "min_format": 46,
-            "max_format": 99,
-            "description": "§6FNations §7— armes, véhicules, machines, missiles & fusées"
-        }
-    })
-    # Icône du pack
-    ic = Image.new("RGBA", (64, 64), hexc("1a1a1a"))
-    d = ImageDraw.Draw(ic)
-    d.rectangle([4, 4, 59, 59], outline=hexc("e0b81c"), width=3)
-    d.polygon([(32, 8), (44, 30), (40, 56), (24, 56), (20, 30)], fill=hexc("e8e8e8"))
-    d.polygon([(32, 8), (40, 22), (24, 22)], fill=hexc("b8262b"))
-    d.polygon([(26, 56), (38, 56), (32, 62)], fill=hexc("ff8a1c"))
-    ic.save(os.path.join(ROOT, "pack.png"))
+MACHINES = ["crafting_station", "compressor", "coal_generator", "solar_panel_t1", "solar_panel_t2", "solar_panel_t3",
+            "electric_furnace", "crusher", "switch", "missile_launcher"]
 
+# Noms (fr_fr, en_us)
+NAMES = {
+    "steel_ingot": ("Lingot d'acier", "Steel Ingot"), "steel_plate": ("Plaque d'acier", "Steel Plate"),
+    "compressed_iron": ("Fer compressé", "Compressed Iron"), "carbon_plate": ("Plaque de carbone", "Carbon Plate"),
+    "iron_dust": ("Poudre de fer", "Iron Dust"), "gold_dust": ("Poudre d'or", "Gold Dust"), "copper_wire": ("Fil de cuivre", "Copper Wire"),
+    "circuit": ("Circuit électronique", "Circuit"), "advanced_circuit": ("Circuit avancé", "Advanced Circuit"), "battery": ("Batterie", "Battery"),
+    "solar_cell": ("Cellule photovoltaïque", "Solar Cell"), "motor": ("Moteur", "Motor"), "jet_engine": ("Réacteur", "Jet Engine"),
+    "rotor": ("Rotor d'hélicoptère", "Helicopter Rotor"), "tire": ("Pneu", "Tire"), "track": ("Chenille", "Track"), "cockpit": ("Cockpit", "Cockpit"),
+    "gun_barrel": ("Canon d'arme", "Gun Barrel"), "gun_parts": ("Pièces d'arme", "Gun Parts"), "explosive_charge": ("Charge explosive", "Explosive Charge"),
+    "warhead": ("Ogive", "Warhead"), "guidance_system": ("Système de guidage", "Guidance System"), "nuclear_core": ("Cœur nucléaire", "Nuclear Core"),
+    "heat_shield": ("Bouclier thermique", "Heat Shield"), "rocket_engine": ("Moteur-fusée", "Rocket Engine"),
+    "fuel_canister": ("Jerrican d'essence", "Fuel Canister"), "rocket_fuel": ("Ergol de fusée", "Rocket Propellant"),
+    "ammo_9mm": ("Munitions 9mm", "9mm Ammo"), "ammo_762": ("Munitions 7.62mm", "7.62mm Ammo"), "ammo_sniper": ("Munitions .50 BMG", ".50 BMG Ammo"),
+    "ammo_shotgun": ("Cartouches calibre 12", "12 Gauge Shells"), "rpg_rocket": ("Roquette RPG", "RPG Rocket"), "tank_shell": ("Obus de char", "Tank Shell"),
+    "pistol": ("Pistolet M9", "M9 Pistol"), "smg": ("Pistolet-mitrailleur", "Submachine Gun"), "assault_rifle": ("Fusil d'assaut", "Assault Rifle"),
+    "shotgun": ("Fusil à pompe", "Shotgun"), "sniper": ("Fusil de précision", "Sniper Rifle"), "rpg": ("Lance-roquettes RPG", "RPG Launcher"),
+    "tank": ("Char d'assaut", "Tank"), "plane": ("Avion de chasse", "Fighter Jet"), "helicopter": ("Hélicoptère", "Helicopter"), "tractor": ("Tracteur", "Tractor"),
+    "rocket": ("Fusée spatiale", "Space Rocket"),
+    "missile_tactical": ("Missile tactique", "Tactical Missile"), "missile_cruise": ("Missile de croisière", "Cruise Missile"),
+    "missile_ballistic": ("Missile balistique", "Ballistic Missile"), "missile_nuclear": ("Missile nucléaire", "Nuclear Missile"),
+    "banknote": ("Billet de banque", "Banknote"),
+    "crafting_station": ("Station de Craft", "Crafting Station"), "compressor": ("Compresseur", "Compressor"),
+    "coal_generator": ("Générateur à charbon", "Coal Generator"), "solar_panel_t1": ("Panneau solaire Tier 1", "Solar Panel Tier 1"),
+    "solar_panel_t2": ("Panneau solaire Tier 2", "Solar Panel Tier 2"), "solar_panel_t3": ("Panneau solaire Tier 3", "Solar Panel Tier 3"),
+    "electric_furnace": ("Four électrique", "Electric Furnace"), "crusher": ("Concasseur", "Crusher"),
+    "switch": ("Interrupteur de sécurité", "Safety Switch"), "missile_launcher": ("Lanceur de missiles", "Missile Launcher"),
+}
+EXTRA_LANG = {
+    "itemGroup.fnations": ("FNations", "FNations"),
+    "key.fnations.reload": ("Recharger l'arme", "Reload weapon"),
+    "category.fnations": ("FNations", "FNations"),
+    "entity.fnations.shell": ("Obus", "Shell"),
+    "entity.fnations.missile": ("Missile", "Missile"),
+    "entity.fnations.rocket": ("Fusée spatiale", "Space Rocket"),
+    "entity.fnations.tank": ("Char d'assaut", "Tank"),
+    "entity.fnations.plane": ("Avion de chasse", "Fighter Jet"),
+    "entity.fnations.helicopter": ("Hélicoptère", "Helicopter"),
+    "entity.fnations.tractor": ("Tracteur", "Tractor"),
+    "container.fnations.panel": ("FNations", "FNations"),
+}
+
+
+def gui_textures():
+    """Textures des menus : panneau (style coffre, thème sombre doré) et machine."""
+    base, light, dark, gold = hexc("2b2f36"), hexc("40464f"), hexc("15171b"), hexc("c9a13c")
+
+    def bevel(d, x0, y0, x1, y1):
+        d.rectangle([x0, y0, x1, y1], fill=base)
+        d.line([x0, y0, x1, y0], fill=light)
+        d.line([x0, y0, x0, y1], fill=light)
+        d.line([x0, y1, x1, y1], fill=dark)
+        d.line([x1, y0, x1, y1], fill=dark)
+
+    def slot(d, x, y):
+        d.rectangle([x, y, x + 17, y + 17], fill=hexc("1d2025"))
+        d.line([x, y, x + 17, y], fill=dark)
+        d.line([x, y, x, y + 17], fill=dark)
+        d.line([x, y + 17, x + 17, y + 17], fill=hexc("4a515b"))
+        d.line([x + 17, y, x + 17, y + 17], fill=hexc("4a515b"))
+
+    # Panneau : 6 rangées en haut (y 0..124), inventaire du joueur en bas (y 126..221)
+    img = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    bevel(d, 0, 0, 175, 124)
+    d.line([3, 13, 172, 13], fill=gold)
+    for r in range(6):
+        for c in range(9):
+            slot(d, 7 + c * 18, 17 + r * 18)
+    bevel(d, 0, 126, 175, 221)
+    d.rectangle([0, 126, 175, 128], fill=base)
+    for r in range(3):
+        for c in range(9):
+            slot(d, 7 + c * 18, 139 + r * 18)
+    for c in range(9):
+        slot(d, 7 + c * 18, 197)
+    img.save(path("textures", "gui", "panel.png"))
+
+    # Machine : 176x166, cases en (52,35) (112,35) (80,35) (80,22), jauges à gauche/droite
+    img = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    bevel(d, 0, 0, 175, 165)
+    d.line([3, 16, 172, 16], fill=gold)
+    d.rectangle([8, 17, 20, 69], outline=gold)
+    d.rectangle([156, 17, 168, 69], outline=hexc("b8262b"))
+    for r in range(3):
+        for c in range(9):
+            slot(d, 7 + c * 18, 83 + r * 18)
+    for c in range(9):
+        slot(d, 7 + c * 18, 141)
+    img.save(path("textures", "gui", "machine.png"))
+
+
+def mod_icon():
+    ic = Image.new("RGBA", (128, 128), hexc("1a1a1a"))
+    d = ImageDraw.Draw(ic)
+    d.rectangle([6, 6, 121, 121], outline=hexc("e0b81c"), width=5)
+    d.polygon([(64, 16), (88, 60), (80, 112), (48, 112), (40, 60)], fill=hexc("e8e8e8"))
+    d.polygon([(64, 16), (80, 44), (48, 44)], fill=hexc("b8262b"))
+    d.polygon([(52, 112), (76, 112), (64, 124)], fill=hexc("ff8a1c"))
+    ic.save(path("icon.png"))
+
+
+def main():
+    if os.path.exists(ASSETS):
+        shutil.rmtree(ASSETS)
+    os.makedirs(ASSETS)
     T = block_textures()
     models = {}
     for name, fn in FLAT.items():
@@ -812,12 +899,35 @@ def main():
     models.update(vehicles(T))
     models["rocket"] = rocket_model(T)
     models.update(missiles(T))
-    models.update(machines(T))
+    blocks = machines(T)
 
     for name, data in models.items():
         write_json(path("models", "item", name + ".json"), data)
         write_json(path("items", name + ".json"), {"model": {"type": "minecraft:model", "model": "fnations:item/" + name}})
-    print(f"Resource pack généré : {len(models)} modèles -> {os.path.normpath(ROOT)}")
+    # Machines : modèle de bloc + blockstate orienté + item
+    for name, data in blocks.items():
+        write_json(path("models", "block", name + ".json"), data)
+        write_json(path("items", name + ".json"), {"model": {"type": "minecraft:model", "model": "fnations:block/" + name}})
+        variants = {}
+        for facing, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
+            for active in ("false", "true"):
+                v = {"model": "fnations:block/" + name}
+                if y:
+                    v["y"] = y
+                variants["active=%s,facing=%s" % (active, facing)] = v
+        write_json(path("blockstates", name + ".json"), {"variants": variants})
+    gui_textures()
+    mod_icon()
+    # Langues
+    fr, en = {}, {}
+    for k, (f, e) in NAMES.items():
+        key = ("block.fnations." if k in MACHINES else "item.fnations.") + k
+        fr[key], en[key] = f, e
+    for k, (f, e) in EXTRA_LANG.items():
+        fr[k], en[k] = f, e
+    write_json(path("lang", "fr_fr.json"), fr)
+    write_json(path("lang", "en_us.json"), en)
+    print(f"Assets générés : {len(models)} modèles d'items, {len(blocks)} machines -> {os.path.normpath(ASSETS)}")
 
 
 if __name__ == "__main__":

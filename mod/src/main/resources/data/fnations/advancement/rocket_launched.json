@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "id": "fnations:rocket"
+    },
+    "title": {
+      "text": "Décollage !",
+      "color": "gold"
+    },
+    "description": {
+      "text": "Lancer une fusée vers l'espace",
+      "color": "gray"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "fnations:first_research"
+}

@@ -1,0 +1,13 @@
+{
+  "_doc": "Configuration du launcher. Remplacez azureClientId par l'ID de VOTRE application Azure (voir README).",
+  "azureClientId": "VOTRE-CLIENT-ID-AZURE",
+  "manifestUrl": "https://example.com/fnations/manifest.json",
+  "serverName": "FNations",
+  "serverAddress": "play.example.com",
+  "serverPort": 25565,
+  "minecraftVersion": "1.21.4",
+  "fabricLoader": "0.16.14",
+  "gameDirName": ".fnations",
+  "website": "https://example.com",
+  "discord": "https://discord.gg/example"
+}

@@ -1,0 +1,33 @@
+{
+  "name": "fnations-launcher",
+  "productName": "FNations Launcher",
+  "version": "0.1.0",
+  "description": "Launcher du serveur FNations : connexion Microsoft, installation Minecraft + Fabric + mods, lancement.",
+  "main": "main.js",
+  "author": "FNations",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "dist": "electron-builder --publish never",
+    "dist:win": "electron-builder --win --publish never",
+    "dist:mac": "electron-builder --mac --publish never",
+    "dist:linux": "electron-builder --linux --publish never",
+    "manifest": "node tools/make-manifest.mjs"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "fr.fnations.launcher",
+    "productName": "FNations Launcher",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "preload.js", "src/**/*", "renderer/**/*", "config/**/*", "package.json"],
+    "win": { "target": ["nsis"], "icon": "build/icon.png" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "shortcutName": "FNations" },
+    "mac": { "target": ["dmg"], "category": "public.app-category.games", "icon": "build/icon.png" },
+    "linux": { "target": ["AppImage"], "category": "Game", "icon": "build/icon.png" }
+  }
+}

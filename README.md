@@ -1,209 +1,202 @@
-# FNations — Serveur Minecraft de Nations
+# FNations — Mod Fabric + Launcher
 
-Serveur **Paper 1.21.4** complet : nations, recherche & développement, guerres, banque, chambres (WorldEdit),
-armes à feu, véhicules (char, avion, hélicoptère, tracteur), machines, missiles et fusée spatiale, tout avec des GUIs.
+Serveur Minecraft **1.21.4** de nations : recherche & développement, guerres, banque, chambres (WorldEdit), armes à feu,
+véhicules (char, avion, hélicoptère, tracteur), machines et énergie, missiles, fusée spatiale (Orbite, Lune).
 
-> **Aucun mod à installer côté joueur.** Le contenu « moddé » est fait par un **plugin** (toute la logique)
-> et un **resource pack** (les modèles 3D, imposé automatiquement à la connexion). Un **datapack** ajoute
-> les recettes vanilla et les progrès.
+Le projet est maintenant un **vrai mod Fabric** (client + serveur). Il est distribué par un **launcher maison**
+qui se connecte avec un **vrai compte Microsoft**, installe Minecraft, Fabric, Java et les mods, puis lance le jeu
+directement sur le serveur.
 
 ```
 Fnations/
-├── plugin/        Plugin Paper (Java 21, Gradle) : source de tous les systèmes et GUIs
-├── resourcepack/  Resource pack généré (modèles 3D + textures)
-├── datapack/      Datapack « fnations » (recette de la Station, progrès, fonctions)
-├── server/        server.properties, scripts de lancement
-└── tools/         build.sh (tout construire) et generate_resourcepack.py (régénère les modèles)
+├── mod/        Mod Fabric (Java 21, Loom, Mojang mappings) : tous les systèmes, GUIs, modèles, données
+├── launcher/   Launcher Electron : connexion Microsoft, installation, synchronisation du modpack, lancement
+├── server/     Modèle de serveur Fabric (server.properties, scripts de démarrage)
+└── tools/      build.sh (tout construire) et generate_resourcepack.py (modèles/textures/langues du mod)
 ```
 
----
-
-## Installation
-
-1. **Java 21** et **Paper 1.21.4** : téléchargez `paper.jar` sur <https://papermc.io/downloads/paper> et placez-le dans `server/`.
-2. **WorldEdit 7.3.x** (obligatoire, utilisé par les chambres) : téléchargez la version Paper 1.21.4 de WorldEdit
-   (les versions 7.4.x demandent Java 25) et placez-la dans `server/plugins/`.
-3. Construisez le projet :
-   ```bash
-   ./tools/build.sh
-   ```
-   Le script produit dans `dist/` : `FNations-1.0.0.jar`, `FNations-RP.zip` (resource pack + SHA-1 affiché),
-   `FNations-datapack.zip`, et les copie dans `server/plugins` et `server/world/datapacks`.
-4. **Resource pack** : hébergez `dist/FNations-RP.zip` (lien direct, par exemple GitHub Release ou mc-packs.net), puis
-   renseignez `resource-pack=` et `resource-pack-sha1=` dans `server/server.properties`.
-5. Acceptez l'EULA (`server/eula.txt`), puis lancez `server/start.sh` (Linux/macOS) ou `start.bat` (Windows).
-
-Premiers pas d'un joueur : `/menu`. Une Station de Craft se fabrique à la table de craft
-(blocs de fer, redstone, table de craft et table de forgeron) ou via `/function fnations:give_station` pour un admin.
+> L'ancien plugin Paper a été entièrement porté dans le mod et retiré du dépôt. Il reste disponible dans l'historique git.
 
 ---
 
-## Les systèmes
+## 1. Le mod FNations
 
-| Système | Commande / accès | GUI |
+### Ce qui change par rapport au plugin
+
+| Système | Avant (plugin + resource pack) | Maintenant (mod) |
 |---|---|---|
-| Menu principal | `/menu` | Accès à tout |
-| Nations | `/nation` (`/n`) | Membres, carte du territoire, diplomatie, trésor, paramètres |
-| Recherche & Développement | `/recherche` (`/rd`) | Arbre technologique en 6 catégories |
-| Guerres | `/guerre` | Déclaration, score, captures, paix, capitulation |
-| Banque / Banque nationale | `/banque`, `/payer` | Dépôts, billets, virements, historique, classements |
-| Chambres | `/chambre`, ou clic droit sur un guichet | Réception : louer, acheter, colocataires, revendre |
-| Station de Craft | Clic droit sur le bloc | Armes, munitions, véhicules, machines, missiles, fusée |
-| Machines | Clic droit sur la machine | Entrée/sortie, jauges d'énergie et de chaleur |
+| Items | 59 items (base PAPER + modèle du pack) | 59 vrais items enregistrés, données dans des composants (chargeur, billets, carburant) |
+| Machines | Blocs vanilla avec un display par-dessus | 10 vrais blocs orientables avec entité de bloc, compatibles entonnoirs, cassés à la pioche |
+| GUIs | Coffres Bukkit | Panneaux au thème FNations, écrans de machine avec jauges, vraie fenêtre de saisie |
+| Armes | Clic droit, F pour recharger | Tir maintenu pour les armes automatiques, recul de caméra, **R** pour recharger, HUD des munitions, zoom de lunette |
+| Véhicules | Armor stands téléportés | Vraies entités avec collisions, conduite fluide simulée par le client (comme les bateaux), rotor animé |
+| Missiles, fusée | Item displays | Entités rendues en 3D. La fusée voyage vers les **dimensions** `fnations:orbit` et `fnations:moon` |
+| Chambres | WorldEdit obligatoire | WorldEdit Fabric si installé (`.schem`), sinon structures vanilla (`.nbt`) |
+| Datapack | À part | Intégré au mod : recette de la Station, progrès, loot tables, dimensions |
 
-### Nations
-Création payante, rangs (Chef d'État, Ministre, Citoyen), invitations ou recrutement ouvert, territoire par chunks
-(adjacents, limite selon membres et recherches), protection des blocs et des explosions, alliances, capitale,
-impôt horaire versé au trésor, et PvP désactivé entre membres et alliés. La carte du territoire est un GUI 9×5 coloré.
+### Systèmes
 
-### Recherche & Développement (`research.yml`)
-25 technologies en 6 branches : Économie, Industrie, Armement, Véhicules, Missiles, Spatial. Chaque recherche est
-payée par le trésor national, prend un temps réel et a des prérequis. Elle **débloque les recettes** de la Station de
-Craft (et des chunks bonus pour Expansion). Une seule recherche à la fois par nation, annulation remboursée à 50 %.
+Commandes : `/menu` ouvre le menu principal, et chaque commande ouvre son interface lorsqu'on la tape sans argument.
 
-### Guerres
-La déclaration demande la technologie *Doctrine militaire*, coûte de l'argent et lance une phase de préparation de 10 min.
-Une fois la guerre active :
-- un kill rapporte +5 points et une prime ;
-- une capture rapporte +15 : rester 60 s sur un chunk ennemi (avec bossbar), le chunk change alors de nation ;
-- une frappe de missile rapporte +10 (×3 en nucléaire), un véhicule détruit +8.
-
-La guerre se termine au score de victoire (100), par paix blanche, par capitulation, à la durée maximale, ou
-quand le vaincu perd tout son territoire. Le vaincu paie 30 % de son trésor en réparations.
-Pendant une guerre active, le territoire ennemi peut être modifié.
-
-### Chambres (WorldEdit)
-Côté admin :
-```
-//wand  (sélectionnez la chambre)
-/chambre creer <id> <prixAchat|0> <prixLocationJour|0> [groupe]
-/chambre guichet [groupe]      ← en regardant un bloc (pupitre, panneau...) : il devient la réception
-/chambre setspawn|prix|reset|snapshot|supprimer|tp|liste
-```
-À la création, l'état de la chambre est sauvegardé en **schematic WorldEdit** (`plugins/FNations/rooms/<id>.schem`).
-Quand la location expire ou que la chambre est libérée, WorldEdit **restaure** cet état. Seuls le propriétaire et
-ses colocataires peuvent construire ou ouvrir des portes dans la chambre.
-
-### Banque
-Compte personnel avec argent de départ, intérêts horaires plafonnés et historique. Les **billets physiques**
-se retirent en GUI et se redéposent au clic droit. Il y a aussi les virements, le classement des fortunes et la
-**banque nationale** : tout citoyen peut y verser, seuls les Ministres peuvent retirer.
-
-### Armes à feu (`weapons.yml`)
-Six armes : pistolet, PM, fusil d'assaut, fusil à pompe (8 plombs), sniper (zoom en visée) et RPG (roquette explosive).
-- **Clic droit** : tirer ;
-- **F** : recharger ;
-- **Accroupi** : viser, ce qui réduit la dispersion.
-
-Le chargeur est stocké dans l'item, les headshots sont multipliés, et les munitions se fabriquent à la Station.
-
-### Véhicules (`config.yml > vehicules`)
-| Véhicule | Contrôles | Arme |
+| Système | Commande | Fonctions |
 |---|---|---|
-| Char | ZQSD (rotation de la caisse) | Canon (obus de char), clic gauche |
-| Avion | Z/S = gaz, direction = regard, décollage à vitesse minimale, décrochage | Mitrailleuse |
-| Hélicoptère | ZQSD, Espace = monter, Ctrl = descendre, rotor animé, 4 places | Mitrailleuse |
-| Tracteur | ZQSD, Espace = charrue (laboure) ; récolte et replante les cultures mûres | — |
+| Nations | `/nation` (`/n`) | Fondation, rangs, invitations, territoire par chunks, carte, alliances, capitale, impôts, protection des blocs et explosions, PvP entre alliés désactivé |
+| Recherche & Développement | `/recherche` (`/rd`) | 25 technologies (`research.yml`) payées par le trésor national ; elles débloquent les recettes de la Station |
+| Guerres | `/guerre` | Déclaration, préparation, score (kills, captures de chunks, missiles, véhicules), paix, capitulation, réparations |
+| Banque | `/banque`, `/payer` | Comptes, billets physiques, virements, historique, intérêts, banque nationale, classements |
+| Chambres | `/chambre` ou guichet de réception | Location ou achat, colocataires, revente, restauration automatique de la chambre |
+| Armes à feu | — | Pistolet, PM, fusil d'assaut, fusil à pompe, sniper, RPG (`weapons.yml`) |
+| Véhicules | — | Char (canon), avion et hélicoptère (mitrailleuse), tracteur (récolte + charrue), carburant, dégâts |
+| Station de Craft | Bloc | Fabrication de tout le contenu (`recipes.yml`, section `station`) |
+| Machines | Blocs | Compresseur, générateur à charbon, solaires T1-T3, four électrique, concasseur, interrupteur de sécurité |
+| Missiles | Lanceur | Tactique, croisière, balistique, nucléaire (zone irradiée) ; tir uniquement en guerre active |
+| Fusée | Item | Ergol, compte à rebours, décollage, arrivée en orbite ou sur la Lune (gravité faible) |
 
-Les véhicules consomment du carburant (clic droit avec un **Jerrican**) et ont des points de vie : ils subissent les
-balles, roquettes, obus, missiles et crashs. Clic droit pour monter, accroupi pour descendre,
-accroupi + clic droit (propriétaire) pour ranger. Ils sont sauvegardés au redémarrage.
+**Énergie** : les générateurs alimentent, dans un rayon de 16 blocs, les machines qui ont du travail. Le lanceur de
+missiles se recharge uniquement sur le surplus. Les machines chauffent en fonctionnant :
 
-### Machines & énergie
-Les machines se posent comme des blocs, avec un modèle 3D par-dessus :
+- à **100 °C**, une machine s'arrête et sa température continue de monter ;
+- à **150 °C**, elle explose ;
+- l'**interrupteur de sécurité** coupe le circuit, manuellement ou automatiquement à 90 °C.
 
-| Machine | Fonction |
+**Contrôles**
+
+| Véhicule ou arme | Commandes |
 |---|---|
-| **Générateur à charbon** | 60 E/s, brûle charbon / bloc de charbon / blaze rod |
-| **Panneaux solaires T1/T2/T3** | 10 / 30 / 80 E/s le jour ; le T3 produit 25 % la nuit, la pluie divise par deux |
-| **Compresseur** | Fer → fer compressé, acier → plaque d'acier, charbon → plaque de carbone, cuivre → fil |
-| **Four électrique** | Toutes les recettes de four vanilla en 3 s, plus fer compressé → acier et poudres → lingots |
-| **Concasseur** | Minerais → 2 poudres. **Recycle les missiles** en composants (le missile nucléaire rend son cœur) |
-| **Interrupteur de sécurité** | Coupe toutes les machines dans un rayon de 16 blocs ; mode disjoncteur automatique à 90 °C |
+| Armes | Clic droit (maintenu pour le PM et le fusil d'assaut), **R** pour recharger, accroupi pour viser (zoom au sniper) |
+| Char et tracteur | ZQSD |
+| Avion | Z/S pour les gaz, la souris dirige |
+| Hélicoptère | ZQSD, Espace pour monter, Ctrl pour descendre |
+| Tous les véhicules | Clic gauche pour tirer, accroupi pour descendre, accroupi + clic droit (propriétaire) pour ranger |
 
-L'énergie circule automatiquement entre générateurs et machines dans un **rayon de 16 blocs**.
-**Surchauffe** : les machines chauffent en travaillant. À 100 °C elles s'arrêtent et la chaleur continue de monter
-tant que le circuit n'est pas coupé par l'interrupteur. À 150 °C, la machine **explose**.
-
-### Missiles (`config.yml > missiles`)
-Le **lanceur de missiles** se charge en énergie depuis le réseau. On place le missile dans son GUI, on saisit la
-cible « X Z », puis on lance : compte à rebours, trajectoire balistique visible et impact.
-
-| Missile | Portée |
-|---|---|
-| Tactique | 400 blocs |
-| Croisière | 2 000 blocs |
-| Balistique | 6 000 blocs, explosions secondaires |
-| **Nucléaire** | 12 000 blocs, 16 explosions, zone irradiée 10 min (poison, nausée) |
-
-Un tir sur une autre nation n'est autorisé qu'en **guerre active** contre elle, et ses défenseurs reçoivent une alerte.
-
-### Fusée
-Fabriquée à la Station (technologie *Conquête spatiale*), posée au sol, remplie avec 16 **Ergols de fusée**.
-Le pilote choisit sa destination dans le GUI de bord : **Station orbitale** (monde vide avec plateforme),
-**Lune** (monde lunaire, gravité faible) ou **Retour sur Terre**. Ensuite viennent un compte à rebours de 10 s,
-le décollage avec flammes et fumée, puis l'arrivée dans l'autre monde, qui est créé automatiquement.
-
----
-
-## Administration
+**Administration** (opérateurs) :
 
 | Commande | Effet |
 |---|---|
-| `/fnations give <joueur> <item> [n]` | Donner un item (auto-complétion des 59 items) |
-| `/fnations items` | GUI de tous les items |
+| `/fnations give <joueur> <item> [n]` | Donner un item |
+| `/fnations items` | Interface avec tous les items |
 | `/fnations recherche <nation> <techno\|tout>` | Accorder des technologies |
-| `/fnations reload` / `save` | Recharger les YAML / sauvegarder |
+| `/fnations reload` | Recharger la configuration |
 | `/banque donner <joueur> <montant>` | Créditer un compte |
+| `/chambre creer\|pos1\|pos2\|guichet\|reset\|snapshot\|setspawn\|prix\|supprimer` | Gérer les chambres |
 
-Permissions : `fnations.admin` (op), `fnations.admin.bypass` (ignore protections et recherches),
-`fnations.station.distance` (`/station` sans bloc).
+**Fichiers** :
+- configuration modifiable dans `config/fnations/` : `config.yml`, `research.yml`, `recipes.yml`, `weapons.yml` ;
+- données du monde dans `world/fnations/`.
 
-Fichiers de configuration (dans `plugins/FNations/`) :
+### Installer le serveur
 
-| Fichier | Contenu |
-|---|---|
-| `config.yml` | Économie, nations, guerres, chambres, véhicules, machines, missiles, fusée |
-| `items.yml` | Items custom |
-| `research.yml` | Arbre technologique |
-| `recipes.yml` | Station et machines |
-| `weapons.yml` | Armes |
+1. Java 21.
+2. Lancez `./tools/build.sh <url-des-mods> <adresse-serveur> [port]`. Le script génère les assets, compile le mod,
+   remplit `dist/mods/` (FNations + Fabric API), écrit `dist/manifest.json` et copie les mods dans `server/mods/`.
+3. (Optionnel, recommandé pour les chambres) WorldEdit Fabric 7.3.11 dans `server/mods/` (le lien est affiché par le script).
+4. Acceptez l'EULA (`server/eula.txt`), puis lancez `server/start.sh` (ou `start.bat`). Le script télécharge lui-même
+   le lanceur officiel du serveur Fabric.
 
-Les données sont dans `plugins/FNations/data/`.
+Les joueurs ont besoin du mod : c'est le rôle du launcher.
 
 ---
 
-## Resource pack & modèles
+## 2. Le launcher FNations
 
-`tools/generate_resourcepack.py` génère le pack : les icônes sont en pixel-art 16×16 et les modèles 3D sont faits en
-éléments JSON. Les items utilisent le composant `item_model` (`fnations:<id>`). Vous pouvez ouvrir et retoucher
-n'importe quel modèle (`resourcepack/FNations-RP/assets/fnations/models/item/*.json`) dans **Blockbench**.
-Si un véhicule apparaît tourné dans le mauvais sens, ajustez `modele-rotation` (0 ou 180) dans `config.yml`.
-`echelle` et `modele-y` règlent la taille et la hauteur.
+Le launcher est une application Electron : un installateur `.exe` pour Windows, une `.dmg` pour macOS et une
+AppImage pour Linux.
 
-## Développement
+| Fonction | Détails |
+|---|---|
+| Connexion Microsoft officielle | OAuth 2.0 avec PKCE dans une fenêtre Microsoft, ou code d'appareil (`microsoft.com/link`). Puis Xbox Live → XSTS → services Minecraft, avec vérification de la licence et du profil. Le launcher ne voit jamais le mot de passe |
+| Sessions | Le jeton de rafraîchissement est chiffré par le système (DPAPI, Trousseau ou libsecret via `safeStorage`) et renouvelé automatiquement. Plusieurs comptes sont possibles |
+| Installation automatique | Minecraft 1.21.4, Fabric Loader, et le **Java 21 officiel de Mojang** : le joueur n'a rien à installer. Tous les fichiers sont vérifiés par SHA-1 |
+| Modpack synchronisé | Le manifeste JSON du serveur liste les mods avec leur SHA-1. Les mods en trop sont retirés, les chemins et les URL sont validés |
+| Lancement direct | Connexion automatique au serveur (Quick Play), mémoire et résolution réglables, console du jeu, état du serveur (ping, joueurs en ligne), actualités |
+
+### Étape indispensable : votre application Azure
+
+Le launcher a besoin de **votre propre** identifiant d'application Microsoft :
+
+1. Ouvrez le portail Azure, section **Microsoft Entra ID → Inscriptions d'applications → Nouvelle inscription**.
+   - Types de comptes : **comptes Microsoft personnels uniquement** ;
+   - URI de redirection : plateforme **Client public/natif (mobile et bureau)**, valeur
+     `https://login.microsoftonline.com/common/oauth2/nativeclient`.
+2. Dans **Authentification**, activez **Autoriser les flux de clients publics** (nécessaire pour la connexion par code).
+3. Copiez l'**ID d'application (client)** dans `launcher/config/launcher.json` (`azureClientId`).
+   Aucun secret client n'est nécessaire.
+4. **Demandez l'accès à l'API Minecraft** à Mojang avec cet ID, via le formulaire de validation des applications tierces
+   (<https://aka.ms/mce-reviewappid>).
+   - Tant que la demande n'est pas acceptée, la connexion s'arrête à l'étape Minecraft. Le launcher affiche alors
+     un message clair (erreur `app_not_allowed`).
+   - Les étapes Microsoft et Xbox fonctionnent déjà.
+
+### Configuration et publication
+
+`launcher/config/launcher.json` contient :
+- `azureClientId` ;
+- `manifestUrl` : l'URL publique de `dist/manifest.json` ;
+- `serverName`, `serverAddress`, `serverPort`, `website`, `discord`.
+
+Un fichier `fnations-launcher.json` placé dans le dossier utilisateur du launcher peut surcharger ces valeurs sans
+recompiler.
+
+Hébergez `dist/mods/*` à l'URL donnée à `build.sh` et `dist/manifest.json` à l'URL `manifestUrl` (un hébergement
+statique HTTPS suffit). Le manifeste accepte aussi une liste `news` pour les actualités.
 
 ```bash
-cd plugin && gradle build                 # → plugin/build/libs/FNations-1.0.0.jar
-python3 tools/generate_resourcepack.py    # régénère le resource pack
+cd launcher
+npm install
+npm start          # lancer en développement
+npm test           # tests unitaires et d'intégration
+npm run dist:win   # installateur Windows (ou dist:mac / dist:linux)
 ```
 
-## État des tests
+---
 
-Testé sur un vrai serveur Paper 1.21.4 (build 232) avec WorldEdit 7.3.19, piloté par un bot (mineflayer).
-Les scénarios suivants fonctionnent, sans exception dans la console :
-- chargement du plugin et du datapack ;
-- création de nation, claim, banque, R&D ;
-- ouverture de tous les GUIs ;
-- création d'une chambre avec sauvegarde WorldEdit ;
-- tir au sniper (mob tué, chargeur décrémenté) ;
-- déploiement, ravitaillement, conduite (le char avance d'environ 20 blocs), tir au canon et descente du char ;
-- production d'un compresseur alimenté par un générateur à charbon ;
-- lancement complet d'un missile jusqu'à l'impact.
+## 3. Développement
 
-Ce qui reste à vérifier avec un vrai client :
-- **le rendu visuel du resource pack** (modèles et positions en main) ;
-- les vols d'avion et d'hélicoptère ;
-- la fusée ;
-- la surchauffe jusqu'à l'explosion ;
-- une guerre entre deux nations, avec captures.
+```bash
+python3 tools/generate_resourcepack.py   # régénère modèles, textures, blockstates et langues du mod
+cd mod
+./gradlew build                          # -> mod/build/libs/fnations-2.0.0.jar
+./gradlew runServer                      # serveur de développement (run-server/)
+./gradlew runClient                      # client de développement (run-client/)
+./gradlew runAutotest                    # client piloté par un scénario de test (captures dans run-client/screenshots)
+```
+
+Le mod `autotest` (`mod/src/autotest`) n'est jamais inclus dans le jar publié. Il se connecte à `localhost:25565`,
+joue les systèmes et prend des captures. Les modèles 3D sont générés par script ; vous pouvez les retoucher dans
+**Blockbench** (`mod/src/main/resources/assets/fnations/models`).
+
+## 4. État des tests
+
+**Mod.** Testé avec un vrai serveur Fabric 1.21.4 et un vrai client Minecraft (rendu logiciel sous Xvfb) :
+
+- chargement du mod, des dimensions, des progrès et des configurations ;
+- toutes les interfaces : menu, nation, territoire, R&D, guerres, banque, saisie, chambres, Station, machines,
+  lanceur, interrupteur, poste de pilotage ;
+- rendu 3D des 59 items, des 10 machines, des 4 véhicules, de la fusée et du missile en vol ;
+- fusil : tir, HUD, zoom du sniper ;
+- chaîne générateur → compresseur, avec production vérifiée côté serveur ;
+- char : montée, conduite sur 13,7 blocs, descente ;
+- **chambre créée avec WorldEdit Fabric** (`//pos1 //pos2`, sauvegarde `.schem`) ;
+- **missile tiré depuis le lanceur**, avec impact confirmé ;
+- **voyage en fusée jusqu'à la dimension Orbite**.
+
+Ces tests m'ont permis de corriger deux problèmes de répartition de l'énergie entre machines.
+
+**Launcher.** Ce qui a été testé ici :
+
+- 15 tests automatisés :
+  - la chaîne Microsoft → Xbox → XSTS → Minecraft, avec des réponses simulées et tous les cas d'erreur ;
+  - le chiffrement et le rafraîchissement des comptes ;
+  - les règles des fichiers de version ;
+  - la synchronisation du modpack et la protection des chemins ;
+  - le ping du serveur ;
+- un essai de bout en bout : installation réelle de Minecraft 1.21.4, Fabric, Java 21 Mojang et du modpack, puis
+  lancement du jeu, qui s'est **connecté tout seul** au serveur avec le mod de production.
+
+Pas encore vérifié :
+
+- la vraie connexion Microsoft : elle demande votre application Azure validée par Mojang et un compte réel ;
+- l'empaquetage Electron (`npm run dist`) : il n'a pas pu être exécuté ici ;
+- le lancement sur Windows et macOS (testé uniquement sous Linux) ;
+- côté mod : le pilotage réel de l'avion et de l'hélicoptère, une guerre entre deux nations avec captures,
+  la surchauffe jusqu'à l'explosion, la récolte du tracteur.
