@@ -462,24 +462,75 @@ FLAT = {
 # =====================================================================
 #  Modèles 3D
 # =====================================================================
+def _auto_uv(face, frm, to):
+    """UV calculées par Minecraft quand le modèle n'en donne pas (BlockElement.uvsByFace)."""
+    fx, fy, fz = frm
+    tx, ty, tz = to
+    return {
+        "down": [fx, 16 - tz, tx, 16 - fz],
+        "up": [fx, fz, tx, tz],
+        "north": [16 - tx, 16 - ty, 16 - fx, 16 - fy],
+        "south": [fx, 16 - ty, tx, 16 - fy],
+        "west": [fz, 16 - ty, tz, 16 - fy],
+        "east": [16 - tz, 16 - ty, 16 - fz, 16 - fy],
+    }[face]
+
+
+def _fit_uv(uv):
+    """Minecraft ne borne pas ces UV : au-delà de 0..16 la face lit les textures voisines de l'atlas.
+    Retourne des UV ramenées dans la texture (ou None si elles y sont déjà)."""
+    if all(0 <= v <= 16 for v in uv):
+        return None
+
+    def fit(a, b):
+        size = b - a
+        if size >= 16:
+            return 0, 16
+        if a < 0 or b > 16:
+            a = a % 16
+            if a + size > 16:
+                a = 16 - size
+        return a, a + size
+
+    u0, u1 = fit(uv[0], uv[2])
+    v0, v1 = fit(uv[1], uv[3])
+    return [round(x, 4) for x in (u0, v0, u1, v1)]
+
+
 class Model:
     def __init__(self, textures):
         self.textures = dict(textures)
         self.elements = []
 
-    def box(self, frm, to, tex, rot=None, faces=None, name=None):
-        """Ajoute un cuboïde. tex = clé de texture, faces = dict face->clé optionnel."""
-        for v in list(frm) + list(to):
+    def box(self, frm, to, tex, rot=None, faces=None, name=None, full=None, uv=None, only=None, light=0):
+        """Ajoute un cuboïde. tex = clé de texture, faces = dict face->clé optionnel,
+        full = faces (ou "all") qui affichent la texture entière (UV 0..16), uv = dict face->UV explicites,
+        only = faces à garder (les autres sont omises), light = émission de lumière de l'élément (0..15)."""
+        frm = [round(v, 4) for v in frm]
+        to = [round(v, 4) for v in to]
+        for v in frm + to:
             assert -16 <= v <= 32, f"coordonnée hors limites {frm} {to}"
         f = {}
         for face in ("north", "south", "east", "west", "up", "down"):
+            if only and face not in only:
+                continue
             t = (faces or {}).get(face, tex)
             f[face] = {"texture": "#" + t}
+            if uv and face in uv:
+                f[face]["uv"] = list(uv[face])
+            elif full == "all" or (full and face in full):
+                f[face]["uv"] = [0, 0, 16, 16]
+            else:
+                fitted = _fit_uv(_auto_uv(face, frm, to))
+                if fitted:
+                    f[face]["uv"] = fitted
         e = {"from": list(frm), "to": list(to), "faces": f}
         if name:
             e["name"] = name
         if rot:
             e["rotation"] = rot
+        if light:
+            e["light_emission"] = light
         self.elements.append(e)
         return self
 
@@ -756,26 +807,324 @@ def machines(T):
     m.box([5, 6, -2], [11, 12, 1], "d", faces={"north": "c"}, name="console")
     out["missile_launcher"] = m.json(parent="minecraft:block/block")
 
-    m = Model({"b": T["blueprint"], "s": T["machine_side"], "d": T["dark_steel"], "w": T["wood"], "c": T["screen"]})
-    m.box([0, 0, 0], [16, 12, 16], "s", name="établi")
-    m.box([-1, 12, -1], [17, 14, 17], "w", faces={"up": "b"}, name="plateau")
-    m.box([2, 14, 11], [14, 22, 13], "d", faces={"north": "c"}, name="écran")
-    m.box([2, 14, 2], [5, 16, 5], "d", name="étau")
-    out["crafting_station"] = m.json(parent="minecraft:block/block")
 
-    for tier in (1, 2, 3):
-        m = Model({"p": T["solar_t%d" % tier], "s": T["machine_side"], "d": T["dark_steel"], "t": T["machine_top"]})
-        m.box([0, 0, 0], [16, 6, 16], "s", faces={"up": "t"}, name="boîtier")
-        m.box([7, 6, 7], [9, 10, 9], "d", name="mât")
-        m.box([-2, 10, -2], [18, 11, 18], "d", name="cadre")
-        m.box([-1.5, 11, -1.5], [17.5, 11.5, 17.5], "p", faces={"down": "d"}, name="panneau")
-        if tier >= 2:
-            m.box([-2, 11.5, 7.5], [18, 12, 8.5], "d", name="séparateur")
-        if tier == 3:
-            m.box([7.5, 11.5, -2], [8.5, 12, 18], "d", name="séparateur 2")
-        out["solar_panel_t%d" % tier] = m.json(parent="minecraft:block/block")
     return out
 
+
+
+# =====================================================================
+#  Panneaux solaires et Station de Craft 3D animés
+#  (parties fixes = modèles de bloc, parties mobiles = modèles rendus par MachineRenderer)
+# =====================================================================
+def save_anim(frames, name, frametime=2, timing=None, kind="block"):
+    """Texture animée : bande verticale de frames 16x16 + fichier .mcmeta."""
+    strip = Image.new("RGBA", (16, 16 * len(frames)), (0, 0, 0, 0))
+    for i, f in enumerate(frames):
+        strip.paste(f, (0, 16 * i))
+    p = path("textures", kind, name + ".png")
+    strip.save(p)
+    anim = {"frametime": frametime, "interpolate": False}
+    if timing:
+        anim["frames"] = timing
+    write_json(p + ".mcmeta", {"animation": anim})
+    return "fnations:%s/%s" % (kind, name)
+
+
+def bevel_tex(base, light=1.35, dark=0.55, inner=None):
+    img = noise_tex(base, 0.04)
+    d = ImageDraw.Draw(img)
+    d.line([0, 0, 15, 0], fill=shade(base, light))
+    d.line([0, 0, 0, 15], fill=shade(base, light))
+    d.line([0, 15, 15, 15], fill=shade(base, dark))
+    d.line([15, 0, 15, 15], fill=shade(base, dark))
+    if inner:
+        d.rectangle([2, 2, 13, 13], outline=shade(base, inner))
+    return img
+
+
+def solar_textures():
+    T = {}
+    metal = hexc("2c3138")
+    side = bevel_tex(metal, inner=0.8)
+    save_tex(side, "block", "solar_side")
+    T["side"] = "fnations:block/solar_side"
+
+    # Face avant : circuit (éteint / allumé et animé)
+    def circuit(level, pulse=None, led=(255, 70, 60)):
+        img = bevel_tex(metal)
+        d = ImageDraw.Draw(img)
+        d.rectangle([2, 2, 13, 13], fill=hexc("121418"))
+        d.rectangle([2, 2, 13, 13], outline=hexc("454b53"))
+        copper = shade(hexc("b86a2c"), level)
+        path_pts = [(4, 4), (4, 9), (7, 9), (7, 11), (11, 11), (11, 6), (9, 6)]
+        for a, b in zip(path_pts, path_pts[1:]):
+            d.line([a, b], fill=copper)
+        d.rectangle([8, 3, 11, 4], fill=shade(copper, 0.9))
+        d.point((5, 12), fill=copper)
+        d.rectangle([3, 12, 4, 12], fill=copper)
+        if pulse is not None:
+            pts = []
+            for a, b in zip(path_pts, path_pts[1:]):
+                n = max(abs(b[0] - a[0]), abs(b[1] - a[1]))
+                for k in range(n):
+                    pts.append((a[0] + (b[0] - a[0]) * k // n, a[1] + (b[1] - a[1]) * k // n))
+            for j in range(3):
+                q = pts[(pulse + j) % len(pts)]
+                d.point(q, fill=(255, 230, 150, 255) if j == 1 else (255, 170, 80, 255))
+        d.point((12, 3), fill=led + (255,))
+        return img
+
+    save_tex(circuit(0.55, led=(150, 40, 40)), "block", "solar_front_off")
+    T["front_off"] = "fnations:block/solar_front_off"
+    frames = [circuit(1.0, pulse=i * 3, led=(80, 255, 120) if i % 4 < 2 else (40, 160, 70)) for i in range(8)]
+    T["front_on"] = save_anim(frames, "solar_front_on", frametime=2)
+
+    # Côté : grille d'aération encadrée
+    img = bevel_tex(metal)
+    d = ImageDraw.Draw(img)
+    d.rectangle([3, 3, 12, 12], fill=hexc("17191d"), outline=hexc("5a616b"))
+    for y in range(5, 12, 2):
+        d.line([5, y, 10, y], fill=hexc("3a4048"))
+    d.rectangle([7, 7, 8, 8], fill=hexc("2f6fd8"))
+    save_tex(img, "block", "solar_vent")
+    T["vent"] = "fnations:block/solar_vent"
+
+    # Dessus du boîtier : 2x2 cellules bleues
+    img = Image.new("RGBA", (16, 16), hexc("dfe6ee"))
+    d = ImageDraw.Draw(img)
+    for (x, y) in [(1, 1), (9, 1), (1, 9), (9, 9)]:
+        d.rectangle([x, y, x + 5, y + 5], fill=hexc("1d4fd8"))
+        d.line([x, y, x + 5, y], fill=hexc("4f7ff0"))
+        d.line([x, y + 5, x + 5, y + 5], fill=hexc("173fae"))
+    d.rectangle([6, 6, 9, 9], fill=hexc("8a9099"), outline=hexc("5d636b"))
+    save_tex(img, "block", "solar_top")
+    T["top"] = "fnations:block/solar_top"
+
+    img = noise_tex(hexc("c9ced6"), 0.05)
+    ImageDraw.Draw(img).line([5, 0, 5, 15], fill=hexc("eef2f6"))
+    save_tex(img, "block", "solar_pole")
+    T["pole"] = "fnations:block/solar_pole"
+    save_tex(noise_tex(hexc("e6ebf1"), 0.03), "block", "solar_frame")
+    T["frame"] = "fnations:block/solar_frame"
+    img = Image.new("RGBA", (16, 16), hexc("10225a"))
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, 15, 15], outline=hexc("3b5bb8"))
+    d.rectangle([6, 6, 9, 9], fill=hexc("e6ebf1"))
+    save_tex(img, "block", "solar_junction")
+    T["junction"] = "fnations:block/solar_junction"
+
+    # Cellules des panneaux (par tier) avec reflet balayant la surface
+    for tier, (base, line, glow) in {1: ("1d4fd8", "5a86f2", (210, 230, 255)), 2: ("0f2a8a", "6f8fe6", (200, 220, 255)),
+                                     3: ("4b1d8f", "c08cff", (255, 220, 255))}.items():
+        def cell(glint):
+            img = Image.new("RGBA", (16, 16), hexc(base))
+            px = img.load()
+            for x in range(16):
+                for y in range(16):
+                    f = 0.85 + 0.25 * (1 - (x + y) / 30)
+                    px[x, y] = shade(hexc(base), f)
+            d = ImageDraw.Draw(img)
+            d.line([0, 7, 15, 7], fill=hexc(line))
+            d.line([7, 0, 7, 15], fill=hexc(line))
+            if tier == 3:
+                d.point([(3, 3), (11, 3), (3, 11), (11, 11)], fill=(255, 230, 120, 255))
+            if glint is not None:
+                for x in range(16):
+                    for y in range(16):
+                        dd = abs((x + y) - glint)
+                        if dd <= 2:
+                            a = (3 - dd) / 3 * 0.6
+                            r, g, b, al = px[x, y]
+                            px[x, y] = (int(r + (glow[0] - r) * a), int(g + (glow[1] - g) * a), int(b + (glow[2] - b) * a), 255)
+            return img
+        frames = [cell(None)] + [cell(g) for g in range(-2, 34, 4)]
+        timing = [{"index": 0, "time": 70}] + list(range(1, len(frames)))
+        T["cell%d" % tier] = save_anim(frames, "solar_cell_t%d" % tier, frametime=2, timing=timing)
+    return T
+
+
+def station_textures():
+    T = {}
+    dark = hexc("23272e")
+    img = bevel_tex(dark, inner=0.75)
+    d = ImageDraw.Draw(img)
+    for x in (2, 13):
+        for y in (2, 13):
+            d.point((x, y), fill=hexc("9aa0a8"))
+    save_tex(img, "block", "station_base")
+    T["base"] = "fnations:block/station_base"
+    save_tex(bevel_tex(hexc("1b1e23"), inner=1.25), "block", "station_top")
+    T["top"] = "fnations:block/station_top"
+
+    # LED clignotantes du socle
+    def leds(i):
+        img = bevel_tex(hexc("2a2f37"))
+        d = ImageDraw.Draw(img)
+        d.rectangle([1, 6, 14, 9], fill=hexc("121418"))
+        cols = [(70, 240, 120), (60, 210, 255), (255, 190, 60), (255, 80, 70)]
+        for k, x in enumerate((3, 7, 11)):
+            on = (i + k) % 4 != 3
+            c = cols[(i + k) % 4] if on else (40, 44, 50)
+            d.rectangle([x, 7, x + 1, 8], fill=c + (255,))
+        return img
+    T["leds"] = save_anim([leds(i) for i in range(4)], "station_leds", frametime=6)
+
+    # Piliers avec bande lumineuse montante
+    def pillar(i):
+        img = noise_tex(hexc("2c3138"), 0.04)
+        d = ImageDraw.Draw(img)
+        d.line([0, 0, 0, 15], fill=hexc("454b53"))
+        d.line([15, 0, 15, 15], fill=hexc("17191d"))
+        d.rectangle([6, 0, 9, 15], fill=hexc("0b2a33"))
+        for y in range(16):
+            dy = (y - (15 - (i * 2) % 16)) % 16
+            a = max(0.0, 1 - dy / 6)
+            c = (int(30 + 60 * a), int(140 + 110 * a), int(170 + 85 * a), 255)
+            d.line([7, y, 8, y], fill=c)
+        return img
+    T["pillar"] = save_anim([pillar(i) for i in range(8)], "station_pillar", frametime=2)
+
+    # Écran supérieur : lignes de code défilantes
+    rng = random.Random(7)
+    lines = [[rng.randint(0, 1) for _ in range(12)] for _ in range(16)]
+    def screen(i):
+        img = Image.new("RGBA", (16, 16), hexc("06090c"))
+        d = ImageDraw.Draw(img)
+        d.rectangle([0, 0, 15, 15], outline=hexc("2b3138"))
+        for row in range(6):
+            src = lines[(row + i) % 16]
+            y = 2 + row * 2
+            for k, bit in enumerate(src):
+                if bit:
+                    d.point((2 + k, y), fill=(60, 220, 230, 255) if row != 2 else (150, 255, 200, 255))
+        d.rectangle([2, 14, 2 + (i % 8) + 3, 14], fill=(60, 220, 230, 255))
+        return img
+    T["screen"] = save_anim([screen(i) for i in range(8)], "station_screen", frametime=4)
+
+    # Console : plan technique avec curseur
+    def console(i):
+        img = Image.new("RGBA", (16, 16), hexc("0d2340"))
+        d = ImageDraw.Draw(img)
+        for x in range(0, 16, 4):
+            d.line([x, 0, x, 15], fill=hexc("1c4570"))
+        for y in range(0, 16, 4):
+            d.line([0, y, 15, y], fill=hexc("1c4570"))
+        d.rectangle([4, 5, 11, 10], outline=hexc("9fd8ff"))
+        d.line([4, 5, 11, 10], fill=hexc("6fb7e0"))
+        if i % 2 == 0:
+            d.rectangle([12, 12, 13, 13], fill=(255, 255, 255, 255))
+        d.rectangle([0, 0, 15, 15], outline=hexc("2b3138"))
+        return img
+    T["console"] = save_anim([console(i) for i in range(4)], "station_console", frametime=10)
+
+    img = noise_tex(hexc("8a9099"), 0.05)
+    d = ImageDraw.Draw(img)
+    d.ellipse([4, 4, 11, 11], fill=hexc("3fdcff"))
+    d.ellipse([6, 6, 9, 9], fill=hexc("d8fbff"))
+    save_tex(img, "block", "station_emitter")
+    T["emitter"] = "fnations:block/station_emitter"
+    img = Image.new("RGBA", (16, 16), (90, 225, 255, 70))
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, 15, 15], outline=(150, 240, 255, 150))
+    save_tex(img, "block", "station_glass")
+    T["glass"] = "fnations:block/station_glass"
+
+    # Hologramme : cyan translucide avec lignes de balayage
+    def holo(i):
+        img = Image.new("RGBA", (16, 16), (70, 215, 255, 70))
+        d = ImageDraw.Draw(img)
+        for y in range(16):
+            if (y + i * 2) % 6 == 0:
+                d.line([0, y, 15, y], fill=(170, 245, 255, 150))
+        return img
+    T["holo"] = save_anim([holo(i) for i in range(6)], "holo", frametime=2)
+    img = Image.new("RGBA", (16, 16), (120, 240, 255, 175))
+    save_tex(img, "block", "holo_ring")
+    T["ring"] = "fnations:block/holo_ring"
+    return T
+
+
+def solar_models():
+    """Bloc (boîtier + mât + pivot), panneau mobile 2x3 cellules, et icône d'inventaire."""
+    S = solar_textures()
+    blocks, parts, items = {}, {}, {}
+    for state in ("off", "on"):
+        m = Model({"side": S["side"], "front": S["front_" + state], "vent": S["vent"], "top": S["top"],
+                   "pole": S["pole"], "dark": "fnations:block/dark_steel"})
+        m.box([0, 0, 0], [16, 16, 16], "side", faces={"north": "front", "east": "vent", "west": "vent", "up": "top"}, full="all", name="boîtier")
+        m.box([7, 16, 7], [9, 25, 9], "pole", name="mât")
+        m.box([6.5, 25, 6.5], [9.5, 26, 9.5], "dark", name="rotule")
+        blocks[state] = m
+    for tier in (1, 2, 3):
+        a = Model({"cell": S["cell%d" % tier], "frame": S["frame"], "j": S["junction"], "dark": "fnations:block/dark_steel"})
+        # cadre extérieur (centré sur 8,8,8 : le pivot du rendu)
+        a.box([-8, 8, -8], [24, 9.25, -7], "frame", name="cadre N")
+        a.box([-8, 8, 23], [24, 9.25, 24], "frame", name="cadre S")
+        a.box([-8, 8, -7], [-7, 9.25, 23], "frame", name="cadre O")
+        a.box([23, 8, -7], [24, 9.25, 23], "frame", name="cadre E")
+        a.box([7.5, 8, -7], [8.5, 9.1, 23], "frame", name="séparateur central")
+        a.box([-7, 8, 2.5], [23, 9.1, 3.5], "frame", name="séparateur 1")
+        a.box([-7, 8, 12.5], [23, 9.1, 13.5], "frame", name="séparateur 2")
+        for (x0, x1) in ((-7, 7.5), (8.5, 23)):
+            for (z0, z1) in ((-7, 2.5), (3.5, 12.5), (13.5, 23)):
+                a.box([x0, 8.1, z0], [x1, 9, z1], "cell", faces={"down": "dark"}, full=["up"], name="cellule")
+        a.box([6, 9, 6], [10, 9.6, 10], "j", full="all", name="boîte de jonction")
+        a.box([7, 7, 3], [9, 8, 13], "dark", name="charnière")
+        a.box([7.5, 7.2, -6], [8.5, 8, 22], "dark", name="longeron")
+        parts["solar_array_t%d" % tier] = a
+        # Icône d'inventaire : boîtier + mât + panneau (statique)
+        it = Model({"side": S["side"], "front": S["front_on"], "vent": S["vent"], "top": S["top"], "pole": S["pole"],
+                    "cell": S["cell%d" % tier], "frame": S["frame"], "dark": "fnations:block/dark_steel"})
+        it.box([0, 0, 0], [16, 16, 16], "side", faces={"north": "front", "east": "vent", "west": "vent", "up": "top"}, full="all")
+        it.box([7, 16, 7], [9, 25, 9], "pole")
+        it.box([-8, 25, -8], [24, 26, 24], "frame", faces={"up": "cell"}, full=["up"])
+        items["solar_panel_t%d" % tier] = it
+    return blocks, parts, items
+
+
+def station_models():
+    S = station_textures()
+    m = Model({"base": S["base"], "top": S["top"], "leds": S["leds"], "pillar": S["pillar"], "screen": S["screen"],
+               "console": S["console"], "emitter": S["emitter"], "glass": S["glass"], "dark": "fnations:block/dark_steel"})
+    m.box([0, 0, 0], [16, 2, 16], "base", faces={"up": "top"}, full="all", name="socle")
+    m.box([1, 2, 1], [15, 4, 15], "leds", faces={"up": "top", "down": "top"}, light=9, name="socle LED")
+    m.box([4, 4, 0.5], [12, 9, 1.5], "dark", faces={"north": "console"}, full=["north"],
+          rot=rot("x", 22.5, [8, 4, 1]), light=11, name="console")
+    m.box([5, 4, 5], [11, 6, 11], "dark", faces={"up": "emitter"}, full=["up"], light=13, name="émetteur")
+    # piliers : canal sombre au centre de chaque face, bande lumineuse animée sur les faces extérieures
+    pil = {f: [6, 0, 10, 16] for f in ("north", "south", "east", "west")}
+    for (x, z) in ((1, 1), (13, 1), (1, 13), (13, 13)):
+        m.box([x, 4, z], [x + 2, 20, z + 2], "pillar", uv=pil, faces={"up": "dark", "down": "dark"}, name="pilier")
+        ns = "north" if z < 8 else "south"
+        ew = "west" if x < 8 else "east"
+        zf = z - 0.02 if ns == "north" else z + 2
+        m.box([x + 0.6, 4.5, zf], [x + 1.4, 19.5, zf + 0.02], "pillar", only=[ns], uv={ns: [7, 0, 9, 16]}, light=12,
+              name="bande " + ns)
+        xf = x - 0.02 if ew == "west" else x + 2
+        m.box([xf, 4.5, z + 0.6], [xf + 0.02, 19.5, z + 1.4], "pillar", only=[ew], uv={ew: [7, 0, 9, 16]}, light=12,
+              name="bande " + ew)
+    m.box([0, 20, 0], [16, 22, 16], "base", faces={"up": "top"}, full="all", name="auvent")
+    m.box([2, 22, 2], [14, 22.5, 14], "dark", faces={"up": "screen"}, full=["up"], light=14, name="écran")
+    m.box([5, 19, 5], [11, 20, 11], "dark", faces={"down": "emitter"}, full=["down"], light=13, name="projecteur")
+    m.box([1.75, 4, 3.5], [2.25, 20, 12.5], "glass", full="all", name="vitre O")
+    m.box([13.75, 4, 3.5], [14.25, 20, 12.5], "glass", full="all", name="vitre E")
+    m.box([3.5, 4, 13.75], [12.5, 20, 14.25], "glass", full="all", name="vitre arrière")
+    for (x, z) in ((0.5, 0.5), (13.5, 0.5), (0.5, 13.5), (13.5, 13.5)):
+        m.box([x, 22, z], [x + 2, 23.5, z + 2], "base", name="borne")
+    beam = Model({"holo": S["holo"]})
+    for i, (a, b) in enumerate(((7, 9), (6.5, 9.5), (6, 10), (5.25, 10.75))):
+        beam.box([a, 8 + i * 2, a], [b, 10 + i * 2, b], "holo", full="all", name="faisceau %d" % i)
+    # anneau octogonal : 4 segments droits + 4 segments tournés de 45° autour du centre
+    ring = Model({"r": S["ring"]})
+    R, w = 6.0, 0.75
+    half = round(R * math.tan(math.pi / 8) + 0.2, 3)
+    for k in range(2):
+        r45 = rot("y", 45, [8, 8, 8]) if k else None
+        ring.box([8 - half, 7.75, 8 - R - w / 2], [8 + half, 8.25, 8 - R + w / 2], "r", full="all", rot=r45)
+        ring.box([8 - half, 7.75, 8 + R - w / 2], [8 + half, 8.25, 8 + R + w / 2], "r", full="all", rot=r45)
+        ring.box([8 - R - w / 2, 7.75, 8 - half], [8 - R + w / 2, 8.25, 8 + half], "r", full="all", rot=r45)
+        ring.box([8 + R - w / 2, 7.75, 8 - half], [8 + R + w / 2, 8.25, 8 + half], "r", full="all", rot=r45)
+    return m, {"holo_beam": beam, "holo_ring": ring}
 
 # =====================================================================
 #  Assemblage
@@ -904,8 +1253,45 @@ def main():
     for name, data in models.items():
         write_json(path("models", "item", name + ".json"), data)
         write_json(path("items", name + ".json"), {"model": {"type": "minecraft:model", "model": "fnations:item/" + name}})
+    # Panneaux solaires et station (animés)
+    sblocks, sparts, sitems = solar_models()
+    station, hparts = station_models()
+    disp_solar = {"gui": {"rotation": [30, 225, 0], "translation": [0, -3, 0], "scale": [0.36, 0.36, 0.36]},
+                  "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.2, 0.2, 0.2]},
+                  "fixed": {"rotation": [0, 0, 0], "translation": [0, -2, 0], "scale": [0.4, 0.4, 0.4]},
+                  "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.25, 0.25, 0.25]},
+                  "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [0.3, 0.3, 0.3]},
+                  "firstperson_lefthand": {"rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [0.3, 0.3, 0.3]}}
+    disp_station = {"gui": {"rotation": [30, 225, 0], "translation": [0, -2, 0], "scale": [0.5, 0.5, 0.5]},
+                    "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.25, 0.25, 0.25]},
+                    "fixed": {"rotation": [0, 0, 0], "translation": [0, -1.5, 0], "scale": [0.55, 0.55, 0.55]},
+                    "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.3, 0.3, 0.3]},
+                    "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [0.35, 0.35, 0.35]},
+                    "firstperson_lefthand": {"rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [0.35, 0.35, 0.35]}}
+    for tier in (1, 2, 3):
+        name = "solar_panel_t%d" % tier
+        blocks[name] = None
+        for state, m in sblocks.items():
+            write_json(path("models", "block", "%s_%s.json" % (name, state)), m.json(parent="minecraft:block/block"))
+        write_json(path("models", "item", name + ".json"), sitems[name].json(display=disp_solar))
+        write_json(path("items", name + ".json"), {"model": {"type": "minecraft:model", "model": "fnations:item/" + name}})
+        variants = {}
+        for facing, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
+            for active in ("false", "true"):
+                v = {"model": "fnations:block/%s_%s" % (name, "on" if active == "true" else "off")}
+                if y:
+                    v["y"] = y
+                variants["active=%s,facing=%s" % (active, facing)] = v
+        write_json(path("blockstates", name + ".json"), {"variants": variants})
+    blocks["crafting_station"] = station.json(parent="minecraft:block/block", display=disp_station)
+    for name, m in {**sparts, **hparts}.items():
+        write_json(path("models", "item", name + ".json"), m.json())
+        write_json(path("items", name + ".json"), {"model": {"type": "minecraft:model", "model": "fnations:item/" + name}})
+
     # Machines : modèle de bloc + blockstate orienté + item
     for name, data in blocks.items():
+        if data is None:
+            continue
         write_json(path("models", "block", name + ".json"), data)
         write_json(path("items", name + ".json"), {"model": {"type": "minecraft:model", "model": "fnations:block/" + name}})
         variants = {}

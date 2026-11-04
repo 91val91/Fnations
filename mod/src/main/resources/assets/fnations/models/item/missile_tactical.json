@@ -27,16 +27,40 @@
      "texture": "#b"
     },
     "east": {
-     "texture": "#b"
+     "texture": "#b",
+     "uv": [
+      0,
+      6.5,
+      16,
+      9.5
+     ]
     },
     "west": {
-     "texture": "#b"
+     "texture": "#b",
+     "uv": [
+      0,
+      6.5,
+      16,
+      9.5
+     ]
     },
     "up": {
-     "texture": "#b"
+     "texture": "#b",
+     "uv": [
+      6.5,
+      0,
+      9.5,
+      16
+     ]
     },
     "down": {
-     "texture": "#b"
+     "texture": "#b",
+     "uv": [
+      6.5,
+      0,
+      9.5,
+      16
+     ]
     }
    },
    "name": "corps"
@@ -60,16 +84,40 @@
      "texture": "#t"
     },
     "east": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      1,
+      7.0,
+      4,
+      9.0
+     ]
     },
     "west": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      12,
+      7.0,
+      15,
+      9.0
+     ]
     },
     "up": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      7.0,
+      12,
+      9.0,
+      15
+     ]
     },
     "down": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      7.0,
+      1,
+      9.0,
+      4
+     ]
     }
    },
    "name": "ogive"
@@ -93,16 +141,40 @@
      "texture": "#t"
     },
     "east": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      4,
+      7.5,
+      5,
+      8.5
+     ]
     },
     "west": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      11,
+      7.5,
+      12,
+      8.5
+     ]
     },
     "up": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      7.5,
+      11,
+      8.5,
+      12
+     ]
     },
     "down": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      7.5,
+      4,
+      8.5,
+      5
+     ]
     }
    },
    "name": "pointe"
@@ -126,16 +198,40 @@
      "texture": "#d"
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      12,
+      7.75,
+      16,
+      8.25
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      0,
+      7.75,
+      4,
+      8.25
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      4.0,
+      0,
+      12.0,
+      4
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      4.0,
+      12,
+      12.0,
+      16
+     ]
     }
    },
    "name": "ailettes h"
@@ -159,16 +255,40 @@
      "texture": "#d"
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      12,
+      4.0,
+      16,
+      12.0
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      0,
+      4.0,
+      4,
+      12.0
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      7.75,
+      0,
+      8.25,
+      4
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      7.75,
+      12,
+      8.25,
+      16
+     ]
     }
    },
    "name": "ailettes v"

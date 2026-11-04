@@ -28,16 +28,40 @@
      "texture": "#c"
     },
     "east": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      0,
+      4,
+      16,
+      7
+     ]
     },
     "west": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      0,
+      4,
+      16,
+      7
+     ]
     },
     "up": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      6.5,
+      0,
+      9.5,
+      16
+     ]
     },
     "down": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      6.5,
+      0,
+      9.5,
+      16
+     ]
     }
    },
    "name": "tube"
@@ -61,16 +85,40 @@
      "texture": "#s"
     },
     "east": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      10,
+      3.5,
+      14,
+      7.5
+     ]
     },
     "west": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      2,
+      3.5,
+      6,
+      7.5
+     ]
     },
     "up": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      6,
+      2,
+      10,
+      6
+     ]
     },
     "down": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      6,
+      10,
+      10,
+      14
+     ]
     }
    },
    "name": "ogive"
@@ -127,16 +175,40 @@
      "texture": "#s"
     },
     "east": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      1,
+      7,
+      3,
+      11
+     ]
     },
     "west": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      13,
+      7,
+      15,
+      11
+     ]
     },
     "up": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7.25,
+      13,
+      8.75,
+      15
+     ]
     },
     "down": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7.25,
+      1,
+      8.75,
+      3
+     ]
     }
    },
    "name": "poignée avant"

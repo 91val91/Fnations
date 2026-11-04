@@ -2,12 +2,16 @@ package fr.fnations.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import fr.fnations.client.render.ItemModelRenderer;
+import fr.fnations.client.render.MachineRenderer;
 import fr.fnations.client.render.VehicleRenderer;
 import fr.fnations.client.screen.MachineScreen;
 import fr.fnations.client.screen.PanelScreen;
 import fr.fnations.client.screen.PromptScreen;
+import fr.fnations.machine.MachineType;
 import fr.fnations.net.ActionPayload;
 import fr.fnations.net.PromptOpenPayload;
+import fr.fnations.registry.ModBlockEntities;
+import fr.fnations.registry.ModBlocks;
 import fr.fnations.registry.ModEntities;
 import fr.fnations.registry.ModMenus;
 import fr.fnations.util.Txt;
@@ -15,6 +19,7 @@ import fr.fnations.vehicle.VehicleEntity;
 import fr.fnations.vehicle.VehicleKind;
 import fr.fnations.weapon.GunItem;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -24,6 +29,8 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
@@ -41,6 +48,8 @@ public final class FNationsClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.SHELL, ItemModelRenderer::new);
         EntityRendererRegistry.register(ModEntities.MISSILE, ItemModelRenderer::new);
         EntityRendererRegistry.register(ModEntities.ROCKET, ItemModelRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.MACHINE, MachineRenderer::new);
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.get(MachineType.CRAFTING_STATION), RenderType.translucent());
 
         RELOAD = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.fnations.reload", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "category.fnations"));
 

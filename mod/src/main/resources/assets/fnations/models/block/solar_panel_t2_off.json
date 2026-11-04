@@ -1,0 +1,197 @@
+{
+ "parent": "minecraft:block/block",
+ "textures": {
+  "side": "fnations:block/solar_side",
+  "front": "fnations:block/solar_front_off",
+  "vent": "fnations:block/solar_vent",
+  "top": "fnations:block/solar_top",
+  "pole": "fnations:block/solar_pole",
+  "dark": "fnations:block/dark_steel",
+  "particle": "fnations:block/solar_side"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    16,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#front",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#side",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#vent",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#vent",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#top",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "down": {
+     "texture": "#side",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    }
+   },
+   "name": "boîtier"
+  },
+  {
+   "from": [
+    7,
+    16,
+    7
+   ],
+   "to": [
+    9,
+    25,
+    9
+   ],
+   "faces": {
+    "north": {
+     "texture": "#pole",
+     "uv": [
+      7,
+      7,
+      9,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#pole",
+     "uv": [
+      7,
+      7,
+      9,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#pole",
+     "uv": [
+      7,
+      7,
+      9,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#pole",
+     "uv": [
+      7,
+      7,
+      9,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#pole"
+    },
+    "down": {
+     "texture": "#pole"
+    }
+   },
+   "name": "mât"
+  },
+  {
+   "from": [
+    6.5,
+    25,
+    6.5
+   ],
+   "to": [
+    9.5,
+    26,
+    9.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#dark",
+     "uv": [
+      6.5,
+      6,
+      9.5,
+      7
+     ]
+    },
+    "south": {
+     "texture": "#dark",
+     "uv": [
+      6.5,
+      6,
+      9.5,
+      7
+     ]
+    },
+    "east": {
+     "texture": "#dark",
+     "uv": [
+      6.5,
+      6,
+      9.5,
+      7
+     ]
+    },
+    "west": {
+     "texture": "#dark",
+     "uv": [
+      6.5,
+      6,
+      9.5,
+      7
+     ]
+    },
+    "up": {
+     "texture": "#dark"
+    },
+    "down": {
+     "texture": "#dark"
+    }
+   },
+   "name": "rotule"
+  }
+ ]
+}

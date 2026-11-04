@@ -39,7 +39,8 @@ public final class AutoTest implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         if (System.getProperty("fnations.autotest") == null) return;
-        script();
+        if ("showcase".equals(System.getenv("FN_SCENARIO"))) showcase();
+        else script();
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
     }
 
@@ -75,6 +76,72 @@ public final class AutoTest implements ClientModInitializer {
             if (best == null || e.distanceToSqr(mc().player) < best.distanceToSqr(mc().player)) best = e;
         }
         return best;
+    }
+
+    /** Scénario court : captures rapprochées des modèles 3D animés (panneaux solaires, station de craft). */
+    private void showcase() {
+        step(40, () -> {
+            cmd("gamemode creative");
+            cmd("time set 6000");
+            cmd("gamerule doDaylightCycle false");
+            cmd("weather clear");
+            cmd("gamerule doMobSpawning false");
+            cmd("forceload add -32 -32 32 32");
+            cmd("fill -15 149 -15 15 149 15 minecraft:grass_block");
+            cmd("fill -15 150 -15 15 160 15 minecraft:air");
+            cmd("setblock -3 150 0 fnations:solar_panel_t1[facing=north]");
+            cmd("setblock 0 150 0 fnations:solar_panel_t2[facing=north]");
+            cmd("setblock 3 150 0 fnations:solar_panel_t3[facing=north]");
+            cmd("setblock 9 150 0 fnations:crafting_station[facing=north]");
+            cmd("setblock 9 150 -6 fnations:crafting_station[facing=east]");
+            for (String it : List.of("solar_panel_t1", "solar_panel_t2", "solar_panel_t3", "crafting_station", "compressor", "coal_generator", "electric_furnace", "crusher", "switch"))
+                cmd("give @s fnations:" + it);
+            cmd("tp @s 4.5 151 -6.5 27 18");
+        });
+        step(60, () -> mc().options.hideGui = true);
+        int[] times = {1000, 3500, 6000, 9500, 12300, 18000};
+        for (int t : times) {
+            step(5, () -> cmd("time set " + t));
+            step(50, () -> shot("solaire_" + t));
+        }
+        // gros plans (matin : panneau incliné vers l'est)
+        step(5, () -> { cmd("time set 2500"); cmd("tp @s 1.9 150 -2.3 25 22"); });
+        step(50, () -> shot("solaire_t2_proche"));
+        step(5, () -> cmd("tp @s 6.2 150 -1.4 60 25"));
+        step(50, () -> shot("solaire_t3_proche"));
+        step(5, () -> cmd("tp @s -0.3 151.8 3.4 160 45"));
+        step(50, () -> shot("solaire_dessus"));
+        step(5, () -> { cmd("time set 18000"); cmd("tp @s 6.2 150 -1.4 60 25"); });
+        step(50, () -> shot("solaire_t3_nuit"));
+        // station de craft : face, trois-quarts, cycle d'objets
+        step(5, () -> { cmd("time set 6000"); cmd("tp @s 9.5 150 -2.9 0 18"); });
+        step(50, () -> shot("station_face"));
+        step(5, () -> cmd("tp @s 11.6 150 -1.6 45 20"));
+        step(40, () -> shot("station_34_a"));
+        step(105, () -> shot("station_34_b"));
+        step(105, () -> shot("station_34_c"));
+        step(5, () -> cmd("tp @s 9.5 150 -1.3 0 22"));
+        step(40, () -> shot("station_proche_a"));
+        step(60, () -> shot("station_proche_b"));
+        step(5, () -> cmd("tp @s 11.5 150 -5.5 90 18"));
+        step(50, () -> shot("station_est"));
+        step(5, () -> { cmd("time set 18000"); cmd("tp @s 11.6 150 -1.6 45 20"); });
+        step(50, () -> shot("station_nuit"));
+        step(5, () -> cmd("tp @s 9.5 150 -1.3 0 22"));
+        step(50, () -> shot("station_nuit_proche"));
+        // icônes d'inventaire
+        step(5, () -> { cmd("time set 6000"); mc().options.hideGui = false; mc().setScreen(new InventoryScreen(mc().player)); });
+        step(30, () -> shot("icones"));
+        step(5, () -> mc().setScreen(null));
+        step(40, () -> {
+            try {
+                Files.write(mc().gameDirectory.toPath().resolve("autotest-result.txt"), report);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            log("FIN");
+            mc().stop();
+        });
     }
 
     private void script() {

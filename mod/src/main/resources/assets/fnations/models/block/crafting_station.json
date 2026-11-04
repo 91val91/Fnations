@@ -1,12 +1,16 @@
 {
  "parent": "minecraft:block/block",
  "textures": {
-  "b": "fnations:block/blueprint",
-  "s": "fnations:block/machine_side",
-  "d": "fnations:block/dark_steel",
-  "w": "fnations:block/wood",
-  "c": "fnations:block/screen",
-  "particle": "fnations:block/blueprint"
+  "base": "fnations:block/station_base",
+  "top": "fnations:block/station_top",
+  "leds": "fnations:block/station_leds",
+  "pillar": "fnations:block/station_pillar",
+  "screen": "fnations:block/station_screen",
+  "console": "fnations:block/station_console",
+  "emitter": "fnations:block/station_emitter",
+  "glass": "fnations:block/station_glass",
+  "dark": "fnations:block/dark_steel",
+  "particle": "fnations:block/station_base"
  },
  "elements": [
   {
@@ -17,129 +21,1353 @@
    ],
    "to": [
     16,
-    12,
+    2,
     16
    ],
    "faces": {
     "north": {
-     "texture": "#s"
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
     },
     "south": {
-     "texture": "#s"
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
     },
     "east": {
-     "texture": "#s"
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
     },
     "west": {
-     "texture": "#s"
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
     },
     "up": {
-     "texture": "#s"
+     "texture": "#top",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
     },
     "down": {
-     "texture": "#s"
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
     }
    },
-   "name": "établi"
+   "name": "socle"
   },
   {
    "from": [
-    -1,
-    12,
-    -1
+    1,
+    2,
+    1
    ],
    "to": [
-    17,
-    14,
-    17
+    15,
+    4,
+    15
    ],
    "faces": {
     "north": {
-     "texture": "#w"
+     "texture": "#leds"
     },
     "south": {
-     "texture": "#w"
+     "texture": "#leds"
     },
     "east": {
-     "texture": "#w"
+     "texture": "#leds"
     },
     "west": {
-     "texture": "#w"
+     "texture": "#leds"
     },
     "up": {
-     "texture": "#b"
+     "texture": "#top"
     },
     "down": {
-     "texture": "#w"
+     "texture": "#top"
     }
    },
-   "name": "plateau"
+   "name": "socle LED",
+   "light_emission": 9
   },
   {
    "from": [
-    2,
-    14,
+    4,
+    4,
+    0.5
+   ],
+   "to": [
+    12,
+    9,
+    1.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#console",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#dark"
+    },
+    "east": {
+     "texture": "#dark"
+    },
+    "west": {
+     "texture": "#dark"
+    },
+    "up": {
+     "texture": "#dark"
+    },
+    "down": {
+     "texture": "#dark"
+    }
+   },
+   "name": "console",
+   "rotation": {
+    "axis": "x",
+    "angle": 22.5,
+    "origin": [
+     8,
+     4,
+     1
+    ]
+   },
+   "light_emission": 11
+  },
+  {
+   "from": [
+    5,
+    4,
+    5
+   ],
+   "to": [
+    11,
+    6,
     11
    ],
+   "faces": {
+    "north": {
+     "texture": "#dark"
+    },
+    "south": {
+     "texture": "#dark"
+    },
+    "east": {
+     "texture": "#dark"
+    },
+    "west": {
+     "texture": "#dark"
+    },
+    "up": {
+     "texture": "#emitter",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "down": {
+     "texture": "#dark"
+    }
+   },
+   "name": "émetteur",
+   "light_emission": 13
+  },
+  {
+   "from": [
+    1,
+    4,
+    1
+   ],
    "to": [
-    14,
-    22,
-    13
+    3,
+    20,
+    3
    ],
    "faces": {
     "north": {
-     "texture": "#c"
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
     },
     "south": {
-     "texture": "#d"
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
     },
     "east": {
-     "texture": "#d"
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#dark"
     },
     "down": {
-     "texture": "#d"
+     "texture": "#dark"
     }
    },
-   "name": "écran"
+   "name": "pilier"
+  },
+  {
+   "from": [
+    1.6,
+    4.5,
+    0.98
+   ],
+   "to": [
+    2.4,
+    19.5,
+    1.0
+   ],
+   "faces": {
+    "north": {
+     "texture": "#pillar",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
+    }
+   },
+   "name": "bande north",
+   "light_emission": 12
+  },
+  {
+   "from": [
+    0.98,
+    4.5,
+    1.6
+   ],
+   "to": [
+    1.0,
+    19.5,
+    2.4
+   ],
+   "faces": {
+    "west": {
+     "texture": "#pillar",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
+    }
+   },
+   "name": "bande west",
+   "light_emission": 12
+  },
+  {
+   "from": [
+    13,
+    4,
+    1
+   ],
+   "to": [
+    15,
+    20,
+    3
+   ],
+   "faces": {
+    "north": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#dark"
+    },
+    "down": {
+     "texture": "#dark"
+    }
+   },
+   "name": "pilier"
+  },
+  {
+   "from": [
+    13.6,
+    4.5,
+    0.98
+   ],
+   "to": [
+    14.4,
+    19.5,
+    1.0
+   ],
+   "faces": {
+    "north": {
+     "texture": "#pillar",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
+    }
+   },
+   "name": "bande north",
+   "light_emission": 12
+  },
+  {
+   "from": [
+    15,
+    4.5,
+    1.6
+   ],
+   "to": [
+    15.02,
+    19.5,
+    2.4
+   ],
+   "faces": {
+    "east": {
+     "texture": "#pillar",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
+    }
+   },
+   "name": "bande east",
+   "light_emission": 12
+  },
+  {
+   "from": [
+    1,
+    4,
+    13
+   ],
+   "to": [
+    3,
+    20,
+    15
+   ],
+   "faces": {
+    "north": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#dark"
+    },
+    "down": {
+     "texture": "#dark"
+    }
+   },
+   "name": "pilier"
+  },
+  {
+   "from": [
+    1.6,
+    4.5,
+    15
+   ],
+   "to": [
+    2.4,
+    19.5,
+    15.02
+   ],
+   "faces": {
+    "south": {
+     "texture": "#pillar",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
+    }
+   },
+   "name": "bande south",
+   "light_emission": 12
+  },
+  {
+   "from": [
+    0.98,
+    4.5,
+    13.6
+   ],
+   "to": [
+    1.0,
+    19.5,
+    14.4
+   ],
+   "faces": {
+    "west": {
+     "texture": "#pillar",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
+    }
+   },
+   "name": "bande west",
+   "light_emission": 12
+  },
+  {
+   "from": [
+    13,
+    4,
+    13
+   ],
+   "to": [
+    15,
+    20,
+    15
+   ],
+   "faces": {
+    "north": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#pillar",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#dark"
+    },
+    "down": {
+     "texture": "#dark"
+    }
+   },
+   "name": "pilier"
+  },
+  {
+   "from": [
+    13.6,
+    4.5,
+    15
+   ],
+   "to": [
+    14.4,
+    19.5,
+    15.02
+   ],
+   "faces": {
+    "south": {
+     "texture": "#pillar",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
+    }
+   },
+   "name": "bande south",
+   "light_emission": 12
+  },
+  {
+   "from": [
+    15,
+    4.5,
+    13.6
+   ],
+   "to": [
+    15.02,
+    19.5,
+    14.4
+   ],
+   "faces": {
+    "east": {
+     "texture": "#pillar",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
+    }
+   },
+   "name": "bande east",
+   "light_emission": 12
+  },
+  {
+   "from": [
+    0,
+    20,
+    0
+   ],
+   "to": [
+    16,
+    22,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#top",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "down": {
+     "texture": "#base",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    }
+   },
+   "name": "auvent"
   },
   {
    "from": [
     2,
-    14,
+    22,
     2
    ],
    "to": [
-    5,
-    16,
-    5
+    14,
+    22.5,
+    14
    ],
    "faces": {
     "north": {
-     "texture": "#d"
+     "texture": "#dark",
+     "uv": [
+      2,
+      9.5,
+      14,
+      10.0
+     ]
     },
     "south": {
-     "texture": "#d"
+     "texture": "#dark",
+     "uv": [
+      2,
+      9.5,
+      14,
+      10.0
+     ]
     },
     "east": {
-     "texture": "#d"
+     "texture": "#dark",
+     "uv": [
+      2,
+      9.5,
+      14,
+      10.0
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#dark",
+     "uv": [
+      2,
+      9.5,
+      14,
+      10.0
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#screen",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#dark"
     }
    },
-   "name": "étau"
+   "name": "écran",
+   "light_emission": 14
+  },
+  {
+   "from": [
+    5,
+    19,
+    5
+   ],
+   "to": [
+    11,
+    20,
+    11
+   ],
+   "faces": {
+    "north": {
+     "texture": "#dark",
+     "uv": [
+      5,
+      12,
+      11,
+      13
+     ]
+    },
+    "south": {
+     "texture": "#dark",
+     "uv": [
+      5,
+      12,
+      11,
+      13
+     ]
+    },
+    "east": {
+     "texture": "#dark",
+     "uv": [
+      5,
+      12,
+      11,
+      13
+     ]
+    },
+    "west": {
+     "texture": "#dark",
+     "uv": [
+      5,
+      12,
+      11,
+      13
+     ]
+    },
+    "up": {
+     "texture": "#dark"
+    },
+    "down": {
+     "texture": "#emitter",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    }
+   },
+   "name": "projecteur",
+   "light_emission": 13
+  },
+  {
+   "from": [
+    1.75,
+    4,
+    3.5
+   ],
+   "to": [
+    2.25,
+    20,
+    12.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "down": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    }
+   },
+   "name": "vitre O"
+  },
+  {
+   "from": [
+    13.75,
+    4,
+    3.5
+   ],
+   "to": [
+    14.25,
+    20,
+    12.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "down": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    }
+   },
+   "name": "vitre E"
+  },
+  {
+   "from": [
+    3.5,
+    4,
+    13.75
+   ],
+   "to": [
+    12.5,
+    20,
+    14.25
+   ],
+   "faces": {
+    "north": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "down": {
+     "texture": "#glass",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    }
+   },
+   "name": "vitre arrière"
+  },
+  {
+   "from": [
+    0.5,
+    22,
+    0.5
+   ],
+   "to": [
+    2.5,
+    23.5,
+    2.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#base",
+     "uv": [
+      13.5,
+      8.5,
+      15.5,
+      10.0
+     ]
+    },
+    "south": {
+     "texture": "#base",
+     "uv": [
+      0.5,
+      8.5,
+      2.5,
+      10.0
+     ]
+    },
+    "east": {
+     "texture": "#base",
+     "uv": [
+      13.5,
+      8.5,
+      15.5,
+      10.0
+     ]
+    },
+    "west": {
+     "texture": "#base",
+     "uv": [
+      0.5,
+      8.5,
+      2.5,
+      10.0
+     ]
+    },
+    "up": {
+     "texture": "#base"
+    },
+    "down": {
+     "texture": "#base"
+    }
+   },
+   "name": "borne"
+  },
+  {
+   "from": [
+    13.5,
+    22,
+    0.5
+   ],
+   "to": [
+    15.5,
+    23.5,
+    2.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#base",
+     "uv": [
+      0.5,
+      8.5,
+      2.5,
+      10.0
+     ]
+    },
+    "south": {
+     "texture": "#base",
+     "uv": [
+      13.5,
+      8.5,
+      15.5,
+      10.0
+     ]
+    },
+    "east": {
+     "texture": "#base",
+     "uv": [
+      13.5,
+      8.5,
+      15.5,
+      10.0
+     ]
+    },
+    "west": {
+     "texture": "#base",
+     "uv": [
+      0.5,
+      8.5,
+      2.5,
+      10.0
+     ]
+    },
+    "up": {
+     "texture": "#base"
+    },
+    "down": {
+     "texture": "#base"
+    }
+   },
+   "name": "borne"
+  },
+  {
+   "from": [
+    0.5,
+    22,
+    13.5
+   ],
+   "to": [
+    2.5,
+    23.5,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#base",
+     "uv": [
+      13.5,
+      8.5,
+      15.5,
+      10.0
+     ]
+    },
+    "south": {
+     "texture": "#base",
+     "uv": [
+      0.5,
+      8.5,
+      2.5,
+      10.0
+     ]
+    },
+    "east": {
+     "texture": "#base",
+     "uv": [
+      0.5,
+      8.5,
+      2.5,
+      10.0
+     ]
+    },
+    "west": {
+     "texture": "#base",
+     "uv": [
+      13.5,
+      8.5,
+      15.5,
+      10.0
+     ]
+    },
+    "up": {
+     "texture": "#base"
+    },
+    "down": {
+     "texture": "#base"
+    }
+   },
+   "name": "borne"
+  },
+  {
+   "from": [
+    13.5,
+    22,
+    13.5
+   ],
+   "to": [
+    15.5,
+    23.5,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#base",
+     "uv": [
+      0.5,
+      8.5,
+      2.5,
+      10.0
+     ]
+    },
+    "south": {
+     "texture": "#base",
+     "uv": [
+      13.5,
+      8.5,
+      15.5,
+      10.0
+     ]
+    },
+    "east": {
+     "texture": "#base",
+     "uv": [
+      0.5,
+      8.5,
+      2.5,
+      10.0
+     ]
+    },
+    "west": {
+     "texture": "#base",
+     "uv": [
+      13.5,
+      8.5,
+      15.5,
+      10.0
+     ]
+    },
+    "up": {
+     "texture": "#base"
+    },
+    "down": {
+     "texture": "#base"
+    }
+   },
+   "name": "borne"
   }
- ]
+ ],
+ "display": {
+  "gui": {
+   "rotation": [
+    30,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    -2,
+    0
+   ],
+   "scale": [
+    0.5,
+    0.5,
+    0.5
+   ]
+  },
+  "ground": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    3,
+    0
+   ],
+   "scale": [
+    0.25,
+    0.25,
+    0.25
+   ]
+  },
+  "fixed": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    -1.5,
+    0
+   ],
+   "scale": [
+    0.55,
+    0.55,
+    0.55
+   ]
+  },
+  "thirdperson_righthand": {
+   "rotation": [
+    75,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    0
+   ],
+   "scale": [
+    0.3,
+    0.3,
+    0.3
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.35,
+    0.35,
+    0.35
+   ]
+  }
+ }
 }

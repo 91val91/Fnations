@@ -178,7 +178,10 @@ public class MachineBlockEntity extends BlockEntity implements WorldlyContainer,
             double f = solarFactor(level);
             solar = (int) Math.round(f * 100);
             status = f <= 0 ? "Nuit / pas de soleil" : "Rendement " + solar + "%";
-            if (!off && f > 0) energy = Math.min(t.capacity, energy + t.production * f);
+            if (!off && f > 0) {
+                energy = Math.min(t.capacity, energy + t.production * f);
+                working = true; // bloc ACTIVE : circuit animé et reflets côté client
+            }
         }
     }
 

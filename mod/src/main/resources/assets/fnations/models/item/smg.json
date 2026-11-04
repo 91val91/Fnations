@@ -28,16 +28,40 @@
      "texture": "#g"
     },
     "east": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      4,
+      5.5,
+      16,
+      8.0
+     ]
     },
     "west": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      4,
+      5.5,
+      16,
+      8.0
+     ]
     },
     "up": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      7,
+      4,
+      9,
+      16
+     ]
     },
     "down": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      7,
+      4,
+      9,
+      16
+     ]
     }
    },
    "name": "corps"
@@ -61,16 +85,40 @@
      "texture": "#m"
     },
     "east": {
-     "texture": "#m"
+     "texture": "#m",
+     "uv": [
+      1,
+      6.25,
+      5,
+      7.25
+     ]
     },
     "west": {
-     "texture": "#m"
+     "texture": "#m",
+     "uv": [
+      11,
+      6.25,
+      15,
+      7.25
+     ]
     },
     "up": {
-     "texture": "#m"
+     "texture": "#m",
+     "uv": [
+      7.5,
+      11,
+      8.5,
+      15
+     ]
     },
     "down": {
-     "texture": "#m"
+     "texture": "#m",
+     "uv": [
+      7.5,
+      1,
+      8.5,
+      5
+     ]
     }
    },
    "name": "canon"

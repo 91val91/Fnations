@@ -28,16 +28,40 @@
      "texture": "#g"
     },
     "east": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      2,
+      5.5,
+      16,
+      8.0
+     ]
     },
     "west": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      2,
+      5.5,
+      16,
+      8.0
+     ]
     },
     "up": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      7,
+      2,
+      9,
+      16
+     ]
     },
     "down": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      7,
+      2,
+      9,
+      16
+     ]
     }
    },
    "name": "corps"
@@ -61,16 +85,40 @@
      "texture": "#m"
     },
     "east": {
-     "texture": "#m"
+     "texture": "#m",
+     "uv": [
+      4,
+      6.25,
+      12,
+      7.25
+     ]
     },
     "west": {
-     "texture": "#m"
+     "texture": "#m",
+     "uv": [
+      4,
+      6.25,
+      12,
+      7.25
+     ]
     },
     "up": {
-     "texture": "#m"
+     "texture": "#m",
+     "uv": [
+      7.5,
+      4,
+      8.5,
+      12
+     ]
     },
     "down": {
-     "texture": "#m"
+     "texture": "#m",
+     "uv": [
+      7.5,
+      4,
+      8.5,
+      12
+     ]
     }
    },
    "name": "canon"
@@ -94,16 +142,40 @@
      "texture": "#w"
     },
     "east": {
-     "texture": "#w"
+     "texture": "#w",
+     "uv": [
+      4,
+      6,
+      8,
+      7.5
+     ]
     },
     "west": {
-     "texture": "#w"
+     "texture": "#w",
+     "uv": [
+      8,
+      6,
+      12,
+      7.5
+     ]
     },
     "up": {
-     "texture": "#w"
+     "texture": "#w",
+     "uv": [
+      7.25,
+      8,
+      8.75,
+      12
+     ]
     },
     "down": {
-     "texture": "#w"
+     "texture": "#w",
+     "uv": [
+      7.25,
+      4,
+      8.75,
+      8
+     ]
     }
    },
    "name": "garde-main"
@@ -127,16 +199,40 @@
      "texture": "#s"
     },
     "east": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      13,
+      8,
+      16,
+      12.5
+     ]
     },
     "west": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      13,
+      8,
+      16,
+      12.5
+     ]
     },
     "up": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7.25,
+      13,
+      8.75,
+      16
+     ]
     },
     "down": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7.25,
+      13,
+      8.75,
+      16
+     ]
     }
    },
    "name": "chargeur",
@@ -211,16 +307,40 @@
      "texture": "#w"
     },
     "east": {
-     "texture": "#w"
+     "texture": "#w",
+     "uv": [
+      8,
+      6,
+      16,
+      9.5
+     ]
     },
     "west": {
-     "texture": "#w"
+     "texture": "#w",
+     "uv": [
+      8,
+      6,
+      16,
+      9.5
+     ]
     },
     "up": {
-     "texture": "#w"
+     "texture": "#w",
+     "uv": [
+      7,
+      8,
+      9,
+      16
+     ]
     },
     "down": {
-     "texture": "#w"
+     "texture": "#w",
+     "uv": [
+      7,
+      8,
+      9,
+      16
+     ]
     }
    },
    "name": "crosse"
@@ -244,16 +364,40 @@
      "texture": "#s"
     },
     "east": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      11,
+      4.5,
+      16,
+      5.5
+     ]
     },
     "west": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      11,
+      4.5,
+      16,
+      5.5
+     ]
     },
     "up": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7.5,
+      11,
+      8.5,
+      16
+     ]
     },
     "down": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7.5,
+      11,
+      8.5,
+      16
+     ]
     }
    },
    "name": "rail"

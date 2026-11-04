@@ -26,7 +26,7 @@ Fnations/
 | Système | Avant (plugin + resource pack) | Maintenant (mod) |
 |---|---|---|
 | Items | 59 items (base PAPER + modèle du pack) | 59 vrais items enregistrés, données dans des composants (chargeur, billets, carburant) |
-| Machines | Blocs vanilla avec un display par-dessus | 10 vrais blocs orientables avec entité de bloc, compatibles entonnoirs, cassés à la pioche |
+| Machines | Blocs vanilla avec un display par-dessus | 10 vrais blocs orientables avec entité de bloc, compatibles entonnoirs, cassés à la pioche. Panneaux solaires et Station de Craft en 3D animée |
 | GUIs | Coffres Bukkit | Panneaux au thème FNations, écrans de machine avec jauges, vraie fenêtre de saisie |
 | Armes | Clic droit, F pour recharger | Tir maintenu pour les armes automatiques, recul de caméra, **R** pour recharger, HUD des munitions, zoom de lunette |
 | Véhicules | Armor stands téléportés | Vraies entités avec collisions, conduite fluide simulée par le client (comme les bateaux), rotor animé |
@@ -47,8 +47,8 @@ Commandes : `/menu` ouvre le menu principal, et chaque commande ouvre son interf
 | Chambres | `/chambre` ou guichet de réception | Location ou achat, colocataires, revente, restauration automatique de la chambre |
 | Armes à feu | — | Pistolet, PM, fusil d'assaut, fusil à pompe, sniper, RPG (`weapons.yml`) |
 | Véhicules | — | Char (canon), avion et hélicoptère (mitrailleuse), tracteur (récolte + charrue), carburant, dégâts |
-| Station de Craft | Bloc | Fabrication de tout le contenu (`recipes.yml`, section `station`) |
-| Machines | Blocs | Compresseur, générateur à charbon, solaires T1-T3, four électrique, concasseur, interrupteur de sécurité |
+| Station de Craft | Bloc | Fabrication de tout le contenu (`recipes.yml`, section `station`). Modèle 3D d'un bloc et demi : piliers lumineux, écrans animés, vitres, hologramme tournant des créations du mod |
+| Machines | Blocs | Compresseur, générateur à charbon, solaires T1-T3, four électrique, concasseur, interrupteur de sécurité. Le panneau des solaires suit le soleil et se met à plat la nuit |
 | Missiles | Lanceur | Tactique, croisière, balistique, nucléaire (zone irradiée) ; tir uniquement en guerre active |
 | Fusée | Item | Ergol, compte à rebours, décollage, arrivée en orbite ou sur la Lune (gravité faible) |
 
@@ -159,6 +159,7 @@ cd mod
 ./gradlew runServer                      # serveur de développement (run-server/)
 ./gradlew runClient                      # client de développement (run-client/)
 ./gradlew runAutotest                    # client piloté par un scénario de test (captures dans run-client/screenshots)
+FN_SCENARIO=showcase ./gradlew runAutotest   # captures rapprochées des panneaux solaires et de la Station
 ```
 
 Le mod `autotest` (`mod/src/autotest`) n'est jamais inclus dans le jar publié. Il se connecte à `localhost:25565`,
@@ -173,6 +174,8 @@ joue les systèmes et prend des captures. Les modèles 3D sont générés par sc
 - toutes les interfaces : menu, nation, territoire, R&D, guerres, banque, saisie, chambres, Station, machines,
   lanceur, interrupteur, poste de pilotage ;
 - rendu 3D des 59 items, des 10 machines, des 4 véhicules, de la fusée et du missile en vol ;
+- panneaux solaires 3D capturés à six heures de la journée (suivi du soleil, mise à plat la nuit, T3 lumineux)
+  et hologramme de la Station de Craft ;
 - fusil : tir, HUD, zoom du sniper ;
 - chaîne générateur → compresseur, avec production vérifiée côté serveur ;
 - char : montée, conduite sur 13,7 blocs, descente ;

@@ -28,16 +28,40 @@
      "texture": "#g"
     },
     "east": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      2,
+      6.25,
+      16,
+      7.25
+     ]
     },
     "west": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      0,
+      6.25,
+      14,
+      7.25
+     ]
     },
     "up": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      7.5,
+      0,
+      8.5,
+      14
+     ]
     },
     "down": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      7.5,
+      2,
+      8.5,
+      16
+     ]
     }
    },
    "name": "canon long"
@@ -61,16 +85,40 @@
      "texture": "#c"
     },
     "east": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      5,
+      5.5,
+      16,
+      8.0
+     ]
     },
     "west": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      5,
+      5.5,
+      16,
+      8.0
+     ]
     },
     "up": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      7,
+      5,
+      9,
+      16
+     ]
     },
     "down": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      7,
+      5,
+      9,
+      16
+     ]
     }
    },
    "name": "corps"
@@ -94,16 +142,40 @@
      "texture": "#s"
     },
     "east": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7,
+      3.5,
+      16,
+      5.0
+     ]
     },
     "west": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7,
+      3.5,
+      16,
+      5.0
+     ]
     },
     "up": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7.25,
+      7,
+      8.75,
+      16
+     ]
     },
     "down": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7.25,
+      7,
+      8.75,
+      16
+     ]
     }
    },
    "name": "lunette"
@@ -233,16 +305,40 @@
      "texture": "#c"
     },
     "east": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      7,
+      6,
+      16,
+      10
+     ]
     },
     "west": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      7,
+      6,
+      16,
+      10
+     ]
     },
     "up": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      7,
+      7,
+      9,
+      16
+     ]
     },
     "down": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      7,
+      7,
+      9,
+      16
+     ]
     }
    },
    "name": "crosse"
@@ -266,16 +362,40 @@
      "texture": "#s"
     },
     "east": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      8.5,
+      7.25,
+      9.0,
+      11.0
+     ]
     },
     "west": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7,
+      7.25,
+      7.5,
+      11.0
+     ]
     },
     "up": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7.75,
+      7,
+      8.25,
+      7.5
+     ]
     },
     "down": {
-     "texture": "#s"
+     "texture": "#s",
+     "uv": [
+      7.75,
+      8.5,
+      8.25,
+      9.0
+     ]
     }
    },
    "name": "bipied",

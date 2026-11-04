@@ -1,6 +1,6 @@
 {
  "model": {
   "type": "minecraft:model",
-  "model": "fnations:block/solar_panel_t3"
+  "model": "fnations:item/solar_panel_t3"
  }
 }

@@ -60,16 +60,40 @@
      "texture": "#red"
     },
     "east": {
-     "texture": "#red"
+     "texture": "#red",
+     "uv": [
+      0,
+      6,
+      4,
+      8
+     ]
     },
     "west": {
-     "texture": "#red"
+     "texture": "#red",
+     "uv": [
+      12,
+      6,
+      16,
+      8
+     ]
     },
     "up": {
-     "texture": "#red"
+     "texture": "#red",
+     "uv": [
+      7,
+      12,
+      9,
+      16
+     ]
     },
     "down": {
-     "texture": "#red"
+     "texture": "#red",
+     "uv": [
+      7,
+      0,
+      9,
+      4
+     ]
     }
    },
    "name": "levier",

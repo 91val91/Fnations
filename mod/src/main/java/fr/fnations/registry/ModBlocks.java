@@ -28,6 +28,7 @@ public final class ModBlocks {
                     .mapColor(MapColor.METAL).strength(3.5f, 8f).requiresCorrectToolForDrops()
                     .sound(SoundType.METAL).noOcclusion();
             if (t == MachineType.ELECTRIC_FURNACE || t == MachineType.COAL_GENERATOR) p = p.lightLevel(s -> s.getValue(MachineBlock.ACTIVE) ? 12 : 0);
+            if (t == MachineType.CRAFTING_STATION) p = p.lightLevel(s -> 7); // écrans et hologramme
             MachineBlock b = Registry.register(BuiltInRegistries.BLOCK, key, new MachineBlock(p, t));
             MACHINES.put(t, b);
         }

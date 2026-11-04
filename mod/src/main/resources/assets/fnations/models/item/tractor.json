@@ -27,16 +27,40 @@
      "texture": "#r"
     },
     "east": {
-     "texture": "#r"
+     "texture": "#r",
+     "uv": [
+      0,
+      5,
+      16,
+      11
+     ]
     },
     "west": {
-     "texture": "#r"
+     "texture": "#r",
+     "uv": [
+      0,
+      5,
+      16,
+      11
+     ]
     },
     "up": {
-     "texture": "#r"
+     "texture": "#r",
+     "uv": [
+      3,
+      0,
+      13,
+      16
+     ]
     },
     "down": {
-     "texture": "#r"
+     "texture": "#r",
+     "uv": [
+      3,
+      0,
+      13,
+      16
+     ]
     }
    },
    "name": "capot"
@@ -54,16 +78,40 @@
    ],
    "faces": {
     "north": {
-     "texture": "#r"
+     "texture": "#r",
+     "uv": [
+      2,
+      4,
+      14,
+      16
+     ]
     },
     "south": {
-     "texture": "#r"
+     "texture": "#r",
+     "uv": [
+      2,
+      4,
+      14,
+      16
+     ]
     },
     "east": {
-     "texture": "#r"
+     "texture": "#r",
+     "uv": [
+      0,
+      4,
+      10,
+      16
+     ]
     },
     "west": {
-     "texture": "#r"
+     "texture": "#r",
+     "uv": [
+      6,
+      4,
+      16,
+      16
+     ]
     },
     "up": {
      "texture": "#r"
@@ -120,22 +168,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      1.5,
+      14,
+      14.5,
+      15
+     ]
     },
     "south": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      1.5,
+      14,
+      14.5,
+      15
+     ]
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      4,
+      14,
+      16,
+      15
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      4,
+      14,
+      16,
+      15
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      1.5,
+      4,
+      14.5,
+      16
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      1.5,
+      4,
+      14.5,
+      16
+     ]
     }
    },
    "name": "toit"
@@ -153,22 +237,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      11,
+      4,
+      16,
+      16
+     ]
     },
     "south": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      11,
+      4,
+      16,
+      16
+     ]
     },
     "east": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      6,
+      4,
+      16,
+      16
+     ]
     },
     "west": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      6,
+      4,
+      16,
+      16
+     ]
     },
     "up": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      11,
+      6,
+      16,
+      16
+     ]
     },
     "down": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      11,
+      6,
+      16,
+      16
+     ]
     }
    },
    "name": "roue arrière g"
@@ -186,22 +306,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      11,
+      4,
+      16,
+      16
+     ]
     },
     "south": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      11,
+      4,
+      16,
+      16
+     ]
     },
     "east": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      6,
+      4,
+      16,
+      16
+     ]
     },
     "west": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      6,
+      4,
+      16,
+      16
+     ]
     },
     "up": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      11,
+      6,
+      16,
+      16
+     ]
     },
     "down": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      11,
+      6,
+      16,
+      16
+     ]
     }
    },
    "name": "roue arrière d"
@@ -225,16 +381,40 @@
      "texture": "#t"
     },
     "east": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      3,
+      10,
+      9,
+      16
+     ]
     },
     "west": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      7,
+      10,
+      13,
+      16
+     ]
     },
     "up": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      0,
+      7,
+      3,
+      13
+     ]
     },
     "down": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      0,
+      3,
+      3,
+      9
+     ]
     }
    },
    "name": "roue avant g"
@@ -258,16 +438,40 @@
      "texture": "#t"
     },
     "east": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      3,
+      10,
+      9,
+      16
+     ]
     },
     "west": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      7,
+      10,
+      13,
+      16
+     ]
     },
     "up": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      13,
+      7,
+      16,
+      13
+     ]
     },
     "down": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      13,
+      3,
+      16,
+      9
+     ]
     }
    },
    "name": "roue avant d"
@@ -285,22 +489,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      5,
+      10,
+      6,
+      16
+     ]
     },
     "south": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      10,
+      10,
+      11,
+      16
+     ]
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      5,
+      10,
+      6,
+      16
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      10,
+      10,
+      11,
+      16
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      10,
+      10,
+      11,
+      11
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      10,
+      5,
+      11,
+      6
+     ]
     }
    },
    "name": "échappement"
@@ -324,16 +564,40 @@
      "texture": "#d"
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      10,
+      6,
+      11,
+      10
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      5,
+      6,
+      6,
+      10
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      4,
+      5,
+      12,
+      6
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      4,
+      10,
+      12,
+      11
+     ]
     }
    },
    "name": "calandre"
@@ -357,16 +621,40 @@
      "texture": "#d"
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      10,
+      12,
+      14,
+      14
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      2,
+      12,
+      6,
+      14
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      1,
+      2,
+      15,
+      6
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      1,
+      10,
+      15,
+      14
+     ]
     }
    },
    "name": "attelage / charrue"

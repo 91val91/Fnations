@@ -26,16 +26,40 @@
      "texture": "#c"
     },
     "east": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      0,
+      1,
+      16,
+      12
+     ]
     },
     "west": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      0,
+      1,
+      16,
+      12
+     ]
     },
     "up": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      2,
+      0,
+      14,
+      16
+     ]
     },
     "down": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      2,
+      0,
+      14,
+      16
+     ]
     }
    },
    "name": "cabine"
@@ -59,16 +83,40 @@
      "texture": "#g"
     },
     "east": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      10,
+      2,
+      14,
+      10
+     ]
     },
     "west": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      2,
+      2,
+      6,
+      10
+     ]
     },
     "up": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      3,
+      2,
+      13,
+      6
+     ]
     },
     "down": {
-     "texture": "#g"
+     "texture": "#g",
+     "uv": [
+      3,
+      10,
+      13,
+      14
+     ]
     }
    },
    "name": "verrière"
@@ -92,16 +140,40 @@
      "texture": "#c"
     },
     "east": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      0,
+      3,
+      16,
+      7
+     ]
     },
     "west": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      0,
+      3,
+      16,
+      7
+     ]
     },
     "up": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
     },
     "down": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      6,
+      0,
+      10,
+      16
+     ]
     }
    },
    "name": "poutre de queue"
@@ -119,22 +191,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      7,
+      9,
+      9,
+      16
+     ]
     },
     "south": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      7,
+      9,
+      9,
+      16
+     ]
     },
     "east": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      2,
+      9,
+      6,
+      16
+     ]
     },
     "west": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      10,
+      9,
+      14,
+      16
+     ]
     },
     "up": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      7,
+      10,
+      9,
+      14
+     ]
     },
     "down": {
-     "texture": "#c"
+     "texture": "#c",
+     "uv": [
+      7,
+      2,
+      9,
+      6
+     ]
     }
    },
    "name": "dérive"
@@ -152,22 +260,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      6,
+      10,
+      7,
+      16
+     ]
     },
     "south": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      9,
+      10,
+      10,
+      16
+     ]
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      4,
+      10,
+      5,
+      16
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      11,
+      10,
+      12,
+      16
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      9,
+      11,
+      10,
+      12
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      9,
+      4,
+      10,
+      5
+     ]
     }
    },
    "name": "rotor anticouple"
@@ -185,22 +329,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      6.5,
+      13,
+      9.5,
+      16
+     ]
     },
     "south": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      6.5,
+      13,
+      9.5,
+      16
+     ]
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      12,
+      13,
+      16,
+      16
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      12,
+      13,
+      16,
+      16
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      16
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      16
+     ]
     }
    },
    "name": "mât"
@@ -224,16 +404,40 @@
      "texture": "#d"
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      0,
+      15,
+      16,
+      16
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      0,
+      15,
+      16,
+      16
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      0,
+      0,
+      1,
+      16
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      0,
+      0,
+      1,
+      16
+     ]
     }
    },
    "name": "patin g"
@@ -257,16 +461,40 @@
      "texture": "#d"
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      0,
+      15,
+      16,
+      16
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      0,
+      15,
+      16,
+      16
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      15,
+      0,
+      16,
+      16
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      15,
+      0,
+      16,
+      16
+     ]
     }
    },
    "name": "patin d"
@@ -290,16 +518,40 @@
      "texture": "#d"
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      3,
+      12,
+      4,
+      16
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      12,
+      12,
+      13,
+      16
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      1,
+      12,
+      2,
+      13
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      1,
+      3,
+      2,
+      4
+     ]
     }
    }
   },
@@ -354,16 +606,40 @@
      "texture": "#d"
     },
     "east": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      3,
+      12,
+      4,
+      16
+     ]
     },
     "west": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      12,
+      12,
+      13,
+      16
+     ]
     },
     "up": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      14,
+      12,
+      15,
+      13
+     ]
     },
     "down": {
-     "texture": "#d"
+     "texture": "#d",
+     "uv": [
+      14,
+      3,
+      15,
+      4
+     ]
     }
    }
   },
@@ -418,16 +694,40 @@
      "texture": "#y"
     },
     "east": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      8,
+      8,
+      16,
+      10
+     ]
     },
     "west": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      8,
+      8,
+      16,
+      10
+     ]
     },
     "up": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      0,
+      8,
+      2,
+      16
+     ]
     },
     "down": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      0,
+      8,
+      2,
+      16
+     ]
     }
    },
    "name": "lance-roquettes g"
@@ -451,16 +751,40 @@
      "texture": "#y"
     },
     "east": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      8,
+      8,
+      16,
+      10
+     ]
     },
     "west": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      8,
+      8,
+      16,
+      10
+     ]
     },
     "up": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      14,
+      8,
+      16,
+      16
+     ]
     },
     "down": {
-     "texture": "#y"
+     "texture": "#y",
+     "uv": [
+      14,
+      8,
+      16,
+      16
+     ]
     }
    },
    "name": "lance-roquettes d"
