@@ -327,8 +327,13 @@ public final class NationPage extends UiPage {
         String biomeKey = biome.unwrapKey().map(k -> "biome." + k.location().getNamespace() + "." + k.location().getPath()).orElse("biome.minecraft.plains");
         double cost = s.config().getDouble("nations.cout-creation", 5000);
         Nation owner = s.nations().at(level, pos);
+        String[] place = fr.fnations.earth.EarthData.get().place(pos.getX(), pos.getZ());
+        boolean earth = fr.fnations.earth.EarthWorld.isEarth(level);
         UiNode info = col(
-                sectionTitle("Localisation"), text("<b><lang:" + biomeKey + "> " + TM + "(" + pos.getX() + ", " + pos.getZ() + ")"),
+                sectionTitle("Localisation"),
+                earth ? text("<b>" + (place[0].isEmpty() ? "En mer" : Txt.esc(place[0])) + (place[1].isEmpty() ? "" : TM + " • " + place[1])) : null,
+                earth ? text(T2 + fr.fnations.earth.EarthData.latLon(pos.getX(), pos.getZ())) : null,
+                text("<b><lang:" + biomeKey + "> " + TM + "(" + pos.getX() + ", " + pos.getZ() + ")"),
                 sectionTitle("Ressources"), text(resources(level, pos, biome)).wrap(),
                 sectionTitle("Cultures"), text(T2 + cultures(biome)).wrap(),
                 owner != null ? text(TR + "Ce chunk appartient déjà à " + Txt.esc(owner.name()) + ".").wrap() : null).gap(4).flex(1);

@@ -58,6 +58,17 @@ public final class Commands {
         cmd(d, List.of("entreprise", "ent", "company"), 0, (p, a) -> ui(p, "entreprise"), (p, a) -> List.of());
         cmd(d, List.of("hdv", "ah", "market"), 0, Commands::market, (p, a) -> a.length == 1 ? List.of("vendre") : List.of());
         cmd(d, List.of("classement", "classements", "top"), 0, (p, a) -> ui(p, "classements"), (p, a) -> List.of());
+        cmd(d, List.of("boutique", "store", "shop"), 0, (p, a) -> ui(p, "boutique"), (p, a) -> List.of());
+        cmd(d, List.of("grade", "grades"), 0, (p, a) -> ui(p, "boutique", java.util.Map.of("tab", "grades")), (p, a) -> List.of());
+        cmd(d, List.of("lootbox", "lootboxs"), 0, (p, a) -> ui(p, "boutique", java.util.Map.of("tab", "lootboxs")), (p, a) -> List.of());
+        cmd(d, List.of("carte", "monde"), 0, (p, a) -> ui(p, "carte"), (p, a) -> List.of());
+        // Livraison des achats de la boutique en ligne (console / Tebex) : fnstore <type> <joueur> [arguments]
+        d.register(literal("fnstore").requires(src -> src.hasPermission(3))
+                .then(argument("type", StringArgumentType.word())
+                        .suggests((ctx, b) -> { for (String t : List.of("grade", "lootbox", "dollars", "spawner")) b.suggest(t); return b.buildFuture(); })
+                        .then(argument("joueur", StringArgumentType.word())
+                                .executes(ctx -> store(ctx, ""))
+                                .then(argument("args", StringArgumentType.greedyString()).executes(ctx -> store(ctx, StringArgumentType.getString(ctx, "args")))))));
         cmd(d, List.of("fnations", "fn"), 0, Commands::admin, Commands::adminSuggest);
     }
 
@@ -87,6 +98,18 @@ public final class Commands {
                             .executes(ctx -> run(ctx, exec, StringArgumentType.getString(ctx, "args").trim().split("\\s+"))));
             d.register(root);
         }
+    }
+
+    private static int store(CommandContext<CommandSourceStack> ctx, String args) {
+        if (s() == null) return 0;
+        String type = StringArgumentType.getString(ctx, "type"), player = StringArgumentType.getString(ctx, "joueur");
+        String err = s().store().deliver(player, (type + " " + args).trim());
+        if (err != null) {
+            ctx.getSource().sendFailure(Txt.mm("<red>Boutique : " + err));
+            return 0;
+        }
+        ctx.getSource().sendSuccess(() -> Txt.mm("<green>Boutique : livraison « " + Txt.esc(type + " " + args) + " » pour " + Txt.esc(player) + "."), true);
+        return 1;
     }
 
     private static int run(CommandContext<CommandSourceStack> ctx, BiConsumer<ServerPlayer, String[]> exec, String[] args) {

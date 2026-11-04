@@ -3,6 +3,12 @@
 # =====================================================================
 sauvegarde-auto-minutes: 5
 
+# ------------------------------------------------------------ Carte du monde (preset de monde fnations:earth)
+# server.properties : level-type=fnations\:earth (nouveau monde). 1 bloc = 1 km, X = longitude, Z = latitude.
+carte:
+  apparition-latitude: 48.8566         # Paris
+  apparition-longitude: 2.3522
+
 # ------------------------------------------------------------ Économie / Banque
 economie:
   argent-depart: 1000
@@ -34,6 +40,37 @@ entreprises:
   membres-base: 5
   membres-par-niveau: 2
   salaire-max: 5000                    # par heure
+
+# ------------------------------------------------------------ Boutique en ligne (grades, LootBoxs, dollars, spawners)
+# La boutique web (Tebex conseillé) livre les achats avec la commande console :
+#   fnstore grade <joueur> <premium|super_premium|ultra> [jours]
+#   fnstore lootbox <joueur> <classic|legendaire|ultra> [nombre]
+#   fnstore dollars <joueur> <montant>
+#   fnstore spawner <joueur> <type> [niveau] [nombre]
+# Avec la clé secrète Tebex, le serveur récupère lui-même les commandes en attente (API « plugin »).
+boutique:
+  url: "https://fnations.tebex.io"
+  tebex-cle-secrete: ""
+  tebex-intervalle-secondes: 60
+  prix:                                # prix affichés dans la tablette (la vente se fait sur la boutique web)
+    premium: "4,99 €"
+    super_premium: "9,99 €"
+    ultra: "19,99 €"
+    classic: "1,99 €"
+    legendaire: "4,99 €"
+    lootbox_ultra: "9,99 €"
+  dollars:
+    - {montant: 25000, prix: "2,99 €"}
+    - {montant: 100000, prix: "9,99 €"}
+    - {montant: 300000, prix: "24,99 €"}
+    - {montant: 1000000, prix: "69,99 €"}
+  spawners:
+    - {type: cow, prix: "2,99 €"}
+    - {type: zombie, prix: "2,99 €"}
+    - {type: skeleton, prix: "3,99 €"}
+    - {type: enderman, prix: "7,99 €"}
+    - {type: blaze, prix: "9,99 €"}
+    - {type: iron_golem, prix: "14,99 €"}
 
 # ------------------------------------------------------------ Hôtel des ventes
 hdv:

@@ -1,7 +1,9 @@
 # FNations — Mod Fabric + Launcher
 
-Serveur Minecraft **1.21.4** de nations : recherche & développement, guerres, banque, chambres (WorldEdit), armes à feu,
-véhicules (char, avion, hélicoptère, tracteur), machines et énergie, missiles, fusée spatiale (Orbite, Lune).
+Serveur Minecraft **1.21.4** de nations sur une **carte de la Terre au 1/1000** : recherche & développement, guerres, banque,
+chambres (WorldEdit), armes à feu, véhicules (char, avion, hélicoptère, tracteur), machines et énergie, missiles,
+fusée spatiale (Orbite, Lune), métiers, entreprises, hôtel des ventes, **grades et boutique en ligne**, **LootBoxs** et
+**spawners**.
 
 Le projet est maintenant un **vrai mod Fabric** (client + serveur). Il est distribué par un **launcher maison**
 qui se connecte avec un **vrai compte Microsoft**, installe Minecraft, Fabric, Java et les mods, puis lance le jeu
@@ -12,7 +14,8 @@ Fnations/
 ├── mod/        Mod Fabric (Java 21, Loom, Mojang mappings) : tous les systèmes, GUIs, modèles, données
 ├── launcher/   Launcher Electron : connexion Microsoft, installation, synchronisation du modpack, lancement
 ├── server/     Modèle de serveur Fabric (server.properties, scripts de démarrage)
-└── tools/      build.sh (tout construire) et generate_resourcepack.py (modèles/textures/langues du mod)
+└── tools/      build.sh (tout construire), generate_resourcepack.py (modèles/textures/langues du mod)
+                et earth_data.py (données de la Terre : relief, couverture du sol, pays)
 ```
 
 > L'ancien plugin Paper a été entièrement porté dans le mod et retiré du dépôt. Il reste disponible dans l'historique git.
@@ -50,8 +53,11 @@ Toutes les interfaces sont réunies dans une tablette au thème sombre (barre de
 | Guerres | Score des conflits, paix, capitulation, capture, déclaration de guerre |
 | Chambres | Réception : filtres par groupe, location, achat, colocataires, téléportation |
 | Classements | Fortunes, nations, métiers, entreprises, vendeurs de la semaine |
+| Carte du monde | La Terre au 1/1000 : relief, frontières, territoires des nations, capitales et votre position. Molette pour zoomer, glisser pour se déplacer, clic pour épingler un lieu (pays, continent, latitude et longitude, nation propriétaire), clic droit pour revenir sur soi. Liste des nations avec recherche (clic = centrer la carte) |
+| Boutique | Onglets Grades, LootBoxs, Dollars, Spawners (boutons vers la boutique en ligne) et Mes avantages : grade et validité, récompenses quotidienne, hebdomadaire et mensuelle, achats livrés |
 
-La Station de Craft ouvre aussi sa page (catégories, recettes, ingrédients, fabrication ×1/×5).
+La Station de Craft ouvre aussi sa page (catégories, recettes, ingrédients, fabrication ×1/×5). Ouvrir une LootBox
+affiche la **roulette** animée, et un clic droit sur un spawner ouvre sa page (niveau, amélioration, récupération).
 
 ### Systèmes
 
@@ -68,6 +74,11 @@ Commandes : `/menu` (ou la touche **M**) ouvre la tablette, et chaque commande o
 | Entreprises | `/entreprise` | Trading, Ingénierie, Agriculture, Construction : niveaux, bonus, salaires horaires, contribution des employés, capital |
 | Hôtel des ventes | `/hdv`, `/hdv vendre <prix> [n]` | Ventes groupées par objet, achat au meilleur prix, offres d'achat, boîte de réception, ventes au nom d'une nation ou d'une entreprise, taxe, classement hebdomadaire |
 | Classements | `/classement` | Fortunes, nations, métiers, entreprises, HDV |
+| Carte du monde | `/carte` (`/monde`) | La Terre au 1/1000 (voir plus bas), avec les territoires des nations |
+| Boutique | `/boutique` (`/store`, `/shop`) | Grades, LootBoxs, dollars et spawners achetés en ligne et livrés en jeu, même hors ligne |
+| Grades | `/grade` | Premium, Super Premium, Ultra : préfixe, bonus de métier, avantages HDV, récompenses |
+| LootBoxs | `/lootbox` ou clic droit | Classic, Légendaire, Ultra : roulette, contenu et chances visibles (`lootboxs.yml`) |
+| Spawners | Bloc | 15 mobs, 5 niveaux, amélioration payée en dollars, récupération par le propriétaire (`spawners.yml`) |
 | Armes à feu | — | Pistolet, PM, fusil d'assaut, fusil à pompe, sniper, RPG (`weapons.yml`) |
 | Véhicules | — | Char (canon), avion et hélicoptère (mitrailleuse), tracteur (récolte + charrue), carburant, dégâts |
 | Station de Craft | Bloc | Fabrication de tout le contenu (`recipes.yml`, section `station`). Modèle 3D d'un bloc et demi : piliers lumineux, écrans animés, vitres, hologramme tournant des créations du mod |
@@ -124,6 +135,78 @@ missiles se recharge uniquement sur le surplus. Les machines chauffent en foncti
 | Hélicoptère | ZQSD, Espace pour monter, Ctrl pour descendre |
 | Tous les véhicules | Clic gauche pour tirer, accroupi pour descendre, accroupi + clic droit (propriétaire) pour ranger |
 
+### La Terre au 1/1000
+
+Le monde principal est la Terre : **1 bloc = 1 km**. X suit la longitude, Z la latitude (le nord est vers −Z) : le monde
+mesure 40 075 × 20 037 blocs et une bordure est posée automatiquement.
+
+- **Relief réel** (ETOPO5, NOAA) : le niveau de la mer est à y 63, les plus hauts sommets de l'Himalaya montent vers
+  y 190 et les fosses océaniques descendent vers y −38. Une case de données couvre 9 km : le relief y est moyenné,
+  puis interpolé et enrichi d'un bruit de détail.
+- **Biomes** tirés de la couverture du sol (Natural Earth II) : forêts, steppes, savanes, déserts, toundra, calottes
+  de glace. Les océans dépendent de la latitude et de la profondeur. Plages, mangroves, marais, sommets enneigés,
+  cerisiers au Japon. Les villages et structures vanilla sont générés normalement.
+- **Pays** (Natural Earth) : la tablette indique le pays et le continent sous vos pieds (création de nation, carte).
+- **Activation** : `level-type=fnations\:earth` dans `server.properties` avant la création du monde (déjà réglé dans
+  `server/server.properties`). En solo, choisissez le type de monde « Terre FNations (1/1000) ».
+- **Apparition** à Paris par défaut (`carte.apparition-latitude` et `carte.apparition-longitude` dans `config.yml`).
+- Le Nether et l'End restent vanilla.
+
+Les données sont régénérées par `python3 tools/earth_data.py` (téléchargement de données du domaine public).
+
+### Boutique en ligne : grades, LootBoxs, dollars, spawners
+
+Les achats se font sur une boutique web (Tebex conseillé). Chaque article exécute une commande console `fnstore`.
+Si le joueur est hors ligne, la livraison attend sa prochaine connexion (`world/fnations/boutique.yml`).
+
+| Article | Commande à mettre dans l'article Tebex |
+|---|---|
+| Grade (jours facultatifs, permanent sinon) | `fnstore grade {username} ultra 30` |
+| LootBoxs | `fnstore lootbox {username} legendaire 3` |
+| Dollars (crédités sur le compte bancaire) | `fnstore dollars {username} 100000` |
+| Spawner (type, niveau, nombre) | `fnstore spawner {username} blaze 1 1` |
+
+**Brancher Tebex** :
+
+1. Créez la boutique et ajoutez un serveur de jeu Minecraft avec l'intégration par plugin.
+2. Copiez sa **clé secrète** dans `config/fnations/config.yml`, dans `boutique.tebex-cle-secrete`.
+3. Le serveur interroge l'API Tebex toutes les `tebex-intervalle-secondes`. Il exécute les commandes en attente :
+   celles « hors ligne » tout de suite, celles « en ligne » quand le joueur est connecté. Puis il les confirme à Tebex.
+4. Mettez l'adresse de la boutique dans `boutique.url`, et les prix affichés dans `boutique.prix`, `boutique.dollars` et
+   `boutique.spawners`. Dans la tablette, les boutons ouvrent la boutique après la confirmation de lien de Minecraft.
+
+Sans Tebex, n'importe quelle boutique capable d'envoyer une commande console (RCON, panel) fonctionne avec les mêmes
+commandes.
+
+**Grades** : racheter le même grade prolonge sa durée, et un grade inférieur ne remplace jamais un grade supérieur actif.
+
+| | Premium | Super Premium | Ultra |
+|---|---|---|---|
+| Préfixe (chat, liste des joueurs) | `[Premium]` doré | `[Super Premium]` bleu | `[Ultra]` violet |
+| Revenus de métier | +5 % | +10 % | +15 % |
+| Emplacements de vente HDV | +5 | +10 | +20 |
+| Taxe HDV | −0,5 point | −1 point | −2 points |
+| Récompense quotidienne | 500 $ | 1 500 $ | 4 000 $ |
+| Récompense hebdomadaire | LootBox Classic | LootBox Classic | LootBox Légendaire |
+| Récompense mensuelle | — | LootBox Légendaire | LootBox Ultra |
+
+**LootBoxs** :
+
+- Trois boîtes : Classic, Légendaire et Ultra. Leur contenu se règle dans `lootboxs.yml` : argent, objets, spawners,
+  jours de grade, autres LootBoxs, chacun avec un poids et une rareté.
+- On ouvre une boîte d'un clic droit ou depuis la tablette : une roulette de 6 secondes ralentit jusqu'au gain.
+- Le gain est tiré par le serveur à l'ouverture, puis livré à la fin de la roulette (ou tout de suite si le joueur se
+  déconnecte). Les gains légendaires et mythiques sont annoncés à tout le serveur.
+
+**Spawners** :
+
+- 15 types de mobs et 5 niveaux, réglés dans `spawners.yml` : délai, mobs par vague, maximum autour, coût
+  d'amélioration (15 000 $ à 200 000 $).
+- Un spawner fonctionne quand un joueur est à moins de 16 blocs.
+- Seul le propriétaire (ou un opérateur) peut l'améliorer, le récupérer ou le casser. Il garde son mob et son niveau,
+  même cassé à la pioche.
+- Les mobs de spawner rapportent moitié moins au métier de Chasseur.
+
 **Administration** (opérateurs) :
 
 | Commande | Effet |
@@ -134,6 +217,7 @@ missiles se recharge uniquement sur le surplus. Les machines chauffent en foncti
 | `/fnations reload` | Recharger la configuration |
 | `/metier set <joueur> <métier> <xp>` | Définir l'XP d'un métier |
 | `/banque donner <joueur> <montant>` | Créditer un compte |
+| `fnstore <grade\|lootbox\|dollars\|spawner> <joueur> [arguments]` | Livrer un achat de la boutique (console, niveau 3) |
 | `/chambre creer\|pos1\|pos2\|guichet\|reset\|snapshot\|setspawn\|prix\|supprimer` | Gérer les chambres |
 
 **Fichiers** :
@@ -141,10 +225,13 @@ missiles se recharge uniquement sur le surplus. Les machines chauffent en foncti
   - `config.yml`, avec les sections `entreprises` et `hdv` ;
   - `research.yml`, `recipes.yml`, `weapons.yml` ;
   - `metiers.yml` : paliers, récompenses, XP et argent de chaque action ;
+  - `lootboxs.yml` (contenu des LootBoxs) et `spawners.yml` (mobs et niveaux) ;
 - données du monde dans `world/fnations/` :
   - `nations.yml`, `bank.yml` ;
   - `jobs.yml`, `entreprises.yml` ;
-  - `hdv.json`, qui contient les objets en vente avec tous leurs composants.
+  - `hdv.json`, qui contient les objets en vente avec tous leurs composants ;
+  - `grades.yml` (grades et récompenses récupérées), `boutique.yml` (livraisons en attente et historique),
+    `terre.yml`.
 
 ### Installer le serveur
 
@@ -222,6 +309,9 @@ cd mod
 ./gradlew runClient                      # client de développement (run-client/)
 ./gradlew runAutotest                    # client piloté par un scénario de test (captures dans run-client/screenshots)
 FN_SCENARIO=showcase ./gradlew runAutotest   # captures rapprochées des panneaux solaires et de la Station
+FN_SCENARIO=terre ./gradlew runAutotest      # survol de lieux réels (Paris, Alpes, Himalaya, Sahara...)
+FN_SCENARIO=boutique ./gradlew runAutotest   # livraisons, grades, LootBoxs, spawner, carte du monde
+python3 tools/earth_data.py                  # régénère les données de la Terre (mod/src/main/resources/fnations-earth)
 ```
 
 Le mod `autotest` (`mod/src/autotest`) n'est jamais inclus dans le jar publié. Il se connecte à `localhost:25565`,
@@ -261,6 +351,23 @@ joue les systèmes et prend des captures. Les modèles 3D sont générés par sc
 
 Ces tests m'ont permis de corriger deux problèmes de répartition de l'énergie entre machines.
 
+**Terre, boutique, LootBoxs et spawners** (scénarios `terre` et `boutique`, même vrai serveur et vrai client) :
+
+- génération de la Terre vérifiée sur place : Paris (avec un village vanilla), Alpes, Himalaya, Sahara, Amazonie,
+  Groenland, mont Fuji, détroit de Gibraltar, Australie ;
+- carte du monde : vue d'ensemble, zoom sur l'Europe puis sur Paris, territoire et capitale de la nation, épingle,
+  recherche de nation ;
+- création d'un pays à Paris : la tablette affiche « France • Europe » et les coordonnées ;
+- livraisons `fnstore` :
+  - grade Ultra, avec le préfixe dans le chat et la liste des joueurs ;
+  - 5 LootBoxs, 250 000 $ et un spawner à blaze ;
+  - une livraison mise en attente pour un joueur hors ligne ;
+- onglets de la boutique, récompense quotidienne, lien vers la boutique (confirmation de Minecraft puis retour à la
+  tablette) ;
+- 3 LootBoxs ouvertes, depuis la tablette et par clic droit, avec la roulette capturée pendant et après l'arrêt ;
+- spawner posé, amélioré au niveau 3, mobs apparus autour, puis récupéré avec son niveau ;
+- un `config.yml` d'une ancienne version reçoit automatiquement les sections ajoutées.
+
 **Launcher.** Ce qui a été testé ici :
 
 - 15 tests automatisés :
@@ -278,4 +385,6 @@ Pas encore vérifié :
 - l'empaquetage Electron (`npm run dist`) : il n'a pas pu être exécuté ici ;
 - le lancement sur Windows et macOS (testé uniquement sous Linux) ;
 - côté mod : le pilotage réel de l'avion et de l'hélicoptère, une guerre entre deux nations avec captures,
-  la surchauffe jusqu'à l'explosion, la récolte du tracteur.
+  la surchauffe jusqu'à l'explosion, la récolte du tracteur ;
+- la récupération des achats par l'API Tebex : elle demande une vraie boutique et sa clé secrète. La livraison
+  elle-même (`fnstore`) est testée.

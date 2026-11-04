@@ -17,3 +17,4 @@ server/.fabric/
 server/fabric-server-launch.jar
 server/config/
 !launcher/build/
+tools/.earth-cache/

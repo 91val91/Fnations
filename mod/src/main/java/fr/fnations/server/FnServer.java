@@ -33,7 +33,7 @@ import java.util.UUID;
 
 /** État serveur de FNations : configuration, managers et horloges. Une instance par serveur démarré. */
 public final class FnServer {
-    private static final String[] DEFAULTS = {"config.yml", "research.yml", "recipes.yml", "weapons.yml", "metiers.yml"};
+    private static final String[] DEFAULTS = {"config.yml", "research.yml", "recipes.yml", "weapons.yml", "metiers.yml", "lootboxs.yml", "spawners.yml"};
     private static FnServer instance;
 
     private final MinecraftServer server;
@@ -55,6 +55,10 @@ public final class FnServer {
     private fr.fnations.company.CompanyManager companies;
     private fr.fnations.market.MarketManager market;
     private fr.fnations.ui.UiManager ui;
+    private fr.fnations.rank.RankManager ranks;
+    private fr.fnations.store.StoreManager store;
+    private fr.fnations.loot.LootManager loot;
+    private fr.fnations.spawner.SpawnerManager spawners;
     private NationActions nationActions;
     private long ticks;
 
@@ -83,10 +87,15 @@ public final class FnServer {
         s.companies = new fr.fnations.company.CompanyManager(s);
         s.jobs = new fr.fnations.job.JobManager(s);
         s.market = new fr.fnations.market.MarketManager(s);
+        s.spawners = new fr.fnations.spawner.SpawnerManager(s);
+        s.loot = new fr.fnations.loot.LootManager(s);
+        s.ranks = new fr.fnations.rank.RankManager(s);
+        s.store = new fr.fnations.store.StoreManager(s);
         s.ui = new fr.fnations.ui.UiManager(s);
         fr.fnations.ui.pages.Pages.register(s, s.ui);
         NationActions actions = new NationActions(s);
         s.nationActions = actions;
+        fr.fnations.earth.EarthWorld.setup(s);
         FNations.LOG.info("FNations : données dans {}, configuration dans {}", s.dataDir, s.configDir);
     }
 
@@ -106,8 +115,68 @@ public final class FnServer {
                     if (in != null) Files.copy(in, target);
                 }
             }
+            upgradeConfig("config.yml");
         } catch (Exception e) {
             FNations.LOG.error("Impossible de préparer le dossier de configuration", e);
+        }
+    }
+
+    /**
+     * Mise à jour du mod : ajoute à la fin du fichier de l'administrateur les sections de premier niveau
+     * apparues dans la nouvelle version (avec leurs commentaires). Les réglages existants ne sont pas touchés.
+     */
+    private void upgradeConfig(String name) {
+        Path target = configDir.resolve(name);
+        if (!Files.exists(target)) return;
+        try (InputStream in = FnServer.class.getResourceAsStream("/fnations-defaults/" + name)) {
+            if (in == null) return;
+            String[] lines = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).split("\r?\n", -1);
+            Yaml cur = Yaml.load(target);
+            StringBuilder extra = new StringBuilder();
+            List<String> added = new ArrayList<>(), comments = new ArrayList<>();
+            for (int i = 0; i < lines.length; i++) {
+                String l = lines[i];
+                if (l.isBlank()) { comments.clear(); continue; }
+                if (l.startsWith("#")) { comments.add(l); continue; }
+                int colon = l.indexOf(':');
+                if (Character.isWhitespace(l.charAt(0)) || colon <= 0) { comments.clear(); continue; }
+                StringBuilder block = new StringBuilder();
+                comments.forEach(c -> block.append(c).append('\n'));
+                comments.clear();
+                block.append(l).append('\n');
+                int j = i + 1;
+                while (j < lines.length) {
+                    if (lines[j].isBlank()) {
+                        int k = j;
+                        while (k < lines.length && lines[k].isBlank()) k++;
+                        if (k < lines.length && Character.isWhitespace(lines[k].charAt(0))) { block.append("\n".repeat(k - j)); j = k; continue; }
+                        break;
+                    }
+                    if (!Character.isWhitespace(lines[j].charAt(0))) break;
+                    block.append(lines[j++]).append('\n');
+                }
+                i = j - 1;
+                String key = l.substring(0, colon).trim();
+                if (!cur.contains(key)) {
+                    extra.append('\n').append(block);
+                    added.add(key);
+                }
+            }
+            if (!added.isEmpty()) {
+                Files.writeString(target, extra.toString(), java.nio.charset.StandardCharsets.UTF_8, java.nio.file.StandardOpenOption.APPEND);
+                FNations.LOG.info("{} : nouvelles sections ajoutées par la mise à jour : {}", name, String.join(", ", added));
+            }
+        } catch (Exception e) {
+            FNations.LOG.warn("Mise à jour de {} impossible : {}", name, e.toString());
+        }
+    }
+
+    /** Valeurs par défaut embarquées dans le mod. */
+    private static Yaml defaults(String name) {
+        try (InputStream in = FnServer.class.getResourceAsStream("/fnations-defaults/" + name)) {
+            return in == null ? new Yaml() : Yaml.load(in);
+        } catch (Exception e) {
+            return new Yaml();
         }
     }
 
@@ -123,6 +192,7 @@ public final class FnServer {
 
     private void loadConfig() {
         config = loadYaml("config.yml");
+        config.fillDefaults(defaults("config.yml"));
         machineRecipes.clear();
         Yaml rec = loadYaml("recipes.yml");
         Map<String, MachineType> map = Map.of("compresseur", MachineType.COMPRESSOR, "four-electrique", MachineType.ELECTRIC_FURNACE, "concasseur", MachineType.CRUSHER);
@@ -148,6 +218,8 @@ public final class FnServer {
         missiles.reload();
         station.reload();
         jobs.reload();
+        loot.reload();
+        spawners.reload();
     }
 
     public Yaml yaml(String name) { return loadYaml(name); }
@@ -161,6 +233,9 @@ public final class FnServer {
         jobs.tick(ticks);
         companies.tick(ticks);
         if (ticks % 1200 == 0) market.tick();
+        loot.tick();
+        if (ticks % 20 == 0) store.tick();
+        if (ticks % 1200 == 0) ranks.tick();
         fr.fnations.rocket.Space.tick(this, ticks);
         if (ticks % 20 == 0) {
             research.tick();
@@ -180,6 +255,8 @@ public final class FnServer {
         jobs.save();
         companies.save();
         market.save();
+        ranks.save();
+        store.save();
         bank.save();
         nations.save();
         wars.save();
@@ -227,5 +304,9 @@ public final class FnServer {
     public fr.fnations.company.CompanyManager companies() { return companies; }
     public fr.fnations.market.MarketManager market() { return market; }
     public fr.fnations.ui.UiManager ui() { return ui; }
+    public fr.fnations.rank.RankManager ranks() { return ranks; }
+    public fr.fnations.store.StoreManager store() { return store; }
+    public fr.fnations.loot.LootManager loot() { return loot; }
+    public fr.fnations.spawner.SpawnerManager spawners() { return spawners; }
     public NationActions nationActions() { return nationActions; }
 }

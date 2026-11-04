@@ -39,7 +39,10 @@ public final class AutoTest implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         if (System.getProperty("fnations.autotest") == null) return;
-        if ("showcase".equals(System.getenv("FN_SCENARIO"))) showcase();
+        String scenario = System.getenv("FN_SCENARIO");
+        if ("showcase".equals(scenario)) showcase();
+        else if ("terre".equals(scenario)) earth();
+        else if ("boutique".equals(scenario)) boutique();
         else script();
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
     }
@@ -76,6 +79,215 @@ public final class AutoTest implements ClientModInitializer {
             if (best == null || e.distanceToSqr(mc().player) < best.distanceToSqr(mc().player)) best = e;
         }
         return best;
+    }
+
+    /** Scénario « terre » : survol de lieux réels du monde au 1/1000. */
+    private void earth() {
+        step(40, () -> {
+            cmd("gamemode spectator");
+            cmd("time set 6000");
+            cmd("gamerule doDaylightCycle false");
+            cmd("weather clear");
+            mc().options.renderDistance().set(12);
+            mc().options.hideGui = true;
+        });
+        Object[][] places = {
+                {"paris", 48.86, 2.35, 96, 0f, 34f},
+                {"alpes", 45.7, 6.2, 196, -90f, 24f},
+                {"himalaya", 27.3, 86.9, 238, 180f, 20f},
+                {"sahara", 25.0, 10.0, 112, 0f, 30f},
+                {"amazonie", -3.0, -60.0, 100, 0f, 32f},
+                {"groenland", 70.5, -42.0, 205, 180f, 24f},
+                {"fuji", 34.9, 138.7, 135, 180f, 22f},
+                {"gibraltar", 35.95, -6.3, 150, -90f, 32f},
+                {"australie", -25.0, 133.0, 108, 0f, 32f},
+        };
+        for (Object[] pl : places) {
+            String name = (String) pl[0];
+            double lat = (Double) pl[1], lon = (Double) pl[2];
+            int y = (Integer) pl[3];
+            float yaw = (Float) pl[4], pitch = (Float) pl[5];
+            int x = (int) Math.round(fr.fnations.earth.EarthData.blockX(lon)), z = (int) Math.round(fr.fnations.earth.EarthData.blockZ(lat));
+            step(10, () -> {
+                cmd("tp @s " + x + " " + y + " " + z + " " + yaw + " " + pitch);
+                String[] place = fr.fnations.earth.EarthData.get().place(x, z);
+                log(name + " : " + fr.fnations.earth.EarthData.latLon(x, z) + " -> " + place[0] + " (" + place[1] + "), bloc " + x + " " + z);
+            });
+            step(520, () -> shot("terre_" + name));
+        }
+        step(20, () -> {
+            try {
+                Files.write(mc().gameDirectory.toPath().resolve("autotest-result.txt"), report);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            log("FIN");
+            mc().stop();
+        });
+    }
+
+    /**
+     * Scénario « boutique » : livraisons de la boutique en ligne (grade, LootBoxs, dollars, spawner),
+     * pages Boutique, ouverture de LootBoxs (roulette), spawner (pose, amélioration, mobs, récupération)
+     * et carte du monde avec une nation fondée à Paris.
+     */
+    private void boutique() {
+        int bx = 262, bz = -5439, y = 120;
+        BlockPos spawnerAt = new BlockPos(bx + 3, y, bz + 3);
+        step(40, () -> {
+            cmd("gamemode creative");
+            cmd("time set 6000");
+            cmd("gamerule doDaylightCycle false");
+            cmd("weather clear");
+            cmd("gamerule doMobSpawning false");
+            cmd("forceload add " + (bx - 24) + " " + (bz - 24) + " " + (bx + 24) + " " + (bz + 24));
+            cmd("fill " + (bx - 12) + " " + (y - 1) + " " + (bz - 12) + " " + (bx + 12) + " " + (y - 1) + " " + (bz + 12) + " minecraft:smooth_stone");
+            cmd("fill " + (bx - 12) + " " + y + " " + (bz - 12) + " " + (bx + 12) + " " + (y + 8) + " " + (bz + 12) + " minecraft:air");
+            cmd("tp @s " + (bx + 0.5) + " " + y + " " + (bz + 0.5) + " 0 15");
+            cmd("clear @s");
+        });
+        // ---------- achats livrés comme par Tebex (commande console fnstore)
+        step(40, () -> {
+            cmd("fnstore grade FnTester ultra 30");
+            cmd("fnstore lootbox FnTester legendaire 2");
+            cmd("fnstore lootbox FnTester ultra 1");
+            cmd("fnstore lootbox FnTester classic 2");
+            cmd("fnstore dollars FnTester 250000");
+            cmd("fnstore spawner FnTester blaze 1");
+            cmd("fnstore dollars JoueurHorsLigne 1000");
+        });
+        step(40, () -> {
+            var team = mc().player.getTeam();
+            log("grade : " + (team == null ? "aucune équipe" : team.getName() + " préfixe « " + team.getPlayerPrefix().getString() + " »"));
+            log("lootboxs : classic " + mc().player.getInventory().countItem(fr.fnations.registry.ModItems.get("lootbox_classic"))
+                    + ", légendaire " + mc().player.getInventory().countItem(fr.fnations.registry.ModItems.get("lootbox_legendaire"))
+                    + ", ultra " + mc().player.getInventory().countItem(fr.fnations.registry.ModItems.get("lootbox_ultra")));
+            int sp = slotOf(fr.fnations.registry.ModItems.get("spawner"));
+            log("spawner : slot " + sp + (sp >= 0 ? " « " + mc().player.getInventory().items.get(sp).getHoverName().getString() + " »" : ""));
+            mc().player.connection.sendChat("Bonjour, je viens d'acheter le grade Ultra !");
+        });
+        step(20, () -> mc().options.keyPlayerList.setDown(true));
+        step(10, () -> shot("grade_chat_tab"));
+        step(5, () -> { mc().options.keyPlayerList.setDown(false); mc().setScreen(new InventoryScreen(mc().player)); });
+        step(30, () -> shot("inventaire_boutique"));
+        step(5, () -> mc().setScreen(null));
+        // ---------- pages de la boutique
+        step(10, () -> cmd("boutique"));
+        step(40, () -> { page("boutique"); shot("ui_boutique_grades"); });
+        step(5, () -> press("boutique.tab:lootboxs"));
+        step(25, () -> shot("ui_boutique_lootboxs"));
+        step(5, () -> press("boutique.tab:dollars"));
+        step(25, () -> shot("ui_boutique_dollars"));
+        step(5, () -> press("boutique.tab:spawners"));
+        step(25, () -> shot("ui_boutique_spawners"));
+        step(5, () -> press("boutique.tab:avantages"));
+        step(25, () -> shot("ui_boutique_avantages"));
+        step(5, () -> press("boutique.claim:DAILY"));
+        step(25, () -> shot("ui_boutique_recompense"));
+        // lien vers la boutique en ligne : fenêtre de confirmation puis retour à la tablette
+        step(5, () -> press("url:https://fnations.tebex.io"));
+        step(20, () -> { log("écran du lien : " + (mc().screen == null ? "aucun" : mc().screen.getClass().getSimpleName())); shot("lien_boutique"); });
+        step(5, () -> { if (mc().screen != null) mc().screen.keyPressed(org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE, 0, 0); });
+        step(15, () -> log("retour à la tablette : " + (ui() != null ? ui().pageId() : "non")));
+        // ---------- LootBoxs : roulette
+        step(5, () -> press("boutique.tab:lootboxs"));
+        step(15, () -> press("boutique.open:legendaire"));
+        step(12, () -> { page("lootbox"); shot("lootbox_depart"); });
+        step(45, () -> shot("lootbox_roulette"));
+        step(90, () -> shot("lootbox_ralenti"));
+        step(40, () -> shot("lootbox_resultat"));
+        step(5, () -> press("lootbox.open:ultra"));
+        step(150, () -> shot("lootbox_ultra_resultat"));
+        // ouverture par clic droit avec l'objet en main
+        step(5, () -> {
+            mc().setScreen(null);
+            int sl = slotOf(fr.fnations.registry.ModItems.get("lootbox_classic"));
+            log("LootBox classic en main : slot " + sl);
+            if (sl >= 0 && sl < 9) {
+                mc().player.getInventory().selected = sl;
+                mc().gameMode.useItem(mc().player, InteractionHand.MAIN_HAND);
+            }
+        });
+        step(150, () -> { page("lootbox"); shot("lootbox_classic_resultat"); });
+        // ---------- nation fondée à Paris (pour la carte du monde)
+        step(5, () -> press("nav:pays"));
+        step(30, () -> { page("pays"); shot("ui_creer_pays_terre"); });
+        step(5, () -> { type("name", "Francia"); press("pays.create"); });
+        step(20, () -> cmd("nation deposer 50000"));
+        int[][] spiral = {{1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {2, 0}, {2, 1}, {2, 2}, {1, 2}, {0, 2},
+                {-1, 2}, {-2, 2}, {-2, 1}, {-2, 0}, {-2, -1}, {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}};
+        step(10, () -> {
+            int cx = Math.floorDiv(bx, 16), cz = Math.floorDiv(bz, 16);
+            for (int[] o : spiral) ui().sendAction("pays.claimat:" + (cx + o[0]) + "," + (cz + o[1]));
+            log("revendications envoyées : " + spiral.length);
+        });
+        step(30, () -> press("pays.tab:territoire"));
+        step(30, () -> shot("ui_pays_territoire_terre"));
+        // ---------- carte du monde
+        step(5, () -> press("nav:carte"));
+        step(120, () -> { page("carte"); shot("ui_carte_monde"); });
+        step(5, () -> ui().sendAction("client:focus:" + bx + "," + bz + ",2"));
+        step(20, () -> shot("ui_carte_europe"));
+        step(5, () -> ui().sendAction("client:focus:" + bx + "," + bz + ",9"));
+        step(20, () -> shot("ui_carte_paris"));
+        step(5, () -> { type("mq", "fran"); ui().sendAction("client:focus:13358,-3340,0.8"); });
+        step(20, () -> shot("ui_carte_recherche"));
+        // ---------- spawner : pose, page, améliorations, mobs, récupération
+        step(5, () -> {
+            mc().setScreen(null);
+            cmd("tp @s " + (bx + 0.5) + " " + y + " " + (bz + 0.5) + " 0 15");
+        });
+        step(10, () -> {
+            int sl = slotOf(fr.fnations.registry.ModItems.get("spawner"));
+            log("spawner à poser : slot " + sl);
+            if (sl >= 0 && sl < 9) mc().player.getInventory().selected = sl;
+            BlockPos under = spawnerAt.below();
+            mc().gameMode.useItemOn(mc().player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(under).add(0, 0.5, 0), Direction.UP, under, false));
+        });
+        step(30, () -> {
+            log("bloc posé : " + mc().level.getBlockState(spawnerAt).getBlock().getDescriptionId());
+            cmd("clear @s fnations:spawner");
+            cmd("tp @s " + (bx + 3.5) + " " + (y + 0.3) + " " + (bz + 1.2) + " 0 22");
+        });
+        step(40, () -> shot("spawner_bloc"));
+        step(5, () -> {
+            mc().player.getInventory().selected = 8;
+            mc().gameMode.useItemOn(mc().player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(spawnerAt), Direction.NORTH, spawnerAt, false));
+        });
+        step(30, () -> { page("spawner"); shot("ui_spawner"); });
+        step(5, () -> press("spawner.upgrade"));
+        step(20, () -> press("spawner.upgrade"));
+        step(30, () -> shot("ui_spawner_niveau3"));
+        step(5, () -> { mc().setScreen(null); cmd("tp @s " + (bx + 3.5) + " " + (y + 1.5) + " " + (bz - 3.5) + " 0 18"); });
+        step(420, () -> {
+            int blazes = 0;
+            for (Entity e : mc().level.entitiesForRendering()) if (e.getType() == net.minecraft.world.entity.EntityType.BLAZE) blazes++;
+            log("blazes apparus : " + blazes);
+            shot("spawner_mobs");
+        });
+        step(5, () -> {
+            cmd("tp @s " + (bx + 3.5) + " " + y + " " + (bz + 0.5) + " 0 20");
+            mc().player.getInventory().selected = 8;
+        });
+        step(10, () -> mc().gameMode.useItemOn(mc().player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(spawnerAt), Direction.NORTH, spawnerAt, false)));
+        step(30, () -> shot("ui_spawner_mobs"));
+        step(5, () -> press("spawner.pickup"));
+        step(30, () -> {
+            int sl = slotOf(fr.fnations.registry.ModItems.get("spawner"));
+            log("spawner récupéré : " + (sl >= 0 ? mc().player.getInventory().items.get(sl).getHoverName().getString() : "non") + ", bloc restant : "
+                    + mc().level.getBlockState(spawnerAt).getBlock().getDescriptionId());
+            mc().setScreen(null);
+            cmd("kill @e[type=minecraft:blaze]");
+        });
+        step(20, () -> {
+            try {
+                Files.write(mc().gameDirectory.toPath().resolve("autotest-result.txt"), report);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            log("FIN");
+            mc().stop();
+        });
     }
 
     /** Scénario court : captures rapprochées des modèles 3D animés (panneaux solaires, station de craft). */

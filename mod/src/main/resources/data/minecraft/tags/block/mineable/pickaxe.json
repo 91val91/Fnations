@@ -9,6 +9,7 @@
     "fnations:electric_furnace",
     "fnations:crusher",
     "fnations:switch",
-    "fnations:missile_launcher"
+    "fnations:missile_launcher",
+    "fnations:spawner"
   ]
 }

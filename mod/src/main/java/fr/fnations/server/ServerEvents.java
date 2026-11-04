@@ -35,6 +35,7 @@ public final class ServerEvents {
             FnServer s = FnServer.get();
             if (s != null) {
                 s.jobs().onQuit(handler.player);
+                s.loot().onQuit(handler.player);
                 s.ui().forget(handler.player.getUUID());
                 s.territory().forget(handler.player.getUUID());
                 s.wars().onQuit(handler.player);
@@ -44,7 +45,11 @@ public final class ServerEvents {
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             FnServer s = FnServer.get();
-            if (s != null) s.jobs().onJoin(handler.player);
+            if (s != null) {
+                s.jobs().onJoin(handler.player);
+                s.ranks().apply(handler.player);
+                s.store().onJoin(handler.player);
+            }
         });
         net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents.AFTER_RESPAWN.register((oldP, newP, alive) -> {
             FnServer s = FnServer.get();
@@ -61,6 +66,10 @@ public final class ServerEvents {
         PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, be) -> {
             FnServer s = FnServer.get();
             if (s == null || !(player instanceof ServerPlayer sp) || !(level instanceof ServerLevel sl)) return true;
+            if (be instanceof fr.fnations.spawner.SpawnerBlockEntity spb && !s.spawners().isOwner(sp, spb)) {
+                Msg.err(sp, "Ce spawner appartient à " + spb.ownerName() + ".");
+                return false;
+            }
             if (s.territory().canBuild(sp, sl, pos)) return true;
             s.territory().deny(sp, sl, pos);
             return false;

@@ -17,6 +17,22 @@ public final class ModComponents {
     public static DataComponentType<Double> NOTE_VALUE;
     /** Carburant restant d'un véhicule rangé. */
     public static DataComponentType<Double> FUEL;
+    /** Type de mob et niveau d'un spawner FNations. */
+    public static DataComponentType<SpawnerData> SPAWNER;
+
+    /** mob = type de spawners.yml, entity = id de l'entité affichée (pour le client), level = 1 à 5. */
+    public record SpawnerData(String mob, String entity, int level) {
+        public static final Codec<SpawnerData> CODEC = com.mojang.serialization.codecs.RecordCodecBuilder.create(i -> i.group(
+                Codec.STRING.fieldOf("mob").forGetter(SpawnerData::mob),
+                Codec.STRING.optionalFieldOf("entity", "").forGetter(SpawnerData::entity),
+                Codec.INT.fieldOf("level").forGetter(SpawnerData::level)).apply(i, SpawnerData::new));
+        public static final net.minecraft.network.codec.StreamCodec<io.netty.buffer.ByteBuf, SpawnerData> STREAM =
+                net.minecraft.network.codec.StreamCodec.composite(ByteBufCodecs.STRING_UTF8, SpawnerData::mob, ByteBufCodecs.STRING_UTF8, SpawnerData::entity,
+                        ByteBufCodecs.VAR_INT, SpawnerData::level, SpawnerData::new);
+
+        /** Id de l'entité : celui enregistré, sinon minecraft:&lt;mob&gt;. */
+        public String entityId() { return !entity.isEmpty() ? entity : mob.contains(":") ? mob : "minecraft:" + mob; }
+    }
 
     private ModComponents() {}
 
@@ -25,6 +41,7 @@ public final class ModComponents {
         MAGAZINE = register("magazine", Codec.INT, ByteBufCodecs.VAR_INT);
         NOTE_VALUE = register("note_value", Codec.DOUBLE, ByteBufCodecs.DOUBLE);
         FUEL = register("fuel", Codec.DOUBLE, ByteBufCodecs.DOUBLE);
+        SPAWNER = register("spawner", SpawnerData.CODEC, SpawnerData.STREAM);
     }
 
     private static <T> DataComponentType<T> register(String id, Codec<T> codec, net.minecraft.network.codec.StreamCodec<? super io.netty.buffer.ByteBuf, T> stream) {

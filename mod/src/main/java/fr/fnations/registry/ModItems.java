@@ -98,6 +98,16 @@ public final class ModItems {
 
         // ---------------- Économie ----------------
         reg("banknote", Category.ECONOMIE, p -> new BanknoteItem(p.stacksTo(64)));
+
+        // ---------------- Boutique : LootBoxs et spawners ----------------
+        reg("lootbox_classic", Category.ECONOMIE, p -> new fr.fnations.loot.LootboxItem(p.stacksTo(64).rarity(Rarity.UNCOMMON), "classic"));
+        reg("lootbox_legendaire", Category.ECONOMIE, p -> new fr.fnations.loot.LootboxItem(p.stacksTo(64).rarity(Rarity.RARE), "legendaire"));
+        reg("lootbox_ultra", Category.ECONOMIE, p -> new fr.fnations.loot.LootboxItem(p.stacksTo(64).rarity(Rarity.EPIC), "ultra"));
+        ResourceKey<Item> sk = ResourceKey.create(Registries.ITEM, FNations.id("spawner"));
+        Item spawner = new fr.fnations.spawner.SpawnerItem(ModBlocks.SPAWNER, new Item.Properties().setId(sk).useBlockDescriptionPrefix().stacksTo(16).rarity(Rarity.RARE)
+                .component(ModComponents.SPAWNER, new ModComponents.SpawnerData("zombie", "minecraft:zombie", 1)));
+        ALL.put("spawner", Registry.register(BuiltInRegistries.ITEM, sk, spawner));
+        CATEGORY.put("spawner", Category.ECONOMIE);
     }
 
     private static void simple(String id, Category c, int stack) {

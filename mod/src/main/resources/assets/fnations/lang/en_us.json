@@ -48,6 +48,9 @@
  "item.fnations.missile_ballistic": "Ballistic Missile",
  "item.fnations.missile_nuclear": "Nuclear Missile",
  "item.fnations.banknote": "Banknote",
+ "item.fnations.lootbox_classic": "Classic LootBox",
+ "item.fnations.lootbox_legendaire": "Legendary LootBox",
+ "item.fnations.lootbox_ultra": "Ultra LootBox",
  "block.fnations.crafting_station": "Crafting Station",
  "block.fnations.compressor": "Compressor",
  "block.fnations.coal_generator": "Coal Generator",
@@ -61,6 +64,7 @@
  "itemGroup.fnations": "FNations",
  "key.fnations.reload": "Reload weapon",
  "key.fnations.tablet": "Open tablet",
+ "generator.fnations.earth": "FNations Earth (1:1000)",
  "category.fnations": "FNations",
  "entity.fnations.shell": "Shell",
  "entity.fnations.missile": "Missile",
@@ -69,5 +73,7 @@
  "entity.fnations.plane": "Fighter Jet",
  "entity.fnations.helicopter": "Helicopter",
  "entity.fnations.tractor": "Tractor",
- "container.fnations.panel": "FNations"
+ "container.fnations.panel": "FNations",
+ "block.fnations.spawner": "Spawner",
+ "item.fnations.spawner.named": "%s Spawner (level %s)"
 }

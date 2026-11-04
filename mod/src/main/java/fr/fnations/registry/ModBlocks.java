@@ -18,6 +18,7 @@ import java.util.Map;
 /** Blocs-machines. */
 public final class ModBlocks {
     public static final Map<MachineType, MachineBlock> MACHINES = new EnumMap<>(MachineType.class);
+    public static fr.fnations.spawner.SpawnerBlock SPAWNER;
 
     private ModBlocks() {}
 
@@ -32,6 +33,9 @@ public final class ModBlocks {
             MachineBlock b = Registry.register(BuiltInRegistries.BLOCK, key, new MachineBlock(p, t));
             MACHINES.put(t, b);
         }
+        ResourceKey<Block> sk = ResourceKey.create(Registries.BLOCK, FNations.id("spawner"));
+        SPAWNER = Registry.register(BuiltInRegistries.BLOCK, sk, new fr.fnations.spawner.SpawnerBlock(BlockBehaviour.Properties.of().setId(sk)
+                .mapColor(MapColor.METAL).strength(5f, 12f).requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion().lightLevel(s -> 6)));
     }
 
     public static MachineBlock get(MachineType t) { return MACHINES.get(t); }

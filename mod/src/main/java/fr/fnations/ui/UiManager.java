@@ -26,6 +26,7 @@ public final class UiManager {
     private static final List<String[]> NAV = List.of(
             new String[]{"accueil", "home", "Accueil"},
             new String[]{"pays", "flag", "Mon pays"},
+            new String[]{"carte", "globe", "Carte du monde"},
             new String[]{"banque", "bank", "Banque"},
             new String[]{"entreprise", "briefcase", "Entreprise"},
             new String[]{"metiers", "pickaxe", "Métiers"},
@@ -33,7 +34,8 @@ public final class UiManager {
             new String[]{"recherche", "flask", "Recherche & Développement"},
             new String[]{"guerres", "swords", "Guerres"},
             new String[]{"chambres", "bed", "Chambres"},
-            new String[]{"classements", "trophy", "Classements"});
+            new String[]{"classements", "trophy", "Classements"},
+            new String[]{"boutique", "cart", "Boutique"});
 
     private final FnServer s;
     private final Map<String, UiPage> pages = new LinkedHashMap<>();

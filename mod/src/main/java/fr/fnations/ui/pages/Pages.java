@@ -19,5 +19,9 @@ public final class Pages {
         ui.register(new RoomPage(s));
         ui.register(new StationPage(s));
         ui.register(new RankingPage(s));
+        ui.register(new BoutiquePage(s));
+        ui.register(new LootboxPage(s));
+        ui.register(new SpawnerPage(s));
+        ui.register(new WorldMapPage(s));
     }
 }

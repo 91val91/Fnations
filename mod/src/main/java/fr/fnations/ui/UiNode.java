@@ -99,6 +99,20 @@ public final class UiNode {
     /** Modèle 3D du joueur local (suit la souris). */
     public static UiNode player() { return new UiNode("player"); }
 
+    /** Roulette animée côté client (ouverture de LootBox) : s'arrête sur l'élément d'indice win au bout de dur ms. */
+    public static UiNode roulette(String id, List<UiNode> items, int win, long durMs, long elapsedMs) {
+        UiNode n = new UiNode("roulette").str("id", id).num("win", win).num("dur", durMs).num("el", elapsedMs);
+        n.add(items);
+        return n;
+    }
+
+    /** Carte du monde (Terre au 1/1000) zoomable, dessinée côté client avec les territoires des nations. */
+    public static UiNode worldmap(String id, com.google.gson.JsonArray nations) {
+        UiNode n = new UiNode("worldmap").str("id", id);
+        n.j.add("nations", nations);
+        return n;
+    }
+
     /** Carte du relief autour du joueur, générée côté client. */
     public static UiNode terrain(int radius) { return new UiNode("terrain").num("radius", radius); }
 

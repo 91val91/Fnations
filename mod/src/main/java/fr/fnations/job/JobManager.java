@@ -210,6 +210,7 @@ public final class JobManager {
             gm *= 1 + 0.02 * s.companies().level(c);
         }
         if (job == Job.CHASSEUR) gm *= 1 + 0.10 * palier(p.getUUID(), Job.CHASSEUR);
+        gm *= 1 + s.ranks().jobBonus(p.getUUID());
         double[] a = xp.computeIfAbsent(p.getUUID(), k -> new double[Job.values().length]);
         int before = palier(a[job.ordinal()]);
         a[job.ordinal()] += gx;
@@ -420,6 +421,7 @@ public final class JobManager {
         Source src = mobs.get(victim.getType());
         if (src == null) src = victim instanceof Enemy ? monster : victim instanceof Animal ? animal : null;
         if (src == null) return;
+        if (victim.getTags().contains("fn_spawner")) src = new Source(src.xp() * 0.5, src.money() * 0.5); // mobs de spawner : moitié
         gain(p, Job.CHASSEUR, src);
         int pal = palier(p.getUUID(), Job.CHASSEUR);
         if (pal >= 2 && p.getRandom().nextDouble() < 0.25) ExperienceOrb.award(p.serverLevel(), victim.position(), 2 + pal);

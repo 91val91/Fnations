@@ -1127,6 +1127,128 @@ def station_models():
     return m, {"holo_beam": beam, "holo_ring": ring}
 
 # =====================================================================
+#  Boutique : LootBoxs (coffres 3D par rareté) et spawner (cage en métal)
+# =====================================================================
+LOOTBOXES = {
+    # id : (corps, garnitures, gemme)
+    "classic": ("3d5a8c", "c9d1dc", "5fd7ff"),
+    "legendaire": ("8a5a14", "f5c542", "ff8a1c"),
+    "ultra": ("2e1a52", "b06bff", "ff5fd2"),
+}
+
+
+def lootbox_assets():
+    disp = {"gui": {"rotation": [30, 225, 0], "translation": [0, 0.5, 0], "scale": [0.82, 0.82, 0.82]},
+            "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.4, 0.4, 0.4]},
+            "fixed": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [0.7, 0.7, 0.7]},
+            "head": {"rotation": [0, 0, 0], "translation": [0, 4, 0], "scale": [0.9, 0.9, 0.9]},
+            "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.4, 0.4, 0.4]},
+            "thirdperson_lefthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.4, 0.4, 0.4]},
+            "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 2, 0], "scale": [0.45, 0.45, 0.45]},
+            "firstperson_lefthand": {"rotation": [0, 225, 0], "translation": [0, 2, 0], "scale": [0.45, 0.45, 0.45]}}
+    out = {}
+    for box, (body, trim, gem) in LOOTBOXES.items():
+        b, t, g = hexc(body), hexc(trim), hexc(gem)
+        # flancs : planches verticales, liseré clair en haut, ombre en bas
+        side = noise_tex(b, 0.07)
+        d = ImageDraw.Draw(side)
+        for x in (3, 7, 11, 15):
+            d.line([x, 0, x, 15], fill=shade(b, 0.72))
+        d.line([0, 0, 15, 0], fill=shade(b, 1.35))
+        d.line([0, 15, 15, 15], fill=shade(b, 0.55))
+        save_tex(side, "item", "lootbox_%s_side" % box)
+        # dessus du couvercle : losange aux couleurs des garnitures
+        top = noise_tex(shade(b, 1.08), 0.06)
+        d = ImageDraw.Draw(top)
+        d.rectangle([0, 0, 15, 15], outline=shade(b, 0.65))
+        d.polygon([(8, 2), (13, 8), (8, 13), (3, 8)], outline=t)
+        d.polygon([(8, 5), (10, 8), (8, 11), (6, 8)], fill=g)
+        save_tex(top, "item", "lootbox_%s_top" % box)
+        # garnitures métalliques
+        tr = noise_tex(t, 0.05)
+        d = ImageDraw.Draw(tr)
+        d.line([0, 0, 15, 0], fill=shade(t, 1.25))
+        d.line([0, 15, 15, 15], fill=shade(t, 0.6))
+        for y in (3, 12):
+            for x in (3, 12):
+                tr.putpixel((x, y), shade(t, 0.55))
+        save_tex(tr, "item", "lootbox_%s_trim" % box)
+        # gemme lumineuse
+        gm = Image.new("RGBA", (16, 16), g)
+        px = gm.load()
+        for x in range(16):
+            for y in range(16):
+                r = ((x - 7.5) ** 2 + (y - 7.5) ** 2) ** 0.5
+                px[x, y] = shade(g, 1.5 - r / 12) if r < 9 else shade(g, 0.8)
+        save_tex(gm, "item", "lootbox_%s_gem" % box)
+
+        m = Model({"side": "fnations:item/lootbox_%s_side" % box, "top": "fnations:item/lootbox_%s_top" % box,
+                   "trim": "fnations:item/lootbox_%s_trim" % box, "gem": "fnations:item/lootbox_%s_gem" % box})
+        m.box([2, 0, 3], [14, 8, 13], "side", name="coffre")
+        m.box([1.5, 8, 2.5], [14.5, 12, 13.5], "side", faces={"up": "top"}, name="couvercle")
+        m.box([1.75, 0, 2.75], [14.25, 1, 13.25], "trim", name="socle")
+        m.box([1.25, 7.5, 2.25], [14.75, 8.5, 13.75], "trim", name="bordure")
+        for x0 in (4, 10.5):
+            m.box([x0, 0.5, 2.6], [x0 + 1.5, 8, 13.4], "trim", only=("north", "south", "east", "west"), name="sangle")
+            m.box([x0, 8.5, 2.3], [x0 + 1.5, 12.3, 13.7], "trim", only=("north", "south", "east", "west", "up"), name="sangle couvercle")
+        m.box([6.5, 4.5, 1.9], [9.5, 8, 3], "trim", name="serrure")
+        m.box([7.25, 5.25, 1.5], [8.75, 6.75, 2], "gem", full="all", light=15, name="gemme")
+        m.box([7, 12, 7], [9, 12.75, 9], "gem", full="all", light=12, name="gemme du dessus")
+        out["lootbox_" + box] = m.json(display=disp)
+    return out
+
+
+def spawner_assets():
+    """Cage du spawner (modèle de bloc) : socle, plafond, piliers, barreaux et cœur animé."""
+    frame = bevel_tex(hexc("2b2f3a"), inner=0.75)
+    d = ImageDraw.Draw(frame)
+    for x, y in ((2, 2), (13, 2), (2, 13), (13, 13)):
+        frame.putpixel((x, y), hexc("8c96ff"))
+    save_tex(frame, "block", "spawner_frame")
+    bar = noise_tex(hexc("9aa3b5"), 0.05)
+    d = ImageDraw.Draw(bar)
+    d.line([0, 0, 0, 15], fill=hexc("d5dbe8"))
+    d.line([15, 0, 15, 15], fill=hexc("5c6475"))
+    save_tex(bar, "block", "spawner_bar")
+    base = bevel_tex(hexc("23262f"))
+    d = ImageDraw.Draw(base)
+    d.ellipse([2, 2, 13, 13], outline=hexc("5865f2"))
+    d.ellipse([5, 5, 10, 10], outline=hexc("3a3f8f"))
+    save_tex(base, "block", "spawner_base")
+    frames = []
+    for i in range(8):
+        f = Image.new("RGBA", (16, 16))
+        px = f.load()
+        k = 0.75 + 0.25 * math.sin(i / 8 * 2 * math.pi)
+        for x in range(16):
+            for y in range(16):
+                r = ((x - 7.5) ** 2 + (y - 7.5) ** 2) ** 0.5
+                a = max(0.0, 1 - r / 10) * k
+                px[x, y] = (int(90 + 140 * a), int(70 + 120 * a), 255, 255)
+        frames.append(f)
+    core = save_anim(frames, "spawner_core", frametime=3)
+    T = {"frame": "fnations:block/spawner_frame", "bar": "fnations:block/spawner_bar",
+         "base": "fnations:block/spawner_base", "core": core}
+    m = Model(T)
+    m.box([0, 0, 0], [16, 2, 16], "frame", faces={"up": "base"}, name="socle")
+    m.box([0, 14, 0], [16, 16, 16], "frame", name="plafond")
+    for x, z in ((0, 0), (14, 0), (0, 14), (14, 14)):
+        m.box([x, 2, z], [x + 2, 14, z + 2], "frame", only=("north", "south", "east", "west"), name="pilier")
+    for o in (4.5, 7.5, 10.5):
+        m.box([o, 2, 0.5], [o + 1, 14, 1.5], "bar", only=("north", "south", "east", "west"), name="barreau nord")
+        m.box([o, 2, 14.5], [o + 1, 14, 15.5], "bar", only=("north", "south", "east", "west"), name="barreau sud")
+        m.box([0.5, 2, o], [1.5, 14, o + 1], "bar", only=("north", "south", "east", "west"), name="barreau ouest")
+        m.box([14.5, 2, o], [15.5, 14, o + 1], "bar", only=("north", "south", "east", "west"), name="barreau est")
+    m.box([4, 2, 4], [12, 2.5, 12], "core", full="all", light=15, name="cœur")
+    m.box([4, 13.5, 4], [12, 14, 12], "core", full="all", light=15, only=("down",), name="cœur du plafond")
+    data = m.json(parent="minecraft:block/block")
+    data["ambientocclusion"] = False
+    write_json(path("models", "block", "spawner.json"), data)
+    write_json(path("blockstates", "spawner.json"), {"variants": {"": {"model": "fnations:block/spawner"}}})
+    write_json(path("items", "spawner.json"), {"model": {"type": "minecraft:model", "model": "fnations:block/spawner"}})
+
+
+# =====================================================================
 #  Assemblage
 # =====================================================================
 MACHINES = ["crafting_station", "compressor", "coal_generator", "solar_panel_t1", "solar_panel_t2", "solar_panel_t3",
@@ -1153,6 +1275,8 @@ NAMES = {
     "missile_tactical": ("Missile tactique", "Tactical Missile"), "missile_cruise": ("Missile de croisière", "Cruise Missile"),
     "missile_ballistic": ("Missile balistique", "Ballistic Missile"), "missile_nuclear": ("Missile nucléaire", "Nuclear Missile"),
     "banknote": ("Billet de banque", "Banknote"),
+    "lootbox_classic": ("LootBox Classic", "Classic LootBox"), "lootbox_legendaire": ("LootBox Légendaire", "Legendary LootBox"),
+    "lootbox_ultra": ("LootBox Ultra", "Ultra LootBox"),
     "crafting_station": ("Station de Craft", "Crafting Station"), "compressor": ("Compresseur", "Compressor"),
     "coal_generator": ("Générateur à charbon", "Coal Generator"), "solar_panel_t1": ("Panneau solaire Tier 1", "Solar Panel Tier 1"),
     "solar_panel_t2": ("Panneau solaire Tier 2", "Solar Panel Tier 2"), "solar_panel_t3": ("Panneau solaire Tier 3", "Solar Panel Tier 3"),
@@ -1163,6 +1287,7 @@ EXTRA_LANG = {
     "itemGroup.fnations": ("FNations", "FNations"),
     "key.fnations.reload": ("Recharger l'arme", "Reload weapon"),
     "key.fnations.tablet": ("Ouvrir la tablette", "Open tablet"),
+    "generator.fnations.earth": ("Terre FNations (1/1000)", "FNations Earth (1:1000)"),
     "category.fnations": ("FNations", "FNations"),
     "entity.fnations.shell": ("Obus", "Shell"),
     "entity.fnations.missile": ("Missile", "Missile"),
@@ -1172,6 +1297,8 @@ EXTRA_LANG = {
     "entity.fnations.helicopter": ("Hélicoptère", "Helicopter"),
     "entity.fnations.tractor": ("Tracteur", "Tractor"),
     "container.fnations.panel": ("FNations", "FNations"),
+    "block.fnations.spawner": ("Spawner", "Spawner"),
+    "item.fnations.spawner.named": ("Spawner %s (niveau %s)", "%s Spawner (level %s)"),
 }
 
 
@@ -1520,6 +1647,12 @@ def main():
     gui_textures()
     print("Icônes de la tablette :", ui_icons())
     mod_icon()
+    # Boutique (en dernier : le tirage aléatoire des textures précédentes reste identique)
+    for name, data in lootbox_assets().items():
+        models[name] = data
+        write_json(path("models", "item", name + ".json"), data)
+        write_json(path("items", name + ".json"), {"model": {"type": "minecraft:model", "model": "fnations:item/" + name}})
+    spawner_assets()
     # Langues
     fr, en = {}, {}
     for k, (f, e) in NAMES.items():

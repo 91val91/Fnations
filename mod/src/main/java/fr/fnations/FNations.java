@@ -34,6 +34,7 @@ public final class FNations implements ModInitializer {
         ModMenus.init();
         ModTab.init();
         ModPayloads.init();
+        fr.fnations.earth.EarthWorld.init();
         ServerEvents.init();
         LOG.info("FNations initialisé : {} items, {} machines.", ModItems.ALL.size(), ModBlocks.MACHINES.size());
     }

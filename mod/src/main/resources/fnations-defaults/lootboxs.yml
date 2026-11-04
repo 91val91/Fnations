@@ -1,0 +1,58 @@
+# =====================================================================
+#                FNations - LootBoxs (achetées sur la boutique)
+# =====================================================================
+# Types de récompense :
+#   argent  : montant
+#   item    : item (minecraft:... ou fnations:...), nombre
+#   spawner : mob (voir spawners.yml), niveau
+#   grade   : grade (premium, super_premium, ultra), jours
+#   lootbox : box (classic, legendaire, ultra), nombre
+# poids = probabilité relative ; rarete = commun, rare, epique, legendaire, mythique (couleur et annonce)
+
+classic:
+  nom: "Classic"
+  couleur: "#3BA7F0"
+  recompenses:
+    - {type: argent, montant: 2500, poids: 30, rarete: commun}
+    - {type: argent, montant: 7500, poids: 12, rarete: rare}
+    - {type: item, item: minecraft:iron_ingot, nombre: 32, poids: 20, rarete: commun}
+    - {type: item, item: minecraft:gold_ingot, nombre: 16, poids: 14, rarete: commun}
+    - {type: item, item: minecraft:diamond, nombre: 4, poids: 10, rarete: rare}
+    - {type: item, item: fnations:steel_plate, nombre: 16, poids: 14, rarete: commun}
+    - {type: item, item: fnations:circuit, nombre: 8, poids: 10, rarete: rare}
+    - {type: item, item: fnations:pistol, nombre: 1, poids: 5, rarete: epique}
+    - {type: spawner, mob: zombie, niveau: 1, poids: 3, rarete: epique}
+    - {type: spawner, mob: cow, niveau: 1, poids: 3, rarete: epique}
+    - {type: lootbox, box: legendaire, nombre: 1, poids: 1, rarete: legendaire}
+
+legendaire:
+  nom: "Légendaire"
+  couleur: "#F5A623"
+  recompenses:
+    - {type: argent, montant: 20000, poids: 25, rarete: rare}
+    - {type: argent, montant: 60000, poids: 8, rarete: epique}
+    - {type: item, item: minecraft:diamond, nombre: 16, poids: 14, rarete: rare}
+    - {type: item, item: minecraft:netherite_ingot, nombre: 2, poids: 6, rarete: epique}
+    - {type: item, item: fnations:advanced_circuit, nombre: 8, poids: 10, rarete: rare}
+    - {type: item, item: fnations:assault_rifle, nombre: 1, poids: 7, rarete: epique}
+    - {type: item, item: fnations:sniper, nombre: 1, poids: 5, rarete: epique}
+    - {type: spawner, mob: skeleton, niveau: 2, poids: 4, rarete: epique}
+    - {type: spawner, mob: blaze, niveau: 1, poids: 3, rarete: legendaire}
+    - {type: grade, grade: premium, jours: 7, poids: 3, rarete: legendaire}
+    - {type: lootbox, box: ultra, nombre: 1, poids: 1, rarete: legendaire}
+
+ultra:
+  nom: "Ultra"
+  couleur: "#B06BFF"
+  recompenses:
+    - {type: argent, montant: 100000, poids: 22, rarete: epique}
+    - {type: argent, montant: 300000, poids: 6, rarete: legendaire}
+    - {type: item, item: minecraft:netherite_ingot, nombre: 8, poids: 10, rarete: epique}
+    - {type: item, item: minecraft:elytra, nombre: 1, poids: 6, rarete: legendaire}
+    - {type: item, item: fnations:tank, nombre: 1, poids: 5, rarete: legendaire}
+    - {type: item, item: fnations:helicopter, nombre: 1, poids: 5, rarete: legendaire}
+    - {type: item, item: fnations:missile_cruise, nombre: 2, poids: 6, rarete: epique}
+    - {type: spawner, mob: iron_golem, niveau: 2, poids: 5, rarete: legendaire}
+    - {type: spawner, mob: blaze, niveau: 3, poids: 4, rarete: legendaire}
+    - {type: grade, grade: super_premium, jours: 15, poids: 3, rarete: legendaire}
+    - {type: grade, grade: ultra, jours: 7, poids: 1, rarete: mythique}

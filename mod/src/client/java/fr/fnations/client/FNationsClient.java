@@ -52,6 +52,8 @@ public final class FNationsClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.MISSILE, ItemModelRenderer::new);
         EntityRendererRegistry.register(ModEntities.ROCKET, ItemModelRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.MACHINE, MachineRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.SPAWNER, fr.fnations.client.render.SpawnerBlockRenderer::new);
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SPAWNER, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.get(MachineType.CRAFTING_STATION), RenderType.translucent());
 
         RELOAD = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.fnations.reload", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "category.fnations"));

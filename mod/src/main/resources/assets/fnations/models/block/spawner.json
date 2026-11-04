@@ -1,0 +1,606 @@
+{
+ "parent": "minecraft:block/block",
+ "textures": {
+  "frame": "fnations:block/spawner_frame",
+  "bar": "fnations:block/spawner_bar",
+  "base": "fnations:block/spawner_base",
+  "core": "fnations:block/spawner_core",
+  "particle": "fnations:block/spawner_frame"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    2,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#frame"
+    },
+    "south": {
+     "texture": "#frame"
+    },
+    "east": {
+     "texture": "#frame"
+    },
+    "west": {
+     "texture": "#frame"
+    },
+    "up": {
+     "texture": "#base"
+    },
+    "down": {
+     "texture": "#frame"
+    }
+   },
+   "name": "socle"
+  },
+  {
+   "from": [
+    0,
+    14,
+    0
+   ],
+   "to": [
+    16,
+    16,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#frame"
+    },
+    "south": {
+     "texture": "#frame"
+    },
+    "east": {
+     "texture": "#frame"
+    },
+    "west": {
+     "texture": "#frame"
+    },
+    "up": {
+     "texture": "#frame"
+    },
+    "down": {
+     "texture": "#frame"
+    }
+   },
+   "name": "plafond"
+  },
+  {
+   "from": [
+    0,
+    2,
+    0
+   ],
+   "to": [
+    2,
+    14,
+    2
+   ],
+   "faces": {
+    "north": {
+     "texture": "#frame"
+    },
+    "south": {
+     "texture": "#frame"
+    },
+    "east": {
+     "texture": "#frame"
+    },
+    "west": {
+     "texture": "#frame"
+    }
+   },
+   "name": "pilier"
+  },
+  {
+   "from": [
+    14,
+    2,
+    0
+   ],
+   "to": [
+    16,
+    14,
+    2
+   ],
+   "faces": {
+    "north": {
+     "texture": "#frame"
+    },
+    "south": {
+     "texture": "#frame"
+    },
+    "east": {
+     "texture": "#frame"
+    },
+    "west": {
+     "texture": "#frame"
+    }
+   },
+   "name": "pilier"
+  },
+  {
+   "from": [
+    0,
+    2,
+    14
+   ],
+   "to": [
+    2,
+    14,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#frame"
+    },
+    "south": {
+     "texture": "#frame"
+    },
+    "east": {
+     "texture": "#frame"
+    },
+    "west": {
+     "texture": "#frame"
+    }
+   },
+   "name": "pilier"
+  },
+  {
+   "from": [
+    14,
+    2,
+    14
+   ],
+   "to": [
+    16,
+    14,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#frame"
+    },
+    "south": {
+     "texture": "#frame"
+    },
+    "east": {
+     "texture": "#frame"
+    },
+    "west": {
+     "texture": "#frame"
+    }
+   },
+   "name": "pilier"
+  },
+  {
+   "from": [
+    4.5,
+    2,
+    0.5
+   ],
+   "to": [
+    5.5,
+    14,
+    1.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau nord"
+  },
+  {
+   "from": [
+    4.5,
+    2,
+    14.5
+   ],
+   "to": [
+    5.5,
+    14,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau sud"
+  },
+  {
+   "from": [
+    0.5,
+    2,
+    4.5
+   ],
+   "to": [
+    1.5,
+    14,
+    5.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau ouest"
+  },
+  {
+   "from": [
+    14.5,
+    2,
+    4.5
+   ],
+   "to": [
+    15.5,
+    14,
+    5.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau est"
+  },
+  {
+   "from": [
+    7.5,
+    2,
+    0.5
+   ],
+   "to": [
+    8.5,
+    14,
+    1.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau nord"
+  },
+  {
+   "from": [
+    7.5,
+    2,
+    14.5
+   ],
+   "to": [
+    8.5,
+    14,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau sud"
+  },
+  {
+   "from": [
+    0.5,
+    2,
+    7.5
+   ],
+   "to": [
+    1.5,
+    14,
+    8.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau ouest"
+  },
+  {
+   "from": [
+    14.5,
+    2,
+    7.5
+   ],
+   "to": [
+    15.5,
+    14,
+    8.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau est"
+  },
+  {
+   "from": [
+    10.5,
+    2,
+    0.5
+   ],
+   "to": [
+    11.5,
+    14,
+    1.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau nord"
+  },
+  {
+   "from": [
+    10.5,
+    2,
+    14.5
+   ],
+   "to": [
+    11.5,
+    14,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau sud"
+  },
+  {
+   "from": [
+    0.5,
+    2,
+    10.5
+   ],
+   "to": [
+    1.5,
+    14,
+    11.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau ouest"
+  },
+  {
+   "from": [
+    14.5,
+    2,
+    10.5
+   ],
+   "to": [
+    15.5,
+    14,
+    11.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#bar"
+    },
+    "south": {
+     "texture": "#bar"
+    },
+    "east": {
+     "texture": "#bar"
+    },
+    "west": {
+     "texture": "#bar"
+    }
+   },
+   "name": "barreau est"
+  },
+  {
+   "from": [
+    4,
+    2,
+    4
+   ],
+   "to": [
+    12,
+    2.5,
+    12
+   ],
+   "faces": {
+    "north": {
+     "texture": "#core",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#core",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#core",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#core",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#core",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    },
+    "down": {
+     "texture": "#core",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    }
+   },
+   "name": "cœur",
+   "light_emission": 15
+  },
+  {
+   "from": [
+    4,
+    13.5,
+    4
+   ],
+   "to": [
+    12,
+    14,
+    12
+   ],
+   "faces": {
+    "down": {
+     "texture": "#core",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ]
+    }
+   },
+   "name": "cœur du plafond",
+   "light_emission": 15
+  }
+ ],
+ "ambientocclusion": false
+}

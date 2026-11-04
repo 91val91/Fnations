@@ -1,0 +1,29 @@
+# =====================================================================
+#                FNations - Spawners customs
+# =====================================================================
+# Les spawners s'obtiennent sur la boutique, dans les LootBoxs ou par un administrateur
+# (fnstore spawner <joueur> <type> [niveau]). Ils font apparaître des mobs tant qu'un joueur
+# est à moins de "distance-activation" blocs. Seul le propriétaire peut les améliorer ou les récupérer.
+distance-activation: 16
+types:
+  zombie:        {nom: "Zombie", entite: minecraft:zombie, rarete: commun}
+  skeleton:      {nom: "Squelette", entite: minecraft:skeleton, rarete: commun}
+  spider:        {nom: "Araignée", entite: minecraft:spider, rarete: commun}
+  creeper:       {nom: "Creeper", entite: minecraft:creeper, rarete: rare}
+  cow:           {nom: "Vache", entite: minecraft:cow, rarete: commun}
+  pig:           {nom: "Cochon", entite: minecraft:pig, rarete: commun}
+  sheep:         {nom: "Mouton", entite: minecraft:sheep, rarete: commun}
+  chicken:       {nom: "Poulet", entite: minecraft:chicken, rarete: commun}
+  slime:         {nom: "Slime", entite: minecraft:slime, rarete: rare}
+  witch:         {nom: "Sorcière", entite: minecraft:witch, rarete: epique}
+  enderman:      {nom: "Enderman", entite: minecraft:enderman, rarete: epique}
+  blaze:         {nom: "Blaze", entite: minecraft:blaze, rarete: legendaire}
+  magma_cube:    {nom: "Cube de magma", entite: minecraft:magma_cube, rarete: rare}
+  iron_golem:    {nom: "Golem de fer", entite: minecraft:iron_golem, rarete: legendaire}
+  wither_skeleton: {nom: "Wither squelette", entite: minecraft:wither_skeleton, rarete: legendaire}
+niveaux:
+  1: {delai-secondes: 30, mobs: 1, max-autour: 6, cout-amelioration: 0}
+  2: {delai-secondes: 22, mobs: 2, max-autour: 8, cout-amelioration: 15000}
+  3: {delai-secondes: 16, mobs: 2, max-autour: 10, cout-amelioration: 40000}
+  4: {delai-secondes: 11, mobs: 3, max-autour: 12, cout-amelioration: 90000}
+  5: {delai-secondes: 7, mobs: 4, max-autour: 14, cout-amelioration: 200000}

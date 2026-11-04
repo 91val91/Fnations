@@ -58,6 +58,12 @@ final class UiView {
         // tête
         UUID uuid;
         String name;
+        // roulette (LootBox) : index gagnant, durée et temps déjà écoulé (ms)
+        int win;
+        long dur, el;
+        // carte du monde : nations et index chunk → nation
+        List<WorldMapView.Nation> nations;
+        Map<Long, WorldMapView.Nation> nationIdx;
 
         Node(JsonObject j, HolderLookup.Provider regs) {
             t = str(j, "t", "col");
@@ -130,6 +136,15 @@ final class UiView {
                 terrainUnder = bool(j, "terrain");
             }
             if (t.equals("terrain")) radius = num(j, "radius", 48);
+            if (t.equals("roulette")) {
+                win = num(j, "win", 0);
+                dur = j.has("dur") ? j.get("dur").getAsLong() : 5000;
+                el = j.has("el") ? j.get("el").getAsLong() : 0;
+            }
+            if (t.equals("worldmap")) {
+                nations = WorldMapView.parse(j.has("nations") && j.get("nations").isJsonArray() ? j.getAsJsonArray("nations") : null);
+                nationIdx = WorldMapView.index(nations);
+            }
             if (j.has("c")) for (JsonElement e : j.getAsJsonArray("c")) if (e.isJsonObject()) kids.add(new Node(e.getAsJsonObject(), regs));
         }
 
@@ -209,6 +224,7 @@ final class UiView {
             case "inv" -> Math.max(1, n.cols) * 18;
             case "player" -> 50;
             case "terrain" -> 96;
+            case "roulette", "worldmap" -> 200;
             default -> 0;
         };
     }
@@ -255,6 +271,8 @@ final class UiView {
             case "inv" -> (int) Math.ceil(36.0 / Math.max(1, n.cols)) * 18;
             case "player" -> 80;
             case "terrain" -> w;
+            case "roulette" -> 70;
+            case "worldmap" -> 140;
             default -> 0;
         };
     }
@@ -262,7 +280,7 @@ final class UiView {
     /** Les conteneurs, textes et champs s'étirent en largeur dans une colonne ; les boutons gardent leur taille. */
     static boolean stretchW(Node c) {
         return c.fill || switch (c.t) {
-            case "col", "row", "list", "grid", "text", "iname", "bar", "sep", "input", "map", "terrain" -> true;
+            case "col", "row", "list", "grid", "text", "iname", "bar", "sep", "input", "map", "terrain", "roulette", "worldmap" -> true;
             default -> false;
         };
     }
@@ -343,7 +361,7 @@ final class UiView {
 
     private static boolean stretchV(Node c) {
         return switch (c.t) {
-            case "col", "list", "grid" -> true;
+            case "col", "list", "grid", "worldmap" -> true;
             default -> false;
         };
     }
@@ -459,7 +477,7 @@ final class UiView {
             Node r = hitAction(n.kids.get(i), mx, my);
             if (r != null) return r;
         }
-        return n.clickable() || n.t.equals("map") || n.t.equals("inv") ? n : null;
+        return n.clickable() || n.t.equals("map") || n.t.equals("inv") || n.t.equals("worldmap") ? n : null;
     }
 
     /** Élément à info-bulle le plus profond sous la souris. */

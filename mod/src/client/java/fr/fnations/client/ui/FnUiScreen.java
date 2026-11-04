@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -61,6 +62,18 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
     private UiView.Node hover, tipNode;
     private EditBox focused;
     private String focusedId;
+    // carte du monde : une vue par carte (conservée entre deux mises à jour), glisser-déplacer
+    private final Map<String, WorldMapView.View> mapViews = new HashMap<>();
+    private UiView.Node dragMap;
+    private double dragX, dragY;
+    private boolean dragMoved;
+    // roulettes des LootBoxs : début de l'animation, dernière case passée, fin jouée
+    private final Map<String, Long> spinStart = new HashMap<>();
+    private final Map<String, Integer> spinTick = new HashMap<>();
+    private final Set<String> spinDone = new HashSet<>();
+    /** Écran mis de côté pendant la confirmation d'un lien (boutique en ligne). */
+    private static FnUiScreen parked;
+    private boolean linking;
 
     private FnUiScreen() { super(Component.literal("FNations")); }
 
@@ -74,13 +87,15 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
+        boolean confirming = parked != null && mc.screen instanceof ConfirmLinkScreen;
         if (page.has("close")) {
             if (mc.screen instanceof FnUiScreen s) { s.closedByServer = true; mc.setScreen(null); }
+            else if (confirming) parked.closedByServer = true;
             return;
         }
-        FnUiScreen s = mc.screen instanceof FnUiScreen cur ? cur : new FnUiScreen();
+        FnUiScreen s = mc.screen instanceof FnUiScreen cur ? cur : confirming ? parked : new FnUiScreen();
         s.update(page);
-        if (mc.screen != s) mc.setScreen(s);
+        if (mc.screen != s && s != parked) mc.setScreen(s);
     }
 
     private static String inflate(byte[] data) throws Exception {
@@ -119,8 +134,8 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
         JsonObject nav = node("col");
         nav.addProperty("w", 30);
         nav.addProperty("bg", "#0F1016");
-        nav.addProperty("pady", 8);
-        nav.addProperty("gap", 3);
+        nav.addProperty("pady", 7);
+        nav.addProperty("gap", 2);
         nav.addProperty("align", "center");
         JsonArray navKids = new JsonArray();
         if (page.has("nav")) for (JsonElement e : page.getAsJsonArray("nav")) {
@@ -130,7 +145,7 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
             b.addProperty("a", "nav:" + n.get("id").getAsString());
             b.addProperty("style", "nav");
             b.addProperty("w", 22);
-            b.addProperty("h", 22);
+            b.addProperty("h", 20);
             if (n.get("id").getAsString().equals(sel)) b.addProperty("sel", true);
             JsonArray tip = new JsonArray();
             tip.add(n.get("tip").getAsString());
@@ -145,7 +160,7 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
         close.addProperty("a", "client:close");
         close.addProperty("style", "nav");
         close.addProperty("w", 22);
-        close.addProperty("h", 22);
+        close.addProperty("h", 20);
         JsonArray ctip = new JsonArray();
         ctip.add("Fermer");
         close.add("tip", ctip);
@@ -220,8 +235,10 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
 
     // =================================================================== actions
     private void send(String action) {
-        if (action == null) return;
+        if (action == null || action.equals("noop")) return;
         if (action.equals("client:close")) { onClose(); return; }
+        if (action.startsWith("url:")) { openLink(action.substring(4)); return; }
+        if (action.startsWith("client:focus:")) { focusMap(action.substring(13)); return; }
         JsonObject d = new JsonObject();
         JsonObject in = new JsonObject();
         boxes.forEach((k, b) -> in.addProperty(k, b.getValue()));
@@ -231,6 +248,38 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
         if (data.length() > 8000) data = "{}";
         ClientPlayNetworking.send(new UiActionPayload(action, data));
     }
+
+    /** Lien externe (boutique en ligne) : fenêtre de confirmation de Minecraft, puis retour à la tablette. */
+    private void openLink(String url) {
+        if (!url.startsWith("https://") && !url.startsWith("http://")) return;
+        linking = true;
+        parked = this;
+        ConfirmLinkScreen.confirmLinkNow(this, url);
+    }
+
+    /** Centre les cartes du monde affichées sur un point (« x,z » ou « x,z,échelle », en blocs) et l'épingle. */
+    private void focusMap(String arg) {
+        String[] v = arg.split(",");
+        if (v.length < 2 || root == null) return;
+        double x, z, sc;
+        try {
+            x = Double.parseDouble(v[0]);
+            z = Double.parseDouble(v[1]);
+            sc = v.length > 2 ? Double.parseDouble(v[2]) : 0;
+        } catch (NumberFormatException e) {
+            return;
+        }
+        List<UiView.Node> maps = new ArrayList<>();
+        UiView.collect(root, "worldmap", maps);
+        for (UiView.Node m : maps) {
+            WorldMapView.View view = view(m);
+            WorldMapView.focus(view, x, z, sc > 0 ? sc : Math.max(2.0, view.scale));
+            view.pinX = x;
+            view.pinZ = z;
+        }
+    }
+
+    private WorldMapView.View view(UiView.Node n) { return mapViews.computeIfAbsent(n.id == null ? "" : n.id, k -> new WorldMapView.View()); }
 
     private void click() {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.6F));
@@ -371,6 +420,8 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
             }
             case "terrain" -> drawTerrain(g, n);
             case "list" -> drawList(g, n, pt);
+            case "roulette" -> drawRoulette(g, n);
+            case "worldmap" -> WorldMapView.draw(g, n, view(n), n.nations, n.nationIdx, vmx, vmy, f * Minecraft.getInstance().getWindow().getGuiScale());
             default -> {
                 drawBox(g, n, hovered);
                 for (UiView.Node c : n.kids) draw(g, c, pt);
@@ -598,6 +649,71 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
         UiDraw.rr(g, x + c - 2, y + c - 2, 4, 4, 2, UiDraw.ACCENT);
     }
 
+    /**
+     * Roulette d'ouverture de LootBox : la bande défile puis ralentit (courbe quartique) jusqu'au gain,
+     * avec un « tic » à chaque case qui passe sous le repère et un halo sur la case gagnante.
+     */
+    private void drawRoulette(GuiGraphics g, UiView.Node n) {
+        String id = n.id == null ? "" : n.id;
+        long now = System.currentTimeMillis();
+        long start = spinStart.computeIfAbsent(id, k -> now - n.el);
+        double t = n.dur <= 0 ? 1 : Math.min(1, (now - start) / (double) n.dur);
+        double ease = 1 - Math.pow(1 - t, 4);
+        int ch = n.h - 12, cw = Math.min(ch, 64), pitch = cw + 4;
+        // point d'arrêt dans la case gagnante, différent à chaque ouverture
+        double jitter = (Math.floorMod(id.hashCode(), 1000) / 1000.0 - 0.5) * 0.7;
+        double target = n.win * pitch + cw / 2.0 + jitter * cw - n.w / 2.0;
+        double off = target * ease;
+        UiDraw.rr(g, n.x, n.y, n.w, n.h, 6, UiDraw.FIELD);
+        g.enableScissor(n.x + 1, n.y + 1, n.x + n.w - 1, n.y + n.h - 1);
+        int first = Math.max(0, (int) Math.floor(off / pitch) - 1);
+        boolean done = t >= 1;
+        float pulse = (float) (0.5 + 0.5 * Math.sin(now / 160.0));
+        for (int i = 0; i < n.kids.size(); i++) {
+            UiView.Node k = n.kids.get(i);
+            int x = (int) Math.round(n.x + i * pitch - off), y = n.y + 6;
+            if (i < first || x > n.x + n.w) { k.w = 0; continue; }
+            k.x = Math.max(n.x, x);
+            k.y = y;
+            k.w = Math.max(0, Math.min(x + cw, n.x + n.w) - k.x);
+            k.h = ch;
+            int rc = k.color == UiDraw.TEXT ? UiDraw.TEXT2 : k.color;
+            boolean winner = done && i == n.win;
+            UiDraw.rr(g, x, y, cw, ch, 5, winner ? UiDraw.alpha(rc, 0.55f + 0.45f * pulse) : UiDraw.LINE);
+            UiDraw.rr(g, x + 1, y + 1, cw - 2, ch - 2, 4, winner ? UiDraw.lighten(UiDraw.ROW, 0.08f) : UiDraw.ROW);
+            g.fillGradient(x + 1, y + ch / 3, x + cw - 1, y + ch - 1, rc & 0x00FFFFFF, (rc & 0x00FFFFFF) | (winner ? 0x90000000 : 0x55000000));
+            g.fill(x + 3, y + ch - 3, x + cw - 3, y + ch - 1, rc);
+            int is = Math.max(16, Math.min(32, cw - 18));
+            drawItem(g, k.stack, x + (cw - is) / 2, y + (ch - is) / 2 - 2, is, k.num);
+        }
+        g.disableScissor();
+        g.pose().pushPose();
+        g.pose().translate(0, 0, 400);
+        // fondu sur les bords (au-dessus des objets et de leur nombre)
+        int fade = Math.min(40, n.w / 6), base = UiDraw.FIELD & 0x00FFFFFF;
+        for (int i = 0; i < fade; i++) {
+            int a = (int) (0xE0 * Math.pow(1 - i / (double) fade, 1.6));
+            g.fill(n.x + 1 + i, n.y + 1, n.x + 2 + i, n.y + n.h - 1, a << 24 | base);
+            g.fill(n.x + n.w - 2 - i, n.y + 1, n.x + n.w - 1 - i, n.y + n.h - 1, a << 24 | base);
+        }
+        // repère central
+        int mx = n.x + n.w / 2, gold = 0xFFF5C542;
+        g.fill(mx - 1, n.y + 3, mx + 1, n.y + n.h - 3, done ? UiDraw.alpha(gold, 0.6f + 0.4f * pulse) : gold);
+        for (int i = 0; i < 5; i++) {
+            g.fill(mx - 5 + i, n.y + 1 + i, mx + 5 - i, n.y + 2 + i, gold);
+            g.fill(mx - 5 + i, n.y + n.h - 2 - i, mx + 5 - i, n.y + n.h - 1 - i, gold);
+        }
+        g.pose().popPose();
+        // sons : une case qui passe sous le repère, puis le gain
+        int under = (int) Math.floor((off + n.w / 2.0) / pitch);
+        Integer last = spinTick.put(id, under);
+        var sm = Minecraft.getInstance().getSoundManager();
+        if (!done && last != null && last != under)
+            sm.play(SimpleSoundInstance.forUI(SoundEvents.NOTE_BLOCK_HAT.value(), 1.6F + (float) ease * 0.4F, 0.35F));
+        if (done && spinDone.add(id) && now - start < n.dur + 1500)
+            sm.play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.0F, 0.6F));
+    }
+
     private void drawToasts(GuiGraphics g) {
         long now = System.currentTimeMillis();
         toasts.removeIf(t -> t.until() < now);
@@ -661,6 +777,20 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
             return true;
         }
         setFocus(null, null);
+        if (t != null && t.t.equals("worldmap")) {
+            if (button == 0) {
+                dragMap = t;
+                dragX = x;
+                dragY = y;
+                dragMoved = false;
+            } else if (button == 1 && Minecraft.getInstance().player != null) {
+                var p = Minecraft.getInstance().player;
+                WorldMapView.View v = view(t);
+                WorldMapView.focus(v, p.getX(), p.getZ(), Math.max(2.0, v.scale));
+                v.pinX = Double.NaN;
+            }
+            return true;
+        }
         if (t == null || button != 0) return true;
         switch (t.t) {
             case "check" -> {
@@ -705,8 +835,39 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
     }
 
     @Override
+    public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
+        if (dragMap != null && button == 0) {
+            WorldMapView.pan(dragMap, view(dragMap), dx / f, dy / f);
+            if (Math.abs(vx(mx) - dragX) + Math.abs(vy(my) - dragY) > 3) dragMoved = true;
+            return true;
+        }
+        return super.mouseDragged(mx, my, button, dx, dy);
+    }
+
+    @Override
+    public boolean mouseReleased(double mx, double my, int button) {
+        if (dragMap != null && button == 0) {
+            if (!dragMoved) {
+                WorldMapView.View v = view(dragMap);
+                double[] b = WorldMapView.blockAt(dragMap, v, vx(mx), vy(my));
+                v.pinX = b[0];
+                v.pinZ = b[1];
+                click();
+            }
+            dragMap = null;
+            return true;
+        }
+        return super.mouseReleased(mx, my, button);
+    }
+
+    @Override
     public boolean mouseScrolled(double mx, double my, double sx, double sy) {
         if (root == null) return false;
+        UiView.Node wm = UiView.hitAction(dialog != null ? dialog : root, vx(mx), vy(my));
+        if (wm != null && wm.t.equals("worldmap")) {
+            if (sy != 0) WorldMapView.zoom(wm, view(wm), vx(mx), vy(my), sy > 0 ? 1.25 : 0.8);
+            return true;
+        }
         UiView.Node l = UiView.hitList(dialog != null ? dialog : root, vx(mx), vy(my));
         if (l != null) {
             l.scroll = Math.max(0, Math.min(l.contentH - l.h, l.scroll - sy * 18));
@@ -753,7 +914,17 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
     }
 
     @Override
+    protected void init() {
+        linking = false;
+        if (parked == this) parked = null;
+    }
+
+    @Override
     public void tick() {
+        if (closedByServer) {
+            Minecraft.getInstance().setScreen(null);
+            return;
+        }
         if (refreshSec > 0 && System.currentTimeMillis() >= nextRefresh) {
             nextRefresh = System.currentTimeMillis() + refreshSec * 1000L;
             send("refresh");
@@ -762,6 +933,7 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
 
     @Override
     public void removed() {
+        if (linking) return;
         if (!closedByServer && Minecraft.getInstance().getConnection() != null) ClientPlayNetworking.send(new UiActionPayload("close", "{}"));
     }
 

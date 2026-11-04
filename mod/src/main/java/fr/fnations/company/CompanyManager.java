@@ -63,6 +63,7 @@ public final class CompanyManager {
         double base = s.config().getDouble("hdv.taxe-pourcent", 5);
         Company c = of(u);
         if (c != null && c.type() == Company.Type.TRADING) base -= 0.3 * level(c);
+        base -= s.ranks().taxCut(u);
         return Math.max(0.5, base);
     }
 
@@ -71,7 +72,7 @@ public final class CompanyManager {
         int base = s.config().getInt("hdv.ventes-max", 20);
         Company c = of(u);
         if (c != null && c.type() == Company.Type.TRADING) base += 2 * level(c);
-        return base;
+        return base + s.ranks().hdvSlots(u);
     }
 
     /** Bonus affichés pour une entreprise. */

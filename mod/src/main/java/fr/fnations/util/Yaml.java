@@ -64,13 +64,15 @@ public final class Yaml {
 
     public Map<String, Object> raw() { return map; }
 
-    @SuppressWarnings("unchecked")
+    /** Valeur à un chemin « a.b.c ». Les clés numériques du YAML (ex. « 1: ») sont trouvées par leur texte. */
     public Object get(String path) {
         Object cur = map;
         for (String part : path.split("\\.")) {
-            if (!(cur instanceof Map)) return null;
-            cur = ((Map<String, Object>) cur).get(part);
-            if (cur == null) return null;
+            if (!(cur instanceof Map<?, ?> m)) return null;
+            Object next = m.get(part);
+            if (next == null) for (var e : m.entrySet()) if (String.valueOf(e.getKey()).equals(part)) { next = e.getValue(); break; }
+            if (next == null) return null;
+            cur = next;
         }
         return cur;
     }
@@ -137,7 +139,23 @@ public final class Yaml {
         return o instanceof Map ? new Yaml((Map<String, Object>) o) : null;
     }
 
-    public Set<String> getKeys() { return new LinkedHashSet<>(map.keySet()); }
+    public Set<String> getKeys() {
+        Set<String> out = new LinkedHashSet<>();
+        for (Object k : map.keySet()) out.add(String.valueOf(k));
+        return out;
+    }
+
+    /** Ajoute, récursivement, les clés absentes à partir des valeurs par défaut (sans toucher aux valeurs présentes). */
+    public void fillDefaults(Yaml def) { fill(map, def.map); }
+
+    @SuppressWarnings("unchecked")
+    private static void fill(Map<String, Object> cur, Map<String, Object> def) {
+        for (var e : def.entrySet()) {
+            Object v = cur.get(e.getKey());
+            if (v == null && !cur.containsKey(e.getKey())) cur.put(e.getKey(), e.getValue());
+            else if (v instanceof Map && e.getValue() instanceof Map) fill((Map<String, Object>) v, (Map<String, Object>) e.getValue());
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public void set(String path, Object value) {
