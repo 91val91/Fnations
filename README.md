@@ -27,16 +27,35 @@ Fnations/
 |---|---|---|
 | Items | 59 items (base PAPER + modèle du pack) | 59 vrais items enregistrés, données dans des composants (chargeur, billets, carburant) |
 | Machines | Blocs vanilla avec un display par-dessus | 10 vrais blocs orientables avec entité de bloc, compatibles entonnoirs, cassés à la pioche. Panneaux solaires et Station de Craft en 3D animée |
-| GUIs | Coffres Bukkit | Panneaux au thème FNations, écrans de machine avec jauges, vraie fenêtre de saisie |
+| GUIs | Coffres Bukkit | **Tablette FNations** (touche **M**) : interface moderne dessinée par le client (listes, onglets, champs de saisie, cartes, modèle 3D du joueur), pages envoyées par le serveur. Écrans de machine au même thème |
 | Armes | Clic droit, F pour recharger | Tir maintenu pour les armes automatiques, recul de caméra, **R** pour recharger, HUD des munitions, zoom de lunette |
 | Véhicules | Armor stands téléportés | Vraies entités avec collisions, conduite fluide simulée par le client (comme les bateaux), rotor animé |
 | Missiles, fusée | Item displays | Entités rendues en 3D. La fusée voyage vers les **dimensions** `fnations:orbit` et `fnations:moon` |
 | Chambres | WorldEdit obligatoire | WorldEdit Fabric si installé (`.schem`), sinon structures vanilla (`.nbt`) |
 | Datapack | À part | Intégré au mod : recette de la Station, progrès, loot tables, dimensions |
 
+### La tablette (touche M)
+
+Toutes les interfaces sont réunies dans une tablette au thème sombre (barre de navigation à gauche) :
+
+| Page | Contenu |
+|---|---|
+| Accueil | Profil du joueur (modèle 3D), solde, nation, entreprise, résumé des six métiers, raccourcis |
+| Mon pays | Sans nation : liste des pays (recherche, adhésion) et création avec **carte du relief** autour du joueur, biome, ressources détectées, cultures. Avec nation : profil (bandeau couleur, étiquettes #Build/#Farm…, description, niveau, puissance, carte du territoire, citoyens), membres, **carte des chunks** sur fond de relief (clic pour revendiquer), diplomatie, paramètres |
+| Banque | Compte personnel (billets, virements, historique), trésor national, capital de l'entreprise |
+| Entreprise | Création (4 types), employés, salaires, capital, bonus de niveau, paramètres |
+| Métiers | Compétences : liste, description, « comment monter », piste des 6 paliers, récompenses, classement |
+| Hôtel des ventes | Ventes, offres d'achat, mon espace, espace pays, espace entreprise (voir plus bas) |
+| R&D | Catégories, technologies (fiche détaillée), recherche en cours avec progression |
+| Guerres | Score des conflits, paix, capitulation, capture, déclaration de guerre |
+| Chambres | Réception : filtres par groupe, location, achat, colocataires, téléportation |
+| Classements | Fortunes, nations, métiers, entreprises, vendeurs de la semaine |
+
+La Station de Craft ouvre aussi sa page (catégories, recettes, ingrédients, fabrication ×1/×5).
+
 ### Systèmes
 
-Commandes : `/menu` ouvre le menu principal, et chaque commande ouvre son interface lorsqu'on la tape sans argument.
+Commandes : `/menu` (ou la touche **M**) ouvre la tablette, et chaque commande ouvre sa page lorsqu'on la tape sans argument.
 
 | Système | Commande | Fonctions |
 |---|---|---|
@@ -45,12 +64,48 @@ Commandes : `/menu` ouvre le menu principal, et chaque commande ouvre son interf
 | Guerres | `/guerre` | Déclaration, préparation, score (kills, captures de chunks, missiles, véhicules), paix, capitulation, réparations |
 | Banque | `/banque`, `/payer` | Comptes, billets physiques, virements, historique, intérêts, banque nationale, classements |
 | Chambres | `/chambre` ou guichet de réception | Location ou achat, colocataires, revente, restauration automatique de la chambre |
+| Métiers | `/metier` (`/jobs`) | Builder, Agriculteur, Chasseur, Bûcheron, Ingénieur, Mineur : XP et argent par action, 6 paliers avec récompenses et bonus (`metiers.yml`) |
+| Entreprises | `/entreprise` | Trading, Ingénierie, Agriculture, Construction : niveaux, bonus, salaires horaires, contribution des employés, capital |
+| Hôtel des ventes | `/hdv`, `/hdv vendre <prix> [n]` | Ventes groupées par objet, achat au meilleur prix, offres d'achat, boîte de réception, ventes au nom d'une nation ou d'une entreprise, taxe, classement hebdomadaire |
+| Classements | `/classement` | Fortunes, nations, métiers, entreprises, HDV |
 | Armes à feu | — | Pistolet, PM, fusil d'assaut, fusil à pompe, sniper, RPG (`weapons.yml`) |
 | Véhicules | — | Char (canon), avion et hélicoptère (mitrailleuse), tracteur (récolte + charrue), carburant, dégâts |
 | Station de Craft | Bloc | Fabrication de tout le contenu (`recipes.yml`, section `station`). Modèle 3D d'un bloc et demi : piliers lumineux, écrans animés, vitres, hologramme tournant des créations du mod |
 | Machines | Blocs | Compresseur, générateur à charbon, solaires T1-T3, four électrique, concasseur, interrupteur de sécurité. Le panneau des solaires suit le soleil et se met à plat la nuit |
 | Missiles | Lanceur | Tactique, croisière, balistique, nucléaire (zone irradiée) ; tir uniquement en guerre active |
 | Fusée | Item | Ergol, compte à rebours, décollage, arrivée en orbite ou sur la Lune (gravité faible) |
+
+**Métiers** : chaque joueur progresse dans les six métiers à la fois.
+
+- L'argent gagné est versé chaque minute, sans spammer l'historique bancaire. La barre d'action affiche l'XP gagnée.
+- Anti-abus : les blocs posés par un joueur ne rapportent rien au Mineur, au Bûcheron ni à l'Agriculteur. Le Builder n'est payé qu'une fois par emplacement. En créatif, aucun métier ne progresse.
+
+| Métier | Gagne de l'XP en… | Bonus des paliers |
+|---|---|---|
+| Builder | posant des blocs | +0,5 bloc de portée par palier, jusqu'à 12 % de blocs non consommés |
+| Agriculteur | récoltant des cultures mûres | jusqu'à 30 % de double récolte, replantation automatique dès le palier 2 |
+| Chasseur | tuant monstres et animaux | primes +10 % par palier, orbes d'XP, Force puis Régénération après un kill |
+| Bûcheron | coupant des bûches, plantant des pousses | double coupe, abattage de l'arbre entier (accroupi, hache), replantation |
+| Ingénieur | fabriquant à la Station, posant des machines | 4 % par palier de chance de récupérer un ingrédient |
+| Mineur | minant pierre et minerais naturels | jusqu'à 30 % de double minerai, Célérité I puis II |
+
+**Entreprises** :
+
+- Fonder une entreprise coûte 10 000 $. Sauf pour le Trading, il faut aussi le palier 1 dans le métier associé.
+- Les employés font monter son niveau (10 niveaux). Pour le Trading, ce sont les ventes à l'HDV.
+- À chaque niveau, les employés gagnent +1 % d'XP et +2 % de revenus dans le métier de l'entreprise.
+  - Ingénierie : ingrédients récupérés plus souvent.
+  - Trading : taxe HDV réduite, emplacements de vente en plus, ventes au nom de l'entreprise.
+- Le PDG fixe la part des revenus de métier reversée au capital (0 à 30 %) et les salaires horaires de chaque employé.
+
+**Hôtel des ventes** :
+
+- Les annonces sont regroupées par objet et classées automatiquement dans 8 catégories et leurs sous-catégories.
+- Achat au meilleur prix, sur plusieurs vendeurs si nécessaire.
+- Les offres d'achat bloquent la somme jusqu'à la livraison. Un vendeur peut y répondre directement depuis son inventaire.
+- Les objets achetés qui ne tiennent pas dans l'inventaire et les annonces expirées (7 jours) arrivent dans la boîte de réception.
+- Taxe de 5 % sur le vendeur.
+- Un Ministre peut vendre au nom de sa nation (recette versée au trésor), un Directeur d'entreprise de Trading au nom de son entreprise.
 
 **Énergie** : les générateurs alimentent, dans un rayon de 16 blocs, les machines qui ont du travail. Le lanceur de
 missiles se recharge uniquement sur le surplus. Les machines chauffent en fonctionnant :
@@ -77,12 +132,19 @@ missiles se recharge uniquement sur le surplus. Les machines chauffent en foncti
 | `/fnations items` | Interface avec tous les items |
 | `/fnations recherche <nation> <techno\|tout>` | Accorder des technologies |
 | `/fnations reload` | Recharger la configuration |
+| `/metier set <joueur> <métier> <xp>` | Définir l'XP d'un métier |
 | `/banque donner <joueur> <montant>` | Créditer un compte |
 | `/chambre creer\|pos1\|pos2\|guichet\|reset\|snapshot\|setspawn\|prix\|supprimer` | Gérer les chambres |
 
 **Fichiers** :
-- configuration modifiable dans `config/fnations/` : `config.yml`, `research.yml`, `recipes.yml`, `weapons.yml` ;
-- données du monde dans `world/fnations/`.
+- configuration modifiable dans `config/fnations/` :
+  - `config.yml`, avec les sections `entreprises` et `hdv` ;
+  - `research.yml`, `recipes.yml`, `weapons.yml` ;
+  - `metiers.yml` : paliers, récompenses, XP et argent de chaque action ;
+- données du monde dans `world/fnations/` :
+  - `nations.yml`, `bank.yml` ;
+  - `jobs.yml`, `entreprises.yml` ;
+  - `hdv.json`, qui contient les objets en vente avec tous leurs composants.
 
 ### Installer le serveur
 
@@ -171,8 +233,22 @@ joue les systèmes et prend des captures. Les modèles 3D sont générés par sc
 **Mod.** Testé avec un vrai serveur Fabric 1.21.4 et un vrai client Minecraft (rendu logiciel sous Xvfb) :
 
 - chargement du mod, des dimensions, des progrès et des configurations ;
-- toutes les interfaces : menu, nation, territoire, R&D, guerres, banque, saisie, chambres, Station, machines,
-  lanceur, interrupteur, poste de pilotage ;
+- toutes les pages de la tablette, chacune capturée et pilotée depuis le client :
+  - accueil ;
+  - création du pays (carte du relief, biome, ressources), profil, membres ;
+  - territoire avec revendication d'un chunk par clic sur la carte ;
+  - banque (retrait d'un billet) ;
+  - métiers avec classement ;
+  - création d'entreprise ;
+  - HDV ;
+  - R&D, guerres, chambres, Station de Craft (fabrication d'un lingot d'acier), classements ;
+- métiers : 5 blocs posés en survie donnent 5 XP de Builder, et les paliers versent leurs récompenses ;
+- hôtel des ventes :
+  - mise en vente de 4 objets, dont des flèches au nom de la nation ;
+  - achat de 10 flèches au meilleur prix, payé au trésor national taxe déduite (38 $ pour 40 $) ;
+  - offre d'achat avec somme bloquée ;
+  - onglets Mon espace et Espace pays, filtres par catégorie ;
+- écrans de machine (au thème de la tablette) : générateur, compresseur, lanceur, interrupteur, poste de pilotage ;
 - rendu 3D des 59 items, des 10 machines, des 4 véhicules, de la fusée et du missile en vol ;
 - panneaux solaires 3D capturés à six heures de la journée (suivi du soleil, mise à plat la nuit, T3 lumineux)
   et hologramme de la Station de Craft ;

@@ -3,24 +3,18 @@ package fr.fnations.server;
 import com.mojang.authlib.GameProfile;
 import fr.fnations.FNations;
 import fr.fnations.admin.Advancements;
-import fr.fnations.bank.BankGui;
 import fr.fnations.bank.BankManager;
 import fr.fnations.craft.CraftingStation;
-import fr.fnations.gui.MainMenu;
 import fr.fnations.machine.MachineRecipe;
 import fr.fnations.machine.MachineType;
 import fr.fnations.missile.MissileManager;
 import fr.fnations.nation.NationActions;
-import fr.fnations.nation.NationGui;
 import fr.fnations.nation.NationManager;
 import fr.fnations.nation.Territory;
-import fr.fnations.research.ResearchGui;
 import fr.fnations.research.ResearchManager;
-import fr.fnations.room.RoomGui;
 import fr.fnations.room.RoomManager;
 import fr.fnations.util.Inv;
 import fr.fnations.util.Yaml;
-import fr.fnations.war.WarGui;
 import fr.fnations.war.WarManager;
 import fr.fnations.weapon.WeaponManager;
 import net.fabricmc.loader.api.FabricLoader;
@@ -39,7 +33,7 @@ import java.util.UUID;
 
 /** État serveur de FNations : configuration, managers et horloges. Une instance par serveur démarré. */
 public final class FnServer {
-    private static final String[] DEFAULTS = {"config.yml", "research.yml", "recipes.yml", "weapons.yml"};
+    private static final String[] DEFAULTS = {"config.yml", "research.yml", "recipes.yml", "weapons.yml", "metiers.yml"};
     private static FnServer instance;
 
     private final MinecraftServer server;
@@ -57,12 +51,11 @@ public final class FnServer {
     private WeaponManager weapons;
     private MissileManager missiles;
     private CraftingStation station;
-    private NationGui nationGui;
-    private BankGui bankGui;
-    private ResearchGui researchGui;
-    private WarGui warGui;
-    private RoomGui roomGui;
-    private MainMenu mainMenu;
+    private fr.fnations.job.JobManager jobs;
+    private fr.fnations.company.CompanyManager companies;
+    private fr.fnations.market.MarketManager market;
+    private fr.fnations.ui.UiManager ui;
+    private NationActions nationActions;
     private long ticks;
 
     private FnServer(MinecraftServer server) {
@@ -87,13 +80,13 @@ public final class FnServer {
         s.weapons = new WeaponManager(s);
         s.missiles = new MissileManager(s);
         s.station = new CraftingStation(s);
+        s.companies = new fr.fnations.company.CompanyManager(s);
+        s.jobs = new fr.fnations.job.JobManager(s);
+        s.market = new fr.fnations.market.MarketManager(s);
+        s.ui = new fr.fnations.ui.UiManager(s);
+        fr.fnations.ui.pages.Pages.register(s, s.ui);
         NationActions actions = new NationActions(s);
-        s.nationGui = new NationGui(s, actions);
-        s.bankGui = new BankGui(s);
-        s.researchGui = new ResearchGui(s);
-        s.warGui = new WarGui(s);
-        s.roomGui = new RoomGui(s);
-        s.mainMenu = new MainMenu(s);
+        s.nationActions = actions;
         FNations.LOG.info("FNations : données dans {}, configuration dans {}", s.dataDir, s.configDir);
     }
 
@@ -154,6 +147,7 @@ public final class FnServer {
         weapons.reload();
         missiles.reload();
         station.reload();
+        jobs.reload();
     }
 
     public Yaml yaml(String name) { return loadYaml(name); }
@@ -164,6 +158,9 @@ public final class FnServer {
         weapons.tick();
         missiles.tick();
         territory.tick(ticks);
+        jobs.tick(ticks);
+        companies.tick(ticks);
+        if (ticks % 1200 == 0) market.tick();
         fr.fnations.rocket.Space.tick(this, ticks);
         if (ticks % 20 == 0) {
             research.tick();
@@ -179,6 +176,10 @@ public final class FnServer {
     }
 
     public void saveAll() {
+        jobs.flush();
+        jobs.save();
+        companies.save();
+        market.save();
         bank.save();
         nations.save();
         wars.save();
@@ -222,10 +223,9 @@ public final class FnServer {
     public WeaponManager weapons() { return weapons; }
     public MissileManager missiles() { return missiles; }
     public CraftingStation station() { return station; }
-    public NationGui nationGui() { return nationGui; }
-    public BankGui bankGui() { return bankGui; }
-    public ResearchGui researchGui() { return researchGui; }
-    public WarGui warGui() { return warGui; }
-    public RoomGui roomGui() { return roomGui; }
-    public MainMenu mainMenu() { return mainMenu; }
+    public fr.fnations.job.JobManager jobs() { return jobs; }
+    public fr.fnations.company.CompanyManager companies() { return companies; }
+    public fr.fnations.market.MarketManager market() { return market; }
+    public fr.fnations.ui.UiManager ui() { return ui; }
+    public NationActions nationActions() { return nationActions; }
 }

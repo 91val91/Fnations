@@ -47,6 +47,34 @@ public final class NationManager {
         return a != null && b != null && (a == b || a.allies().contains(b.id()));
     }
 
+    /** Résumé texte d'une nation (commande /nation info). */
+    public List<String> describe(Nation n) {
+        List<String> l = new ArrayList<>();
+        l.add("<gray>Tag : <white>[" + n.tag() + "]");
+        l.add("<gray>Chef : <gold>" + plugin.name(n.leader()));
+        l.add("<gray>Citoyens : <white>" + n.members().size());
+        l.add("<gray>Territoire : <white>" + n.claims().size() + "/" + maxClaims(n) + " chunks");
+        l.add("<gray>Trésor : <green>" + fr.fnations.util.Txt.money(n.balance()));
+        l.add("<gray>Technologies : <aqua>" + n.researched().size() + "/" + plugin.research().all().size());
+        l.add("<gray>Puissance : <white>" + power(n));
+        l.add("<gray>Guerres : <green>" + n.wins() + " victoires <gray>/ <red>" + n.losses() + " défaites");
+        l.add(n.open() ? "<green>Recrutement ouvert" : "<red>Sur invitation");
+        return l;
+    }
+
+    /** Points de puissance : membres, territoire, technologies, victoires et trésor. */
+    public int power(Nation n) {
+        return n.members().size() * 10 + n.claims().size() * 2 + n.researched().size() * 15 + n.wins() * 25 + (int) Math.min(500, n.balance() / 2000);
+    }
+
+    /** Niveau de la nation et progression vers le suivant (0..1). */
+    public double[] level(Nation n) {
+        double p = power(n);
+        double lvl = Math.sqrt(p / 8.0);
+        int l = (int) Math.floor(lvl) + 1;
+        return new double[]{l, lvl - Math.floor(lvl)};
+    }
+
     public int maxClaims(Nation n) {
         var c = plugin.config();
         return c.getInt("nations.claims-base", 9) + c.getInt("nations.claims-par-membre", 4) * n.members().size() + n.bonusClaims();
@@ -174,6 +202,8 @@ public final class NationManager {
             n.setResearch(s.getString("research.current"), s.getLong("research.end"));
             n.setBonusClaims(s.getInt("bonus-claims"));
             n.setRecord(s.getInt("wins"), s.getInt("losses"));
+            n.setDescription(s.getString("description", ""));
+            n.tags().addAll(s.getStringList("tags"));
             nations.put(id, n);
             n.members().keySet().forEach(u -> byPlayer.put(u, id));
             n.claims().forEach(c -> byChunk.put(c, id));
@@ -203,6 +233,8 @@ public final class NationManager {
             y.set(p + "bonus-claims", n.bonusClaims());
             y.set(p + "wins", n.wins());
             y.set(p + "losses", n.losses());
+            y.set(p + "description", n.description());
+            y.set(p + "tags", new ArrayList<>(n.tags()));
         }
         store.save();
     }

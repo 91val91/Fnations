@@ -60,6 +60,7 @@
  "block.fnations.missile_launcher": "Missile Launcher",
  "itemGroup.fnations": "FNations",
  "key.fnations.reload": "Reload weapon",
+ "key.fnations.tablet": "Open tablet",
  "category.fnations": "FNations",
  "entity.fnations.shell": "Shell",
  "entity.fnations.missile": "Missile",

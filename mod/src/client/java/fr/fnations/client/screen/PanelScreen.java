@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-/** Écran des panneaux FNations (thème sombre doré, mise en page façon coffre). */
+/** Écran des panneaux FNations (thème bleu nuit de la tablette, mise en page façon coffre). */
 public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     private static final ResourceLocation TEX = FNations.id("textures/gui/panel.png");
     private final int rows;
@@ -36,7 +36,7 @@ public final class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics g, int mx, int my) {
-        g.drawString(font, title, titleLabelX, titleLabelY, 0xFFE8C26A, false);
-        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFFB8B8B8, false);
+        g.drawString(font, title, titleLabelX, titleLabelY, 0xFFFFFFFF, false);
+        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFFA3A6B4, false);
     }
 }

@@ -52,7 +52,7 @@ loom {
             name "Autotest Client"
             source sourceSets.autotest
             runDir "run-client"
-            programArgs "--username", "FnTester"
+            programArgs "--username", "FnTester", "--width", "1280", "--height", "720"
             vmArgs "-Dfnations.autotest=1"
         }
     }

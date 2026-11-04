@@ -51,14 +51,22 @@ public final class Commands {
         cmd(d, List.of("payer", "pay"), 0, (p, a) -> pay(p, a, 0), (p, a) -> a.length == 1 ? players(p) : List.of());
         cmd(d, List.of("guerre", "war"), 0, Commands::war, (p, a) -> a.length == 1 ? List.of("declarer", "capturer", "liste") : nations());
         cmd(d, List.of("chambre", "chambres", "hotel"), 0, Commands::room, Commands::roomSuggest);
-        cmd(d, List.of("recherche", "rd", "research"), 0, (p, a) -> s().researchGui().open(p), (p, a) -> List.of());
-        cmd(d, List.of("menu"), 0, (p, a) -> s().mainMenu().open(p), (p, a) -> List.of());
-        cmd(d, List.of("station"), 2, (p, a) -> s().station().open(p), (p, a) -> List.of());
+        cmd(d, List.of("recherche", "rd", "research"), 0, (p, a) -> ui(p, "recherche"), (p, a) -> List.of());
+        cmd(d, List.of("menu", "tablette"), 0, (p, a) -> ui(p, "accueil"), (p, a) -> List.of());
+        cmd(d, List.of("station"), 2, (p, a) -> ui(p, "station"), (p, a) -> List.of());
+        cmd(d, List.of("metier", "metiers", "jobs", "competences"), 0, Commands::jobs, Commands::jobsSuggest);
+        cmd(d, List.of("entreprise", "ent", "company"), 0, (p, a) -> ui(p, "entreprise"), (p, a) -> List.of());
+        cmd(d, List.of("hdv", "ah", "market"), 0, Commands::market, (p, a) -> a.length == 1 ? List.of("vendre") : List.of());
+        cmd(d, List.of("classement", "classements", "top"), 0, (p, a) -> ui(p, "classements"), (p, a) -> List.of());
         cmd(d, List.of("fnations", "fn"), 0, Commands::admin, Commands::adminSuggest);
     }
 
     // ------------------------------------------------------------ infrastructure
     private static FnServer s() { return FnServer.get(); }
+
+    private static void ui(ServerPlayer p, String page) { s().ui().open(p, page); }
+
+    private static void ui(ServerPlayer p, String page, java.util.Map<String, String> state) { s().ui().open(p, page, state); }
 
     private static void cmd(CommandDispatcher<CommandSourceStack> d, List<String> names, int perm,
                             BiConsumer<ServerPlayer, String[]> exec, BiFunction<ServerPlayer, String[], List<String>> suggest) {
@@ -109,8 +117,8 @@ public final class Commands {
     // ------------------------------------------------------------ /nation
     private static void nation(ServerPlayer p, String[] a) {
         FnServer s = s();
-        NationActions act = s.nationGui().actions();
-        if (a.length == 0) { s.nationGui().open(p); return; }
+        NationActions act = s.nationActions();
+        if (a.length == 0) { ui(p, "pays"); return; }
         String arg = arg(a, 1);
         switch (a[0].toLowerCase()) {
             case "creer", "create" -> { if (arg == null) usage(p, "creer <nom>"); else act.create(p, arg); }
@@ -130,7 +138,7 @@ public final class Commands {
             case "setcapitale", "sethome" -> act.setHome(p);
             case "impot", "tax" -> money(p, arg, v -> act.setTax(p, v));
             case "tag" -> { if (arg == null) usage(p, "tag <TAG>"); else act.setTag(p, arg); }
-            case "carte", "map" -> s.nationGui().territory(p);
+            case "carte", "map" -> ui(p, "pays", java.util.Map.of("tab", "territoire"));
             case "liste", "list" -> {
                 Msg.send(p, "<gold>Nations (" + s.nations().all().size() + ") :");
                 s.nations().all().forEach(n -> Msg.raw(p, " <dark_gray>• " + n.colored() + " <gray>[" + n.tag() + "] "
@@ -140,7 +148,7 @@ public final class Commands {
                 Nation n = arg == null ? s.nations().of(p) : s.nations().get(arg);
                 if (n == null) { Msg.err(p, "Nation introuvable."); return; }
                 Msg.send(p, n.colored());
-                s.nationGui().describe(n).forEach(l -> Msg.raw(p, "  " + l));
+                s.nations().describe(n).forEach(l -> Msg.raw(p, "  " + l));
             }
             case "dissoudre" -> {
                 if (arg == null || !arg.equalsIgnoreCase("confirmer")) usage(p, "dissoudre confirmer");
@@ -180,7 +188,7 @@ public final class Commands {
     // ------------------------------------------------------------ /banque & /payer
     private static void bank(ServerPlayer p, String[] a) {
         FnServer s = s();
-        if (a.length == 0) { s.bankGui().open(p); return; }
+        if (a.length == 0) { ui(p, "banque"); return; }
         switch (a[0].toLowerCase()) {
             case "solde" -> Msg.send(p, "Solde : <gold>" + Txt.money(s.bank().balance(p.getUUID())));
             case "payer" -> pay(p, a, 1);
@@ -195,7 +203,7 @@ public final class Commands {
                 Inv.give(p, s.bank().banknote(v));
                 Msg.ok(p, "Retrait de " + Txt.money(v) + ".");
             }
-            case "nation" -> s.bankGui().openNation(p);
+            case "nation" -> ui(p, "banque");
             case "donner" -> {
                 if (!p.hasPermissions(2)) { Msg.err(p, "Réservé aux administrateurs."); return; }
                 if (a.length < 3) { Msg.err(p, "Usage : /banque donner <joueur> <montant>"); return; }
@@ -222,28 +230,29 @@ public final class Commands {
     // ------------------------------------------------------------ /guerre
     private static void war(ServerPlayer p, String[] a) {
         FnServer s = s();
-        if (a.length == 0) { s.warGui().open(p); return; }
+        if (a.length == 0) { ui(p, "guerres"); return; }
         switch (a[0].toLowerCase()) {
             case "declarer" -> {
                 if (a.length < 2) { Msg.err(p, "Usage : /guerre declarer <nation>"); return; }
                 Nation t = s.nations().get(a[1]);
-                if (t == null) Msg.err(p, "Nation introuvable."); else s.warGui().confirmDeclare(p, t);
+                if (t == null) Msg.err(p, "Nation introuvable.");
+                else { ui(p, "guerres"); s.ui().handle(p, "guerres.declare:" + t.id(), "{}"); }
             }
             case "capturer" -> s.wars().startCapture(p);
             case "liste" -> {
                 if (s.wars().all().isEmpty()) Msg.send(p, "<green>☮ Le monde est en paix.");
                 for (War w : s.wars().all()) Msg.send(p, w.attacker() + " " + w.attackerScore() + " ⚔ " + w.defenderScore() + " " + w.defender());
             }
-            default -> s.warGui().open(p);
+            default -> ui(p, "guerres");
         }
     }
 
     // ------------------------------------------------------------ /chambre
     private static void room(ServerPlayer p, String[] a) {
         FnServer s = s();
-        if (a.length == 0) { s.roomGui().open(p, null); return; }
+        if (a.length == 0) { ui(p, "chambres"); return; }
         String sub = a[0].toLowerCase();
-        if (!List.of("liste", "tp").contains(sub) && !p.hasPermissions(2)) { s.roomGui().open(p, null); return; }
+        if (!List.of("liste", "tp").contains(sub) && !p.hasPermissions(2)) { ui(p, "chambres"); return; }
         var rm = s.rooms();
         switch (sub) {
             case "pos1", "pos2" -> {
@@ -306,10 +315,53 @@ public final class Commands {
         return List.of();
     }
 
+    // ------------------------------------------------------------ /metier
+    private static void jobs(ServerPlayer p, String[] a) {
+        FnServer s = s();
+        if (a.length >= 4 && a[0].equalsIgnoreCase("set") && p.hasPermissions(2)) {
+            ServerPlayer t = s.playerByName(a[1]);
+            fr.fnations.job.Job j = fr.fnations.job.Job.byId(a[2]);
+            Double v = Txt.parseAmount(a[3]);
+            if (t == null || j == null || v == null) { Msg.err(p, "Usage : /metier set <joueur> <metier> <xp>"); return; }
+            s.jobs().setXp(t, j, v);
+            Msg.ok(p, j.display + " de " + t.getScoreboardName() + " : " + Math.round(v) + " XP.");
+            return;
+        }
+        fr.fnations.job.Job j = a.length > 0 ? fr.fnations.job.Job.byId(a[0]) : null;
+        ui(p, "metiers", j == null ? java.util.Map.of() : java.util.Map.of("job", j.id));
+    }
+
+    private static List<String> jobsSuggest(ServerPlayer p, String[] a) {
+        List<String> ids = new ArrayList<>();
+        for (fr.fnations.job.Job j : fr.fnations.job.Job.values()) ids.add(j.id);
+        if (a.length <= 1) {
+            if (p.hasPermissions(2)) ids.add("set");
+            return ids;
+        }
+        if (a[0].equalsIgnoreCase("set")) return a.length == 2 ? players(p) : a.length == 3 ? ids : List.of();
+        return List.of();
+    }
+
+    // ------------------------------------------------------------ /hdv
+    private static void market(ServerPlayer p, String[] a) {
+        FnServer s = s();
+        if (a.length >= 2 && a[0].equalsIgnoreCase("vendre")) {
+            Double price = Txt.parseAmount(a[1]);
+            int slot = p.getInventory().selected;
+            var held = p.getInventory().items.get(slot);
+            if (price == null || held.isEmpty()) { Msg.err(p, "Usage : /hdv vendre <prix unitaire> [quantité] (objet en main)"); return; }
+            int qty = held.getCount();
+            try { if (a.length > 2) qty = Math.max(1, Integer.parseInt(a[2])); } catch (NumberFormatException ignored) {}
+            s.market().sell(p, slot, qty, price, fr.fnations.market.MarketManager.player(p.getUUID()));
+            return;
+        }
+        ui(p, "hdv");
+    }
+
     // ------------------------------------------------------------ /fnations (admin)
     private static void admin(ServerPlayer p, String[] a) {
         FnServer s = s();
-        if (a.length == 0 || !p.hasPermissions(2)) { s.mainMenu().open(p); return; }
+        if (a.length == 0 || !p.hasPermissions(2)) { ui(p, "accueil"); return; }
         switch (a[0].toLowerCase()) {
             case "give" -> {
                 if (a.length < 3) { Msg.err(p, "Usage : /fnations give <joueur> <item> [quantité]"); return; }

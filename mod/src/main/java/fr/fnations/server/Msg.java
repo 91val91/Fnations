@@ -14,7 +14,11 @@ import net.minecraft.sounds.SoundSource;
 public final class Msg {
     private Msg() {}
 
-    public static void send(ServerPlayer p, String mini) { p.sendSystemMessage(Txt.prefixed(mini)); }
+    public static void send(ServerPlayer p, String mini) {
+        p.sendSystemMessage(Txt.prefixed(mini));
+        FnServer s = FnServer.get();
+        if (s != null && s.ui() != null) s.ui().toast(p, mini); // affiché aussi sur la tablette si elle est ouverte
+    }
 
     public static void ok(ServerPlayer p, String mini) { send(p, "<green>" + mini); }
 

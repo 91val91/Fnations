@@ -41,6 +41,8 @@ public final class Nation {
     private long researchEnd;
     private int bonusClaims;
     private int wins, losses;
+    private String description = "";
+    private final java.util.List<String> tags = new java.util.ArrayList<>();
 
     public Nation(String id, String name, UUID leader, long createdAt) {
         this.id = id;
@@ -92,4 +94,7 @@ public final class Nation {
     public void addWin() { wins++; }
     public void addLoss() { losses++; }
     public void setRecord(int w, int l) { wins = w; losses = l; }
+    public String description() { return description; }
+    public void setDescription(String d) { description = d == null ? "" : d; }
+    public java.util.List<String> tags() { return tags; }
 }

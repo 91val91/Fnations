@@ -32,7 +32,9 @@ public final class NationActions {
         return n;
     }
 
-    public void create(ServerPlayer p, String name) {
+    public void create(ServerPlayer p, String name) { create(p, name, true); }
+
+    public void create(ServerPlayer p, String name, boolean announce) {
         if (nm.of(p) != null) { Msg.err(p, "Vous êtes déjà dans une nation."); return; }
         String err = nm.validateName(name);
         if (err != null) { Msg.err(p, err); return; }
@@ -42,7 +44,12 @@ public final class NationActions {
             return;
         }
         Nation n = nm.create(p, name);
-        Msg.broadcast(plugin.server(), ("<green>" + Txt.esc(p.getScoreboardName()) + " a fondé la nation " + n.colored() + "<green> !"));
+        String dim = Locs.dim(p.level());
+        String key = Locs.chunkKey(dim, p.blockPosition().getX() >> 4, p.blockPosition().getZ() >> 4);
+        if (nm.atChunk(key) == null && !plugin.config().getStringList("nations.mondes-interdits").contains(dim)
+                && !plugin.rooms().intersectsChunk(dim, p.blockPosition().getX() >> 4, p.blockPosition().getZ() >> 4)) nm.claim(n, key);
+        if (announce) Msg.broadcast(plugin.server(), ("<green>" + Txt.esc(p.getScoreboardName()) + " a fondé la nation " + n.colored() + "<green> !"));
+        else Msg.ok(p, "Nation " + n.name() + " fondée !");
     }
 
     public void invite(ServerPlayer p, String target) {
@@ -116,11 +123,12 @@ public final class NationActions {
         nm.broadcast(n, "<gold>" + plugin.name(target) + " est le nouveau Chef d'État !");
     }
 
-    public void claim(ServerPlayer p) {
+    public void claim(ServerPlayer p) { claimChunk(p, p.blockPosition().getX() >> 4, p.blockPosition().getZ() >> 4); }
+
+    private void claimChunk(ServerPlayer p, int cx, int cz) {
         Nation n = need(p, Role.OFFICER);
         if (n == null) return;
         String dim = Locs.dim(p.level());
-        int cx = p.blockPosition().getX() >> 4, cz = p.blockPosition().getZ() >> 4;
         String key = Locs.chunkKey(dim, cx, cz);
         if (plugin.config().getStringList("nations.mondes-interdits").contains(dim)) {
             Msg.err(p, "On ne peut pas revendiquer de territoire dans ce monde."); return;
@@ -138,6 +146,22 @@ public final class NationActions {
         }
         nm.claim(n, key);
         Msg.ok(p, "Chunk revendiqué pour " + n.colored() + "<green> (" + n.claims().size() + "/" + nm.maxClaims(n) + ").");
+    }
+
+    /** Revendication d'un chunk cliqué sur la carte (proche du joueur). */
+    public void claimAt(ServerPlayer p, int cx, int cz) {
+        int pcx = p.blockPosition().getX() >> 4, pcz = p.blockPosition().getZ() >> 4;
+        if (Math.abs(cx - pcx) > 12 || Math.abs(cz - pcz) > 12) { Msg.err(p, "Ce chunk est trop loin de vous."); return; }
+        claimChunk(p, cx, cz);
+    }
+
+    public void unclaimAt(ServerPlayer p, int cx, int cz) {
+        Nation n = need(p, Role.OFFICER);
+        if (n == null) return;
+        String key = Locs.chunkKey(Locs.dim(p.level()), cx, cz);
+        if (!n.claims().contains(key)) { Msg.err(p, "Ce chunk n'appartient pas à votre nation."); return; }
+        nm.unclaim(n, key);
+        Msg.ok(p, "Chunk " + cx + ", " + cz + " abandonné.");
     }
 
     public void unclaim(ServerPlayer p) {

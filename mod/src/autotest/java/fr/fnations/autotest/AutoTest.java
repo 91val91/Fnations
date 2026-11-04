@@ -144,6 +144,31 @@ public final class AutoTest implements ClientModInitializer {
         });
     }
 
+    // ------------------------------------------------------------ tablette (pages serveur)
+    private fr.fnations.client.ui.FnUiScreen ui() { return mc().screen instanceof fr.fnations.client.ui.FnUiScreen s ? s : null; }
+
+    private void press(String a) {
+        var s = ui();
+        boolean ok = s != null && s.press(a);
+        if (!ok && s != null) { s.sendAction(a); log("action " + a + " (envoyée directement)"); }
+        else log("action " + a + (ok ? "" : " : aucune tablette ouverte"));
+    }
+
+    private void type(String id, String v) { var s = ui(); if (s != null) s.type(id, v); }
+
+    private void check(String id, boolean v) { var s = ui(); if (s != null) s.setCheck(id, v); }
+
+    private int slotOf(net.minecraft.world.item.Item item) {
+        var items = mc().player.getInventory().items;
+        for (int i = 0; i < items.size(); i++) if (items.get(i).is(item)) return i;
+        return -1;
+    }
+
+    private void page(String expected) {
+        var s = ui();
+        log("page affichée : " + (s == null ? "aucune" : s.pageId()) + (s != null && s.pageId().equals(expected) ? " (ok)" : " (attendu " + expected + ")"));
+    }
+
     private void script() {
         // ---------- préparation du terrain
         step(40, () -> {
@@ -170,37 +195,102 @@ public final class AutoTest implements ClientModInitializer {
         step(40, () -> mc().setScreen(new InventoryScreen(mc().player)));
         step(30, () -> shot("inventaire"));
         step(10, () -> mc().setScreen(null));
-        // ---------- interfaces (panneaux serveur)
-        step(10, () -> {
-            cmd("banque donner FnTester 500000");
-            cmd("nation creer Atlantis");
-            cmd("nation deposer 200000");
-            cmd("nation claim");
-            cmd("fnations recherche Atlantis tout");
+        // ---------- tablette : accueil, création du pays, profil, membres, territoire
+        step(10, () -> { cmd("banque donner FnTester 500000"); cmd("menu"); });
+        step(40, () -> { page("accueil"); shot("ui_accueil"); });
+        step(5, () -> press("nav:pays"));
+        step(40, () -> { page("pays"); shot("ui_creer_pays"); });
+        step(5, () -> { type("name", "Atlantis"); press("pays.create"); });
+        step(30, () -> shot("ui_pays_profil"));
+        step(5, () -> { cmd("nation deposer 200000"); cmd("fnations recherche Atlantis tout"); });
+        step(20, () -> { press("pays.tab:parametres"); });
+        step(10, () -> { press("pays.tagtoggle:Build"); });
+        step(10, () -> { press("pays.tagtoggle:Commerce"); type("desc", "Nation de test : commerce et construction."); });
+        step(10, () -> press("pays.desc"));
+        step(15, () -> press("pays.tab:profil"));
+        step(30, () -> shot("ui_pays_profil2"));
+        step(5, () -> press("pays.tab:membres"));
+        step(30, () -> shot("ui_pays_membres"));
+        step(5, () -> press("pays.tab:territoire"));
+        step(40, () -> shot("ui_pays_territoire"));
+        step(5, () -> {
+            int cx = mc().player.getBlockX() >> 4, cz = mc().player.getBlockZ() >> 4;
+            press("pays.claimat:" + (cx + 1) + "," + cz);
         });
-        step(40, () -> cmd("menu"));
-        step(30, () -> shot("menu_principal"));
-        step(5, () -> click(20));
-        step(30, () -> shot("gui_nation"));
-        step(5, () -> click(20));
-        step(30, () -> shot("gui_territoire"));
-        step(5, () -> { mc().player.closeContainer(); cmd("recherche"); });
-        step(30, () -> click(22));
-        step(30, () -> shot("gui_recherche"));
-        step(5, () -> { mc().player.closeContainer(); cmd("guerre"); });
-        step(30, () -> shot("gui_guerres"));
-        step(5, () -> { mc().player.closeContainer(); cmd("banque"); });
-        step(30, () -> shot("gui_banque"));
-        step(5, () -> click(23)); // retrait personnalisé -> fenêtre de saisie
-        step(30, () -> {
-            boolean prompt = mc().screen instanceof PromptScreen;
-            log("fenêtre de saisie ouverte : " + prompt);
-            shot("saisie");
-            if (prompt) {
-                for (var c : mc().screen.children()) if (c instanceof EditBox eb) eb.setValue("250");
-                mc().screen.keyPressed(257, 0, 0);
+        step(30, () -> shot("ui_pays_claim"));
+        // ---------- banque
+        step(5, () -> press("nav:banque"));
+        step(20, () -> { type("note", "250"); press("banque.notecustom"); });
+        step(30, () -> { page("banque"); shot("ui_banque"); log("billet reçu : " + (slotOf(fr.fnations.registry.ModItems.get("banknote")) >= 0)); });
+        // ---------- métiers : gain réel d'XP de Builder en survie + paliers
+        step(5, () -> { mc().setScreen(null); cmd("gamemode survival"); cmd("item replace entity @s hotbar.8 with minecraft:stone 16"); });
+        step(20, () -> {
+            mc().player.getInventory().selected = 8;
+            for (int i = 0; i < 5; i++) {
+                BlockPos at = new BlockPos(-3 + i, 149, -12);
+                mc().gameMode.useItemOn(mc().player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(at), Direction.UP, at, false));
             }
         });
+        step(20, () -> shot("metier_barre_action"));
+        step(10, () -> { cmd("gamemode creative"); cmd("metier set FnTester agriculteur 2600"); cmd("metier set FnTester mineur 5200"); cmd("metier"); });
+        step(40, () -> { page("metiers"); shot("ui_metiers_builder"); });
+        step(5, () -> press("metiers.job:mineur"));
+        step(10, () -> press("metiers.how"));
+        step(30, () -> shot("ui_metiers_mineur"));
+        step(5, () -> press("metiers.top"));
+        step(30, () -> shot("ui_metiers_classement"));
+        // ---------- entreprise
+        step(5, () -> { press("dialog:close"); press("nav:entreprise"); });
+        step(30, () -> shot("ui_entreprise_creation"));
+        step(5, () -> press("entreprise.type:FARMER"));
+        step(10, () -> { type("cname", "AgroCorp"); press("entreprise.create"); });
+        step(30, () -> { page("entreprise"); shot("ui_entreprise"); });
+        // ---------- hôtel des ventes : ventes (dont une au nom de la nation), achat, offre d'achat
+        step(5, () -> {
+            cmd("give @s minecraft:diamond_sword");
+            cmd("give @s minecraft:arrow 64");
+            cmd("give @s minecraft:bread 32");
+            press("nav:hdv");
+        });
+        step(30, () -> { page("hdv"); shot("ui_hdv_vide"); });
+        step(5, () -> press("hdv.pick:" + slotOf(net.minecraft.world.item.Items.DIAMOND_SWORD)));
+        step(25, () -> shot("ui_hdv_dialogue_vente"));
+        step(5, () -> { type("sqty", "1"); type("sprice", "100"); press("hdv.sell"); });
+        step(15, () -> press("hdv.pick:" + slotOf(net.minecraft.world.item.Items.ARROW)));
+        step(15, () -> { type("sqty", "64"); type("sprice", "4"); check("fornation", true); press("hdv.sell"); });
+        step(15, () -> press("hdv.pick:" + slotOf(net.minecraft.world.item.Items.BREAD)));
+        step(15, () -> { type("sqty", "16"); type("sprice", "2.5"); press("hdv.sell"); });
+        step(15, () -> press("hdv.pick:" + slotOf(fr.fnations.registry.ModItems.get("steel_plate"))));
+        step(15, () -> { type("sqty", "8"); type("sprice", "45"); press("hdv.sell"); });
+        step(30, () -> shot("ui_hdv_ventes"));
+        step(5, () -> press("hdv.open:minecraft:arrow"));
+        step(25, () -> shot("ui_hdv_groupe"));
+        step(5, () -> { type("qty", "10"); press("hdv.buybest:minecraft:arrow"); });
+        step(25, () -> { shot("ui_hdv_achat"); log("flèches après achat : " + mc().player.getInventory().countItem(net.minecraft.world.item.Items.ARROW)); });
+        step(5, () -> press("hdv.offerdlg:minecraft:arrow"));
+        step(15, () -> { type("oqty", "20"); type("oprice", "3"); press("hdv.offer:minecraft:arrow"); });
+        step(15, () -> { press("hdv.tab:offres"); });
+        step(10, () -> press("hdv.open:minecraft:arrow"));
+        step(25, () -> shot("ui_hdv_offres"));
+        step(5, () -> press("hdv.tab:espace"));
+        step(25, () -> shot("ui_hdv_espace"));
+        step(5, () -> press("hdv.tab:pays"));
+        step(25, () -> shot("ui_hdv_pays"));
+        step(5, () -> { press("hdv.tab:ventes"); press("hdv.cat:equipements"); });
+        step(25, () -> shot("ui_hdv_categorie"));
+        // ---------- R&D, guerres, classements
+        step(5, () -> press("nav:recherche"));
+        step(30, () -> { page("recherche"); shot("ui_recherche"); });
+        step(5, () -> press("recherche.cat:militaire"));
+        step(10, () -> press("recherche.tech:doctrine_militaire"));
+        step(25, () -> shot("ui_recherche_detail"));
+        step(5, () -> { press("dialog:close"); press("nav:guerres"); });
+        step(30, () -> { page("guerres"); shot("ui_guerres"); });
+        step(5, () -> press("nav:classements"));
+        step(25, () -> shot("ui_classements"));
+        step(5, () -> press("classements.tab:metiers"));
+        step(25, () -> shot("ui_classements_metiers"));
+        step(5, () -> mc().setScreen(null));
         // ---------- chambre avec WorldEdit (//pos1 //pos2 puis /chambre creer)
         step(10, () -> {
             mc().player.closeContainer();
@@ -209,8 +299,9 @@ public final class AutoTest implements ClientModInitializer {
         });
         step(20, () -> cmd("chambre creer suite1 20000 500 Palace"));
         step(30, () -> { log("chambre créée (voir rooms/suite1.schem côté serveur)"); cmd("chambre"); });
-        step(30, () -> shot("gui_chambres"));
-        step(5, () -> mc().player.closeContainer());
+        step(20, () -> press("chambres.room:suite1"));
+        step(30, () -> { page("chambres"); shot("ui_chambres"); });
+        step(5, () -> mc().setScreen(null));
         // ---------- machines
         step(10, () -> {
             String[] ms = {"crafting_station", "compressor", "coal_generator", "solar_panel_t1", "solar_panel_t2", "solar_panel_t3", "electric_furnace", "crusher", "switch", "missile_launcher"};
@@ -241,11 +332,15 @@ public final class AutoTest implements ClientModInitializer {
         step(15, () -> use(new BlockPos(7, 150, -4)));
         step(30, () -> shot("gui_interrupteur"));
         step(5, () -> { mc().player.closeContainer(); cmd("tp @s -8.5 150 -6.5 0 30"); });
+        step(5, () -> { cmd("give @s fnations:compressed_iron 2"); cmd("give @s minecraft:coal 4"); });
         step(15, () -> use(new BlockPos(-9, 150, -4)));
-        step(30, () -> shot("gui_station"));
-        step(5, () -> click(21)); // armes à feu
-        step(30, () -> shot("gui_station_armes"));
-        step(5, () -> mc().player.closeContainer());
+        step(30, () -> { page("station"); press("station.recipe:steel_ingot"); });
+        step(25, () -> shot("ui_station"));
+        step(5, () -> press("station.craft:steel_ingot;1"));
+        step(25, () -> { shot("ui_station_fabrique"); log("lingots d'acier : " + mc().player.getInventory().countItem(fr.fnations.registry.ModItems.get("steel_ingot"))); });
+        step(5, () -> press("station.cat:ARME"));
+        step(25, () -> shot("ui_station_armes"));
+        step(5, () -> mc().setScreen(null));
         // ---------- véhicules et fusée
         step(10, () -> {
             cmd("summon fnations:tank -8 150 6 {Rotation:[30f,0f]}");

@@ -34,10 +34,27 @@ public final class ServerEvents {
             Prompt.forget(handler.player.getUUID());
             FnServer s = FnServer.get();
             if (s != null) {
+                s.jobs().onQuit(handler.player);
+                s.ui().forget(handler.player.getUUID());
                 s.territory().forget(handler.player.getUUID());
                 s.wars().onQuit(handler.player);
                 s.weapons().onQuit(handler.player);
             }
+        });
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            FnServer s = FnServer.get();
+            if (s != null) s.jobs().onJoin(handler.player);
+        });
+        net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents.AFTER_RESPAWN.register((oldP, newP, alive) -> {
+            FnServer s = FnServer.get();
+            if (s != null) s.jobs().applyAttributes(newP);
+        });
+
+        // ---- Métiers : blocs cassés (après la casse, seulement si autorisée)
+        PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, be) -> {
+            FnServer s = FnServer.get();
+            if (s != null && player instanceof ServerPlayer sp && level instanceof ServerLevel sl) s.jobs().onBreak(sp, sl, pos, state);
         });
 
         // ---- Protection : casse de blocs
@@ -56,7 +73,7 @@ public final class ServerEvents {
             ServerLevel sl = (ServerLevel) level;
             String group = s.rooms().deskGroup(sl, hit.getBlockPos());
             if (group != null && hand == net.minecraft.world.InteractionHand.MAIN_HAND) {
-                s.roomGui().open(sp, group);
+                s.ui().open(sp, "chambres", java.util.Map.of("group", group == null ? "" : group, "room", ""));
                 return InteractionResult.SUCCESS;
             }
             BlockPos target = hit.getBlockPos();
@@ -93,6 +110,7 @@ public final class ServerEvents {
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
             FnServer s = FnServer.get();
             if (s != null && entity instanceof ServerPlayer victim) s.wars().onDeath(victim, source);
+            if (s != null && source.getEntity() instanceof ServerPlayer killer && entity != killer) s.jobs().onKill(killer, entity);
         });
     }
 

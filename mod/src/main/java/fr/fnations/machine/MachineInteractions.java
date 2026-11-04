@@ -25,7 +25,7 @@ public final class MachineInteractions {
             return;
         }
         switch (be.type()) {
-            case CRAFTING_STATION -> s.station().open(p);
+            case CRAFTING_STATION -> s.ui().open(p, "station", fr.fnations.ui.pages.StationPage.at(p, be.getBlockPos()));
             case SWITCH -> switchPanel(p, be);
             default -> p.openMenu(be);
         }

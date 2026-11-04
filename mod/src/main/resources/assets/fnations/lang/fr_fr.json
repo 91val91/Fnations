@@ -60,6 +60,7 @@
  "block.fnations.missile_launcher": "Lanceur de missiles",
  "itemGroup.fnations": "FNations",
  "key.fnations.reload": "Recharger l'arme",
+ "key.fnations.tablet": "Ouvrir la tablette",
  "category.fnations": "FNations",
  "entity.fnations.shell": "Obus",
  "entity.fnations.missile": "Missile",

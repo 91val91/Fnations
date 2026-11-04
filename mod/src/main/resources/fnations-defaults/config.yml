@@ -27,6 +27,20 @@ nations:
   pvp-allies: false
   mondes-interdits: ["fnations:orbit", "fnations:moon"]
 
+# ------------------------------------------------------------ Entreprises
+entreprises:
+  cout-creation: 10000
+  palier-requis: 1                     # palier du métier associé pour fonder (Trading : aucun)
+  membres-base: 5
+  membres-par-niveau: 2
+  salaire-max: 5000                    # par heure
+
+# ------------------------------------------------------------ Hôtel des ventes
+hdv:
+  taxe-pourcent: 5                     # prélevée sur le vendeur (réduite pour le Trading)
+  duree-jours: 7                       # durée d'une annonce ou d'une offre d'achat
+  ventes-max: 20                       # annonces simultanées par joueur
+
 # ------------------------------------------------------------ Recherche & Développement
 recherche:
   multiplicateur-duree: 1.0            # 0.5 = recherches 2x plus rapides

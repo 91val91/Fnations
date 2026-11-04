@@ -1162,6 +1162,7 @@ NAMES = {
 EXTRA_LANG = {
     "itemGroup.fnations": ("FNations", "FNations"),
     "key.fnations.reload": ("Recharger l'arme", "Reload weapon"),
+    "key.fnations.tablet": ("Ouvrir la tablette", "Open tablet"),
     "category.fnations": ("FNations", "FNations"),
     "entity.fnations.shell": ("Obus", "Shell"),
     "entity.fnations.missile": ("Missile", "Missile"),
@@ -1175,33 +1176,25 @@ EXTRA_LANG = {
 
 
 def gui_textures():
-    """Textures des menus : panneau (style coffre, thème sombre doré) et machine."""
-    base, light, dark, gold = hexc("2b2f36"), hexc("40464f"), hexc("15171b"), hexc("c9a13c")
+    """Textures des menus (thème bleu nuit de la tablette) : panneau et machine."""
+    base, edge, dark, accent = hexc("1e1f2a"), hexc("2e3040"), hexc("111219"), hexc("5865f2")
 
-    def bevel(d, x0, y0, x1, y1):
-        d.rectangle([x0, y0, x1, y1], fill=base)
-        d.line([x0, y0, x1, y0], fill=light)
-        d.line([x0, y0, x0, y1], fill=light)
-        d.line([x0, y1, x1, y1], fill=dark)
-        d.line([x1, y0, x1, y1], fill=dark)
+    def panel(d, x0, y0, x1, y1):
+        d.rounded_rectangle([x0, y0, x1, y1], radius=4, fill=base, outline=edge)
 
     def slot(d, x, y):
-        d.rectangle([x, y, x + 17, y + 17], fill=hexc("1d2025"))
-        d.line([x, y, x + 17, y], fill=dark)
-        d.line([x, y, x, y + 17], fill=dark)
-        d.line([x, y + 17, x + 17, y + 17], fill=hexc("4a515b"))
-        d.line([x + 17, y, x + 17, y + 17], fill=hexc("4a515b"))
+        d.rounded_rectangle([x, y, x + 17, y + 17], radius=2, fill=hexc("262836"))
+        d.rounded_rectangle([x + 1, y + 1, x + 16, y + 16], radius=2, fill=hexc("16171f"))
 
     # Panneau : 6 rangées en haut (y 0..124), inventaire du joueur en bas (y 126..221)
     img = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    bevel(d, 0, 0, 175, 124)
-    d.line([3, 13, 172, 13], fill=gold)
+    panel(d, 0, 0, 175, 124)
+    d.line([6, 13, 169, 13], fill=accent)
     for r in range(6):
         for c in range(9):
             slot(d, 7 + c * 18, 17 + r * 18)
-    bevel(d, 0, 126, 175, 221)
-    d.rectangle([0, 126, 175, 128], fill=base)
+    panel(d, 0, 126, 175, 221)
     for r in range(3):
         for c in range(9):
             slot(d, 7 + c * 18, 139 + r * 18)
@@ -1209,19 +1202,241 @@ def gui_textures():
         slot(d, 7 + c * 18, 197)
     img.save(path("textures", "gui", "panel.png"))
 
-    # Machine : 176x166, cases en (52,35) (112,35) (80,35) (80,22), jauges à gauche/droite
+    # Machine : 176x166, jauges à gauche (énergie) et à droite (chaleur)
     img = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    bevel(d, 0, 0, 175, 165)
-    d.line([3, 16, 172, 16], fill=gold)
-    d.rectangle([8, 17, 20, 69], outline=gold)
-    d.rectangle([156, 17, 168, 69], outline=hexc("b8262b"))
+    panel(d, 0, 0, 175, 165)
+    d.line([6, 16, 169, 16], fill=accent)
+    d.rounded_rectangle([8, 17, 20, 69], radius=2, outline=accent)
+    d.rounded_rectangle([156, 17, 168, 69], radius=2, outline=hexc("f04747"))
     for r in range(3):
         for c in range(9):
             slot(d, 7 + c * 18, 83 + r * 18)
     for c in range(9):
         slot(d, 7 + c * 18, 141)
     img.save(path("textures", "gui", "machine.png"))
+
+
+def ui_icons():
+    """Icônes blanches de la tablette (teintées à l'affichage), dans l'ordre de fr.fnations.ui.UiIcons."""
+    java = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "mod", "src", "main", "java", "fr", "fnations", "ui", "UiIcons.java")
+    src = open(java, encoding="utf-8").read()
+    block = src[src.index("List.of(") + 8: src.index(");", src.index("List.of("))]
+    names = [n.strip().strip('"') for n in block.replace("\n", " ").split(",") if n.strip()]
+    W = (255, 255, 255, 255)
+    S = 64  # dessin en 64x64 puis réduction lissée en 16x16
+
+    def person(d, cx, top, r):
+        d.ellipse([cx - r, top, cx + r, top + 2 * r], fill=W)
+        d.pieslice([cx - 2 * r, top + 2 * r + 2, cx + 2 * r, top + 6 * r + 2], 180, 360, fill=W)
+
+    def gear(d, teeth, outer, inner, hole):
+        c = S / 2
+        pts = []
+        for i in range(teeth * 2):
+            a = math.pi * 2 * i / (teeth * 2)
+            rr = outer if i % 2 == 0 else inner
+            for da in (-0.18, 0.18):
+                pts.append((c + rr * math.cos(a + da), c + rr * math.sin(a + da)))
+        d.polygon(pts, fill=W)
+        d.ellipse([c - hole, c - hole, c + hole, c + hole], fill=(0, 0, 0, 0))
+
+    def draw(name, d):
+        L = 6  # épaisseur de trait
+        if name == "home":
+            d.polygon([(32, 6), (58, 30), (50, 30), (50, 56), (14, 56), (14, 30), (6, 30)], fill=W)
+            d.rectangle([27, 38, 37, 56], fill=(0, 0, 0, 0))
+        elif name == "flag":
+            d.rectangle([12, 6, 17, 60], fill=W)
+            d.polygon([(17, 8), (54, 8), (46, 20), (54, 32), (17, 32)], fill=W)
+        elif name == "bank":
+            d.polygon([(32, 4), (60, 20), (4, 20)], fill=W)
+            for x in (10, 22, 36, 48):
+                d.rectangle([x, 24, x + 6, 48], fill=W)
+            d.rectangle([4, 50, 60, 58], fill=W)
+        elif name == "briefcase":
+            d.rounded_rectangle([6, 20, 58, 56], radius=6, fill=W)
+            d.rounded_rectangle([22, 8, 42, 24], radius=4, outline=W, width=L)
+            d.rectangle([6, 34, 58, 38], fill=(0, 0, 0, 0))
+        elif name == "pickaxe":
+            d.line([(16, 54), (44, 22)], fill=W, width=L + 2)
+            d.arc([6, 2, 62, 50], 200, 340, fill=W, width=L + 2)
+        elif name == "shop":
+            d.polygon([(6, 8), (58, 8), (62, 24), (2, 24)], fill=W)
+            d.rectangle([8, 28, 56, 58], fill=W)
+            d.rectangle([24, 38, 40, 58], fill=(0, 0, 0, 0))
+        elif name == "flask":
+            d.rectangle([24, 4, 40, 10], fill=W)
+            d.polygon([(26, 10), (38, 10), (38, 26), (58, 58), (6, 58), (26, 26)], fill=W)
+            d.polygon([(30, 14), (34, 14), (34, 28), (40, 38), (24, 38), (30, 28)], fill=(0, 0, 0, 0))
+        elif name == "swords":
+            d.line([(8, 8), (52, 52)], fill=W, width=L)
+            d.line([(56, 8), (12, 52)], fill=W, width=L)
+            d.line([(40, 54), (54, 40)], fill=W, width=L)
+            d.line([(10, 40), (24, 54)], fill=W, width=L)
+        elif name == "bed":
+            d.rectangle([4, 14, 10, 54], fill=W)
+            d.rectangle([4, 34, 60, 46], fill=W)
+            d.rectangle([54, 34, 60, 54], fill=W)
+            d.rounded_rectangle([12, 24, 26, 34], radius=3, fill=W)
+            d.rounded_rectangle([28, 26, 60, 34], radius=3, fill=W)
+        elif name == "trophy":
+            d.pieslice([14, -10, 50, 40], 0, 180, fill=W)
+            d.rectangle([14, 6, 50, 15], fill=W)
+            d.arc([2, 8, 22, 30], 90, 270, fill=W, width=5)
+            d.arc([42, 8, 62, 30], 270, 90, fill=W, width=5)
+            d.rectangle([28, 38, 36, 48], fill=W)
+            d.rounded_rectangle([16, 48, 48, 58], radius=3, fill=W)
+        elif name == "gear":
+            gear(d, 8, 30, 22, 9)
+        elif name == "cog":
+            gear(d, 6, 28, 18, 8)
+        elif name == "close":
+            d.line([(12, 12), (52, 52)], fill=W, width=L + 2)
+            d.line([(52, 12), (12, 52)], fill=W, width=L + 2)
+        elif name == "search":
+            d.ellipse([6, 6, 42, 42], outline=W, width=L + 1)
+            d.line([(38, 38), (58, 58)], fill=W, width=L + 3)
+        elif name == "plus":
+            d.rectangle([28, 8, 36, 56], fill=W)
+            d.rectangle([8, 28, 56, 36], fill=W)
+        elif name == "minus":
+            d.rectangle([8, 28, 56, 36], fill=W)
+        elif name.startswith("chevron_"):
+            pts = {"down": [(10, 22), (32, 44), (54, 22)], "up": [(10, 42), (32, 20), (54, 42)],
+                   "right": [(22, 10), (44, 32), (22, 54)], "left": [(42, 10), (20, 32), (42, 54)]}[name[8:]]
+            d.line(pts, fill=W, width=L + 2, joint="curve")
+        elif name == "check":
+            d.line([(8, 34), (24, 50), (56, 14)], fill=W, width=L + 3, joint="curve")
+        elif name == "lock":
+            d.arc([16, 4, 48, 40], 180, 360, fill=W, width=L + 1)
+            d.rectangle([16, 20, 22, 30], fill=W)
+            d.rectangle([42, 20, 48, 30], fill=W)
+            d.rounded_rectangle([8, 28, 56, 60], radius=6, fill=W)
+            d.rectangle([29, 38, 35, 50], fill=(0, 0, 0, 0))
+        elif name == "star":
+            pts = []
+            for i in range(10):
+                a = -math.pi / 2 + i * math.pi / 5
+                rr = 30 if i % 2 == 0 else 12
+                pts.append((32 + rr * math.cos(a), 34 + rr * math.sin(a)))
+            d.polygon(pts, fill=W)
+        elif name == "coin":
+            d.ellipse([4, 4, 60, 60], fill=W)
+            d.ellipse([12, 12, 52, 52], outline=(0, 0, 0, 0), width=4)
+            d.rectangle([29, 18, 35, 46], fill=(0, 0, 0, 0))
+        elif name == "clock":
+            d.ellipse([4, 4, 60, 60], outline=W, width=L)
+            d.line([(32, 14), (32, 32), (46, 40)], fill=W, width=L)
+        elif name == "teleport":
+            d.ellipse([6, 36, 58, 58], outline=W, width=L)
+            d.line([(32, 4), (32, 34)], fill=W, width=L + 1)
+            d.polygon([(20, 22), (44, 22), (32, 38)], fill=W)
+        elif name == "users":
+            person(d, 22, 8, 9)
+            person(d, 44, 14, 8)
+        elif name == "user":
+            person(d, 32, 6, 12)
+        elif name == "map":
+            d.polygon([(4, 12), (22, 4), (42, 12), (60, 4), (60, 52), (42, 60), (22, 52), (4, 60)], fill=W)
+            d.line([(22, 8), (22, 52)], fill=(0, 0, 0, 0), width=3)
+            d.line([(42, 14), (42, 58)], fill=(0, 0, 0, 0), width=3)
+        elif name == "crown":
+            d.polygon([(4, 18), (18, 32), (32, 8), (46, 32), (60, 18), (54, 52), (10, 52)], fill=W)
+            d.rectangle([10, 54, 54, 60], fill=W)
+        elif name == "shield":
+            d.polygon([(32, 4), (58, 12), (56, 36), (32, 60), (8, 36), (6, 12)], fill=W)
+        elif name == "info":
+            d.ellipse([4, 4, 60, 60], fill=W)
+            d.rectangle([28, 26, 36, 48], fill=(0, 0, 0, 0))
+            d.ellipse([27, 12, 37, 21], fill=(0, 0, 0, 0))
+        elif name == "hammer":
+            d.line([(14, 56), (40, 26)], fill=W, width=L + 1)
+            d.polygon([(26, 14), (44, 2), (62, 22), (46, 34)], fill=W)
+        elif name == "wheat":
+            d.line([(32, 60), (32, 10)], fill=W, width=4)
+            for y in (12, 24, 36):
+                d.ellipse([18, y, 30, y + 14], fill=W)
+                d.ellipse([34, y, 46, y + 14], fill=W)
+            d.ellipse([26, 2, 38, 16], fill=W)
+        elif name == "sword":
+            d.line([(14, 50), (54, 10)], fill=W, width=L + 1)
+            d.line([(8, 36), (28, 56)], fill=W, width=L)
+            d.line([(6, 58), (14, 50)], fill=W, width=L + 2)
+        elif name == "axe":
+            d.line([(18, 58), (42, 12)], fill=W, width=L)
+            d.pieslice([30, 2, 62, 40], 250, 80, fill=W)
+        elif name == "chart":
+            d.rectangle([6, 36, 18, 58], fill=W)
+            d.rectangle([26, 22, 38, 58], fill=W)
+            d.rectangle([46, 8, 58, 58], fill=W)
+        elif name == "mail":
+            d.rounded_rectangle([4, 12, 60, 52], radius=5, fill=W)
+            d.line([(6, 14), (32, 36), (58, 14)], fill=(0, 0, 0, 0), width=5)
+        elif name == "tag":
+            d.polygon([(4, 30), (30, 4), (60, 4), (60, 34), (34, 60)], fill=W)
+            d.ellipse([44, 12, 54, 22], fill=(0, 0, 0, 0))
+        elif name == "factory":
+            d.polygon([(4, 58), (4, 28), (20, 38), (20, 28), (36, 38), (36, 28), (52, 38), (52, 6), (60, 6), (60, 58)], fill=W)
+        elif name == "refresh":
+            d.arc([8, 8, 56, 56], 40, 320, fill=W, width=L + 1)
+            d.polygon([(44, 2), (60, 18), (40, 22)], fill=W)
+        elif name == "trash":
+            d.rectangle([8, 10, 56, 16], fill=W)
+            d.rectangle([24, 4, 40, 10], fill=W)
+            d.polygon([(12, 18), (52, 18), (48, 60), (16, 60)], fill=W)
+        elif name == "edit":
+            d.polygon([(10, 46), (44, 12), (52, 20), (18, 54), (8, 56)], fill=W)
+            d.polygon([(48, 8), (52, 4), (60, 12), (56, 16)], fill=W)
+        elif name == "heart":
+            d.ellipse([4, 8, 34, 38], fill=W)
+            d.ellipse([30, 8, 60, 38], fill=W)
+            d.polygon([(6, 28), (58, 28), (32, 58)], fill=W)
+        elif name == "globe":
+            d.ellipse([4, 4, 60, 60], outline=W, width=L)
+            d.ellipse([20, 4, 44, 60], outline=W, width=4)
+            d.line([(6, 32), (58, 32)], fill=W, width=4)
+        elif name == "cart":
+            d.line([(2, 8), (12, 8), (20, 42), (54, 42), (60, 16), (14, 16)], fill=W, width=L, joint="curve")
+            d.ellipse([16, 48, 28, 60], fill=W)
+            d.ellipse([44, 48, 56, 60], fill=W)
+        elif name == "box":
+            d.polygon([(32, 4), (60, 18), (32, 32), (4, 18)], fill=W)
+            d.polygon([(4, 22), (30, 36), (30, 62), (4, 48)], fill=W)
+            d.polygon([(34, 36), (60, 22), (60, 48), (34, 62)], fill=W)
+        elif name == "medal":
+            d.polygon([(14, 2), (28, 2), (34, 22), (22, 26)], fill=W)
+            d.polygon([(50, 2), (36, 2), (30, 22), (42, 26)], fill=W)
+            d.ellipse([12, 22, 52, 62], fill=W)
+            d.ellipse([22, 32, 42, 52], outline=(0, 0, 0, 0), width=4)
+        elif name == "bell":
+            d.pieslice([10, 6, 54, 50], 180, 360, fill=W)
+            d.rectangle([10, 28, 54, 46], fill=W)
+            d.rectangle([4, 46, 60, 52], fill=W)
+            d.ellipse([26, 52, 38, 62], fill=W)
+        elif name == "arrow_up":
+            d.polygon([(32, 4), (58, 32), (42, 32), (42, 60), (22, 60), (22, 32), (6, 32)], fill=W)
+        elif name == "arrow_down":
+            d.polygon([(32, 60), (58, 32), (42, 32), (42, 4), (22, 4), (22, 32), (6, 32)], fill=W)
+        elif name == "handshake":
+            d.rounded_rectangle([4, 20, 38, 44], radius=12, outline=W, width=L)
+            d.rounded_rectangle([26, 20, 60, 44], radius=12, outline=W, width=L)
+        elif name == "send":
+            d.polygon([(4, 30), (60, 4), (42, 60), (30, 36)], fill=W)
+            d.line([(30, 36), (60, 4)], fill=(0, 0, 0, 0), width=3)
+        elif name == "dot":
+            d.ellipse([16, 16, 48, 48], fill=W)
+        else:
+            raise SystemExit("Icône sans dessin : " + name)
+
+    atlas = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
+    for i, name in enumerate(names):
+        big = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+        draw(name, ImageDraw.Draw(big))
+        small = big.resize((16, 16), Image.LANCZOS)
+        atlas.alpha_composite(small, ((i % 16) * 16, (i // 16) * 16))
+    atlas.save(path("textures", "gui", "ui_icons.png"))
+    return len(names)
 
 
 def mod_icon():
@@ -1303,6 +1518,7 @@ def main():
                 variants["active=%s,facing=%s" % (active, facing)] = v
         write_json(path("blockstates", name + ".json"), {"variants": variants})
     gui_textures()
+    print("Icônes de la tablette :", ui_icons())
     mod_icon()
     # Langues
     fr, en = {}, {}

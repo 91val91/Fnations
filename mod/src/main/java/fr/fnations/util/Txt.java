@@ -150,7 +150,7 @@ public final class Txt {
     /** Échappe un texte saisi par un joueur. */
     public static String esc(String s) { return s == null ? "" : s.replace("<", "\\<"); }
 
-    public static String money(double v) { return MONEY.format(v) + " $"; }
+    public static String money(double v) { return MONEY.format(v).replace('\u202F', ' ').replace('\u00A0', ' ') + " $"; }
 
     public static String duration(long seconds) {
         if (seconds < 0) seconds = 0;

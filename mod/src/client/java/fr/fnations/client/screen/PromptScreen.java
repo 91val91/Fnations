@@ -60,15 +60,16 @@ public final class PromptScreen extends Screen {
     public void renderBackground(GuiGraphics g, int mx, int my, float pt) {
         super.renderBackground(g, mx, my, pt);
         int w = 260, x = (width - w) / 2, y = height / 2 - 44;
-        g.fill(x, y, x + w, y + 98, 0xE0141820);
-        g.fill(x, y, x + w, y + 1, 0xFFE0B81C);
+        g.fill(x - 1, y - 1, x + w + 1, y + 99, 0xFF2E3040);
+        g.fill(x, y, x + w, y + 98, 0xF01E1F2A);
+        g.fill(x, y, x + w, y + 2, 0xFF5865F2);
     }
 
     @Override
     public void render(GuiGraphics g, int mx, int my, float pt) {
         super.render(g, mx, my, pt);
         int y = height / 2 - 44;
-        g.drawCenteredString(font, Txt.mm("<gold><b>FNations"), width / 2, y + 6, 0xFFFFFFFF);
+        g.drawCenteredString(font, Txt.mm("<#8C96FF><b>FNations"), width / 2, y + 6, 0xFFFFFFFF);
         g.drawCenteredString(font, title, width / 2, y + 20, 0xFFFFFFFF);
     }
 

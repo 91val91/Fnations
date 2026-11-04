@@ -15,6 +15,12 @@ public final class ModPayloads {
         PayloadTypeRegistry.playC2S().register(PromptAnswerPayload.TYPE, PromptAnswerPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(ActionPayload.TYPE, ActionPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(LaunchPayload.TYPE, LaunchPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(UiPayload.TYPE, UiPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(UiActionPayload.TYPE, UiActionPayload.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(UiActionPayload.TYPE, (p, ctx) -> {
+            FnServer s = FnServer.get();
+            if (s != null) s.ui().handle(ctx.player(), p.action(), p.data());
+        });
 
         ServerPlayNetworking.registerGlobalReceiver(PromptAnswerPayload.TYPE, (p, ctx) -> Prompt.answer(ctx.player(), p.id(), p.text(), p.cancelled()));
         ServerPlayNetworking.registerGlobalReceiver(ActionPayload.TYPE, (p, ctx) -> {

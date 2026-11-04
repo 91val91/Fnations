@@ -90,7 +90,8 @@ public final class BankManager {
 
     public List<String> history(String key) { return history.getOrDefault(key, new LinkedList<>()); }
 
-    private void log(String key, String line) {
+    /** Ajoute une ligne à l'historique d'un compte (joueur, "nation:id", "company:id"). */
+    public void log(String key, String line) {
         LinkedList<String> l = history.computeIfAbsent(key, k -> new LinkedList<>());
         l.addFirst("<dark_gray>" + fmt.format(new Date()) + " " + line);
         while (l.size() > 15) l.removeLast();

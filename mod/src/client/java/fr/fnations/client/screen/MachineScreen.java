@@ -95,29 +95,28 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         for (int i = 0; i < menu.machineSlots(); i++) {
             var sl = menu.slots.get(i);
             int sx = x + sl.x - 1, sy = y + sl.y - 1;
-            g.fill(sx, sy, sx + 18, sy + 18, 0xFF0E1013);
-            g.fill(sx + 1, sy + 1, sx + 18, sy + 18, 0xFF4A515B);
-            g.fill(sx + 1, sy + 1, sx + 17, sy + 17, 0xFF1D2025);
+            g.fill(sx, sy, sx + 18, sy + 18, 0xFF262836);
+            g.fill(sx + 1, sy + 1, sx + 17, sy + 17, 0xFF16171F);
         }
         // jauge d'énergie (verticale, gauche)
         double e = menu.capacity() <= 0 ? 0 : Math.min(1, menu.energy() / (double) menu.capacity());
         int h = (int) Math.round(e * 50);
-        g.fill(x + 9, y + 18, x + 19, y + 68, 0xFF202020);
-        g.fill(x + 9, y + 68 - h, x + 19, y + 68, 0xFFE8C31C);
+        g.fill(x + 9, y + 18, x + 19, y + 68, 0xFF111219);
+        g.fill(x + 9, y + 68 - h, x + 19, y + 68, 0xFF5865F2);
         // jauge de chaleur (verticale, droite)
         if (menu.type.heatRate > 0) {
             double hr = Math.min(1, menu.heat() / 150.0);
             int hh = (int) Math.round(hr * 50);
             int col = menu.heat() >= 100 ? 0xFFE02020 : menu.heat() >= 70 ? 0xFFE08020 : menu.heat() >= 40 ? 0xFFE0C020 : 0xFF40C040;
-            g.fill(x + 157, y + 18, x + 167, y + 68, 0xFF202020);
+            g.fill(x + 157, y + 18, x + 167, y + 68, 0xFF111219);
             g.fill(x + 157, y + 68 - hh, x + 167, y + 68, col);
             g.fill(x + 157, y + 68 - 33, x + 167, y + 68 - 32, 0xFFFFFFFF);
         }
         // progression
         if (menu.type.kind == MachineType.Kind.CONSUMER) {
             int w = menu.maxProgress() <= 0 ? 0 : (int) Math.round(22.0 * menu.progress() / menu.maxProgress());
-            g.fill(x + 76, y + 38, x + 100, y + 46, 0xFF303030);
-            g.fill(x + 77, y + 39, x + 77 + w, y + 45, 0xFF4FD04F);
+            g.fill(x + 76, y + 38, x + 100, y + 46, 0xFF262836);
+            g.fill(x + 77, y + 39, x + 77 + w, y + 45, 0xFF43D17A);
         }
         if (menu.type == MachineType.COAL_GENERATOR && menu.burn() > 0) {
             g.fill(x + 81, y + 54, x + 95, y + 58, 0xFFFF8A1C);
@@ -126,8 +125,8 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics g, int mx, int my) {
-        g.drawString(font, title, 24, 6, 0xFFE8C26A, false);
-        if (menu.type != MachineType.MISSILE_LAUNCHER) g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFFB8B8B8, false);
+        g.drawString(font, title, 24, 6, 0xFFFFFFFF, false);
+        if (menu.type != MachineType.MISSILE_LAUNCHER) g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFFA3A6B4, false);
         String status;
         if (menu.overheated()) status = "<red><b>SURCHAUFFE";
         else if (menu.tripped()) status = "<red>Coupée (interrupteur)";

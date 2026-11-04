@@ -7,6 +7,9 @@ import fr.fnations.client.render.VehicleRenderer;
 import fr.fnations.client.screen.MachineScreen;
 import fr.fnations.client.screen.PanelScreen;
 import fr.fnations.client.screen.PromptScreen;
+import fr.fnations.client.ui.FnUiScreen;
+import fr.fnations.net.UiActionPayload;
+import fr.fnations.net.UiPayload;
 import fr.fnations.machine.MachineType;
 import fr.fnations.net.ActionPayload;
 import fr.fnations.net.PromptOpenPayload;
@@ -36,7 +39,7 @@ import org.lwjgl.glfw.GLFW;
 
 /** Partie client : écrans, rendus, touches, tir, conduite et HUD. */
 public final class FNationsClient implements ClientModInitializer {
-    public static KeyMapping RELOAD;
+    public static KeyMapping RELOAD, TABLET;
     private boolean useWasDown, jumpWasDown;
     private int fireCooldown, vehicleFireCooldown;
 
@@ -52,6 +55,8 @@ public final class FNationsClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.get(MachineType.CRAFTING_STATION), RenderType.translucent());
 
         RELOAD = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.fnations.reload", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "category.fnations"));
+        TABLET = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.fnations.tablet", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, "category.fnations"));
+        ClientPlayNetworking.registerGlobalReceiver(UiPayload.TYPE, (p, ctx) -> FnUiScreen.receive(p.data()));
 
         ClientPlayNetworking.registerGlobalReceiver(PromptOpenPayload.TYPE, (p, ctx) -> ctx.client().setScreen(new PromptScreen(p.id(), p.question(), p.initial())));
 
@@ -68,6 +73,9 @@ public final class FNationsClient implements ClientModInitializer {
         if (p == null) return;
         if (fireCooldown > 0) fireCooldown--;
         if (vehicleFireCooldown > 0) vehicleFireCooldown--;
+        while (TABLET.consumeClick()) {
+            if (mc.screen == null) ClientPlayNetworking.send(new UiActionPayload("nav:accueil", "{}"));
+        }
         while (RELOAD.consumeClick()) {
             if (p.getMainHandItem().getItem() instanceof GunItem) ClientPlayNetworking.send(new ActionPayload(ActionPayload.Kind.RELOAD, 0));
         }

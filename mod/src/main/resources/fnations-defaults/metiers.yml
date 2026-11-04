@@ -1,0 +1,103 @@
+# =====================================================================
+#              FNations - Métiers (compétences des joueurs)
+# =====================================================================
+# Chaque source s'écrit [xp, argent]. Les clés de blocs acceptent un
+# identifiant (minecraft:coal_ore) ou un tag (#minecraft:logs).
+
+# XP totale à atteindre pour chaque palier (6 paliers)
+paliers: [500, 2000, 5000, 12000, 25000, 50000]
+# Argent versé une seule fois en atteignant chaque palier
+recompenses: [250, 750, 2000, 5000, 12000, 30000]
+multiplicateur-xp: 1.0
+multiplicateur-argent: 1.0
+compter-en-creatif: false
+
+mineur:
+  blocs:
+    "#minecraft:base_stone_overworld": [0.4, 0.01]
+    "#minecraft:base_stone_nether": [0.3, 0.01]
+    "minecraft:end_stone": [0.5, 0.02]
+    "minecraft:coal_ore": [3, 0.4]
+    "minecraft:deepslate_coal_ore": [3.5, 0.45]
+    "minecraft:copper_ore": [3, 0.4]
+    "minecraft:deepslate_copper_ore": [3.5, 0.45]
+    "minecraft:iron_ore": [6, 0.8]
+    "minecraft:deepslate_iron_ore": [7, 0.9]
+    "minecraft:gold_ore": [8, 1.2]
+    "minecraft:deepslate_gold_ore": [9, 1.3]
+    "minecraft:nether_gold_ore": [5, 0.6]
+    "minecraft:redstone_ore": [5, 0.6]
+    "minecraft:deepslate_redstone_ore": [6, 0.7]
+    "minecraft:lapis_ore": [6, 0.8]
+    "minecraft:deepslate_lapis_ore": [7, 0.9]
+    "minecraft:nether_quartz_ore": [4, 0.5]
+    "minecraft:diamond_ore": [20, 4]
+    "minecraft:deepslate_diamond_ore": [22, 4.5]
+    "minecraft:emerald_ore": [25, 5]
+    "minecraft:deepslate_emerald_ore": [27, 5.5]
+    "minecraft:ancient_debris": [40, 10]
+    "minecraft:amethyst_cluster": [3, 0.3]
+
+bucheron:
+  blocs:
+    "#minecraft:logs": [2, 0.15]
+  planter:
+    "#minecraft:saplings": [1, 0.05]
+
+agriculteur:
+  recoltes:
+    "minecraft:wheat": [2, 0.15]
+    "minecraft:carrots": [2, 0.15]
+    "minecraft:potatoes": [2, 0.15]
+    "minecraft:beetroots": [2, 0.15]
+    "minecraft:nether_wart": [2.5, 0.2]
+    "minecraft:cocoa": [2.5, 0.2]
+    "minecraft:melon": [2, 0.15]
+    "minecraft:pumpkin": [2, 0.15]
+    "minecraft:sweet_berry_bush": [1, 0.08]
+    "minecraft:sugar_cane": [1, 0.06]
+    "minecraft:cactus": [1, 0.06]
+    "minecraft:bamboo": [0.3, 0.02]
+    "minecraft:torchflower": [3, 0.3]
+    "minecraft:pitcher_plant": [3, 0.3]
+
+chasseur:
+  monstres: [5, 0.8]          # tout monstre non listé
+  animaux: [1.5, 0.15]        # tout animal non listé
+  entites:
+    "minecraft:creeper": [6, 1]
+    "minecraft:enderman": [12, 2.5]
+    "minecraft:blaze": [10, 2]
+    "minecraft:witch": [10, 2]
+    "minecraft:wither_skeleton": [15, 3.5]
+    "minecraft:ghast": [12, 2.5]
+    "minecraft:guardian": [10, 2]
+    "minecraft:elder_guardian": [150, 40]
+    "minecraft:evoker": [30, 8]
+    "minecraft:ravager": [40, 10]
+    "minecraft:breeze": [15, 3]
+    "minecraft:warden": [250, 60]
+    "minecraft:wither": [600, 200]
+    "minecraft:ender_dragon": [1500, 500]
+
+builder:
+  poser: [1, 0.03]            # par bloc posé (une fois par emplacement)
+  bonus:
+    "#minecraft:stairs": [1.5, 0.05]
+    "#minecraft:slabs": [1.3, 0.04]
+    "#minecraft:walls": [1.5, 0.05]
+    "#minecraft:fences": [1.3, 0.04]
+    "#minecraft:impermeable": [1.5, 0.05]
+    "minecraft:lantern": [2, 0.08]
+    "minecraft:sea_lantern": [2, 0.08]
+
+ingenieur:
+  poser-machine: [5, 1]
+  station:                    # par fabrication, selon la catégorie de l'objet
+    COMPOSANT: [4, 1]
+    MUNITION: [2, 0.5]
+    ARME: [20, 5]
+    VEHICULE: [60, 15]
+    MACHINE: [30, 8]
+    MISSILE: [50, 12]
+    FUSEE: [120, 30]
