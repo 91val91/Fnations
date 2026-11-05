@@ -47,7 +47,8 @@ Toutes les interfaces sont réunies dans une tablette au thème sombre (barre de
 | Mon pays | Sans nation : liste des pays (recherche, adhésion) et création avec **carte du relief** autour du joueur, biome, ressources détectées, cultures. Avec nation : profil (bandeau couleur, étiquettes #Build/#Farm…, description, niveau, puissance, carte du territoire, citoyens), membres, **carte des chunks** sur fond de relief (clic pour revendiquer), diplomatie, paramètres |
 | Banque | Compte personnel (billets, virements, historique), trésor national, capital de l'entreprise |
 | Entreprise | Création (4 types), employés, salaires, capital, bonus de niveau, paramètres |
-| Métiers | Compétences : liste, description, « comment monter », piste des 6 paliers, récompenses, classement |
+| Métiers | Compétences : progression de chaque métier, piste des 6 paliers, onglets Paliers et bonus (avec les crafts débloqués), Crafts (verrouillés ou débloqués, fiche de recette), Comment monter, Notation, classement |
+| Notation | Constructions soumises au jury : mes constructions, meilleures constructions, classement des pays, onglet Jury (visite, note sur 5 critères) |
 | Hôtel des ventes | Ventes, offres d'achat, mon espace, espace pays, espace entreprise (voir plus bas) |
 | R&D | Catégories, technologies (fiche détaillée), recherche en cours avec progression |
 | Guerres | Score des conflits, paix, capitulation, capture, déclaration de guerre |
@@ -70,7 +71,8 @@ Commandes : `/menu` (ou la touche **M**) ouvre la tablette, et chaque commande o
 | Guerres | `/guerre` | Déclaration, préparation, score (kills, captures de chunks, missiles, véhicules), paix, capitulation, réparations |
 | Banque | `/banque`, `/payer` | Comptes, billets physiques, virements, historique, intérêts, banque nationale, classements |
 | Chambres | `/chambre` ou guichet de réception | Location ou achat, colocataires, revente, restauration automatique de la chambre |
-| Métiers | `/metier` (`/jobs`) | Builder, Agriculteur, Chasseur, Bûcheron, Ingénieur, Mineur : XP et argent par action, 6 paliers avec récompenses et bonus (`metiers.yml`) |
+| Métiers | `/metier` (`/jobs`) | Builder, Agriculteur, Chasseur, Bûcheron, Ingénieur, Mineur : XP et argent par action, 6 paliers avec récompenses, bonus et **crafts débloqués** (`metiers.yml`) |
+| Notation | `/notation` (`/note`) | Le jury note les constructions sur 5 critères : Build, Skill, Architecture, Respect du thème, R&D. Notes des joueurs et des pays, récompenses de métier |
 | Entreprises | `/entreprise` | Trading, Ingénierie, Agriculture, Construction : niveaux, bonus, salaires horaires, contribution des employés, capital |
 | Hôtel des ventes | `/hdv`, `/hdv vendre <prix> [n]` | Ventes groupées par objet, achat au meilleur prix, offres d'achat, boîte de réception, ventes au nom d'une nation ou d'une entreprise, taxe, classement hebdomadaire |
 | Classements | `/classement` | Fortunes, nations, métiers, entreprises, HDV |
@@ -99,6 +101,23 @@ Commandes : `/menu` (ou la touche **M**) ouvre la tablette, et chaque commande o
 | Bûcheron | coupant des bûches, plantant des pousses | double coupe, abattage de l'arbre entier (accroupi, hache), replantation |
 | Ingénieur | fabriquant à la Station, posant des machines | 4 % par palier de chance de récupérer un ingrédient |
 | Mineur | minant pierre et minerais naturels | jusqu'à 30 % de double minerai, Célérité I puis II |
+
+**Crafts par palier** : la plupart des crafts demandent un palier dans un métier, à la Station de Craft comme à
+l'établi. Sans le palier, la Station refuse la fabrication et l'établi laisse le résultat vide, avec le palier
+manquant affiché dans la barre d'action. Les joueurs en créatif ne sont pas limités. Les conditions se règlent dans
+la section `crafts` de `metiers.yml`. Par défaut :
+
+| Métier | Palier 0 (dès le départ) | Paliers suivants |
+|---|---|---|
+| Ingénieur | Station de Craft, lingot d'acier, circuit, batterie, compresseur, générateur, interrupteur | 1 : cellule solaire, moteur, pneu, cockpit, four électrique, solaire T1 • 2 : circuit avancé, rotor, chenille, concasseur, solaire T2 • 3 : réacteur, guidage, bouclier thermique, hélicoptère, char • **4 : fusée**, moteur-fusée, ergol, avion, solaire T3 • 5 : lanceur, ogive, missiles tactique et de croisière • 6 : cœur nucléaire, missiles balistique et nucléaire |
+| Chasseur | pièces et canon d'arme, pistolet, munitions 9 mm | 1 : PM, fusil à pompe, cartouches, arbalète • 2 : fusil d'assaut, 7.62 mm • 3 : sniper, .50 BMG, flèches spectrales • 4 : RPG et roquettes • 5 : obus de char |
+| Mineur | — | 2 : charge explosive, TNT • 3 : enclume |
+| Agriculteur | jerrican d'essence | 2 : tracteur, gâteau, carotte dorée • 4 : pomme dorée |
+| Bûcheron | — | 2 : bibliothèque • 3 : pupitre, bibliothèque sculptée |
+| Builder | — | 3 : lanterne aquatique • 5 : balise, conduit |
+
+En atteignant un palier, le joueur voit la liste de ses nouveaux crafts. Spécialisés, les joueurs échangent leurs
+fabrications à l'hôtel des ventes.
 
 **Entreprises** :
 
@@ -207,6 +226,28 @@ commandes.
   même cassé à la pioche.
 - Les mobs de spawner rapportent moitié moins au métier de Chasseur.
 
+### Notation des constructions
+
+1. Le joueur se place dans sa construction et la soumet (`/notation`, « Soumettre une construction ») avec son nom,
+   son thème et, s'il le souhaite, pour son pays. Trois constructions au plus peuvent attendre le jury
+   (`notation.max-en-attente`).
+2. Les jurés (opérateurs, ou joueurs nommés avec `/notation jury ajouter`) voient les constructions en attente.
+   Ils peuvent s'y téléporter puis les noter de 0 à 10 sur cinq critères, avec un commentaire :
+
+| Critère | Ce que le jury regarde |
+|---|---|
+| Build | quantité et finition des constructions |
+| Skill | technique : détails, profondeur, terraformation |
+| Architecture | style, proportions, organisation de la ville |
+| Respect du thème | fidélité au thème annoncé (pays, époque, style) |
+| R&D | technologie : machines, énergie, recherches du pays (la progression du pays est affichée au juré) |
+
+3. La note d'une construction est la moyenne de ses jurés. Le joueur et son pays ont une moyenne, affichée dans la
+   page Métiers (Builder et Ingénieur), sur le profil du pays et dans les classements.
+4. À la première note, si elle atteint 4/10, l'auteur reçoit, proportionnellement à la note : jusqu'à 2 000 XP de
+   Builder, 15 000 $ et, selon la note R&D, jusqu'à 800 XP d'Ingénieur. Un juré ne note pas ses propres constructions.
+   Un joueur absent est prévenu à sa connexion.
+
 **Administration** (opérateurs) :
 
 | Commande | Effet |
@@ -218,6 +259,8 @@ commandes.
 | `/metier set <joueur> <métier> <xp>` | Définir l'XP d'un métier |
 | `/banque donner <joueur> <montant>` | Créditer un compte |
 | `fnstore <grade\|lootbox\|dollars\|spawner> <joueur> [arguments]` | Livrer un achat de la boutique (console, niveau 3) |
+| `/notation jury <ajouter\|retirer\|liste> [joueur]` | Gérer les jurés de la notation |
+| `/notation inscrire <joueur> <nom> \| <thème>` | Inscrire une construction pour un joueur, à votre position (rattachée au pays de ce territoire) |
 | `/chambre creer\|pos1\|pos2\|guichet\|reset\|snapshot\|setspawn\|prix\|supprimer` | Gérer les chambres |
 
 **Fichiers** :
@@ -226,12 +269,13 @@ commandes.
   - `research.yml`, `recipes.yml`, `weapons.yml` ;
   - `metiers.yml` : paliers, récompenses, XP et argent de chaque action ;
   - `lootboxs.yml` (contenu des LootBoxs) et `spawners.yml` (mobs et niveaux) ;
+  - `metiers.yml` contient aussi la section `crafts` (paliers requis), et `config.yml` la section `notation` ;
 - données du monde dans `world/fnations/` :
   - `nations.yml`, `bank.yml` ;
   - `jobs.yml`, `entreprises.yml` ;
   - `hdv.json`, qui contient les objets en vente avec tous leurs composants ;
   - `grades.yml` (grades et récompenses récupérées), `boutique.yml` (livraisons en attente et historique),
-    `terre.yml`.
+    `terre.yml`, `notation.yml` (constructions, notes, jurés).
 
 ### Installer le serveur
 
@@ -311,6 +355,7 @@ cd mod
 FN_SCENARIO=showcase ./gradlew runAutotest   # captures rapprochées des panneaux solaires et de la Station
 FN_SCENARIO=terre ./gradlew runAutotest      # survol de lieux réels (Paris, Alpes, Himalaya, Sahara...)
 FN_SCENARIO=boutique ./gradlew runAutotest   # livraisons, grades, LootBoxs, spawner, carte du monde
+FN_SCENARIO=metiers ./gradlew runAutotest    # crafts par palier (établi, Station), page Métiers, notation
 python3 tools/earth_data.py                  # régénère les données de la Terre (mod/src/main/resources/fnations-earth)
 ```
 
@@ -367,6 +412,20 @@ Ces tests m'ont permis de corriger deux problèmes de répartition de l'énergie
 - 3 LootBoxs ouvertes, depuis la tablette et par clic droit, avec la roulette capturée pendant et après l'arrêt ;
 - spawner posé, amélioré au niveau 3, mobs apparus autour, puis récupéré avec son niveau ;
 - un `config.yml` d'une ancienne version reçoit automatiquement les sections ajoutées.
+
+**Métiers et notation** (scénario `metiers`) :
+
+- à l'établi, la TNT reste vide sans le palier 2 de Mineur, avec le palier manquant dans la barre d'action. Une fois
+  le palier atteint, elle se fabrique ;
+- à la Station, la fusée est refusée sans le palier 4 d'Ingénieur, puis débloquée ;
+- page Métiers : paliers avec leurs crafts, onglet Crafts et fiche de la fusée, Comment monter, Notation ;
+- notation :
+  - une construction soumise pour son pays, et une autre inscrite par un opérateur pour un joueur absent ;
+  - note du jury sur les 5 critères (7,8/10) ;
+  - 1 560 XP de Builder versés au joueur absent ;
+  - meilleures constructions, classement des pays, note sur le profil du pays ;
+  - visite d'une construction par un juré ;
+- un `metiers.yml` d'une ancienne version reçoit la section `crafts`.
 
 **Launcher.** Ce qui a été testé ici :
 

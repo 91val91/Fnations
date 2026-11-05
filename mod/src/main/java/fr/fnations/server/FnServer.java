@@ -59,6 +59,7 @@ public final class FnServer {
     private fr.fnations.store.StoreManager store;
     private fr.fnations.loot.LootManager loot;
     private fr.fnations.spawner.SpawnerManager spawners;
+    private fr.fnations.rating.RatingManager ratings;
     private NationActions nationActions;
     private long ticks;
 
@@ -91,6 +92,7 @@ public final class FnServer {
         s.loot = new fr.fnations.loot.LootManager(s);
         s.ranks = new fr.fnations.rank.RankManager(s);
         s.store = new fr.fnations.store.StoreManager(s);
+        s.ratings = new fr.fnations.rating.RatingManager(s);
         s.ui = new fr.fnations.ui.UiManager(s);
         fr.fnations.ui.pages.Pages.register(s, s.ui);
         NationActions actions = new NationActions(s);
@@ -116,6 +118,7 @@ public final class FnServer {
                 }
             }
             upgradeConfig("config.yml");
+            upgradeConfig("metiers.yml");
         } catch (Exception e) {
             FNations.LOG.error("Impossible de préparer le dossier de configuration", e);
         }
@@ -257,6 +260,7 @@ public final class FnServer {
         market.save();
         ranks.save();
         store.save();
+        ratings.save();
         bank.save();
         nations.save();
         wars.save();
@@ -308,5 +312,7 @@ public final class FnServer {
     public fr.fnations.store.StoreManager store() { return store; }
     public fr.fnations.loot.LootManager loot() { return loot; }
     public fr.fnations.spawner.SpawnerManager spawners() { return spawners; }
+
+    public fr.fnations.rating.RatingManager ratings() { return ratings; }
     public NationActions nationActions() { return nationActions; }
 }

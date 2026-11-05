@@ -62,6 +62,8 @@ public final class Commands {
         cmd(d, List.of("grade", "grades"), 0, (p, a) -> ui(p, "boutique", java.util.Map.of("tab", "grades")), (p, a) -> List.of());
         cmd(d, List.of("lootbox", "lootboxs"), 0, (p, a) -> ui(p, "boutique", java.util.Map.of("tab", "lootboxs")), (p, a) -> List.of());
         cmd(d, List.of("carte", "monde"), 0, (p, a) -> ui(p, "carte"), (p, a) -> List.of());
+        cmd(d, List.of("notation", "note", "notes"), 0, Commands::notation,
+                (p, a) -> a.length == 1 && p.hasPermissions(3) ? List.of("jury", "inscrire") : a.length == 2 && a[0].equalsIgnoreCase("jury") ? List.of("ajouter", "retirer", "liste") : List.of());
         // Livraison des achats de la boutique en ligne (console / Tebex) : fnstore <type> <joueur> [arguments]
         d.register(literal("fnstore").requires(src -> src.hasPermission(3))
                 .then(argument("type", StringArgumentType.word())
@@ -366,6 +368,45 @@ public final class Commands {
     }
 
     // ------------------------------------------------------------ /hdv
+    /** /notation : page de notation ; /notation jury ajouter|retirer|liste <joueur> (opérateurs). */
+    private static void notation(ServerPlayer p, String[] a) {
+        FnServer s = s();
+        if (a.length >= 1 && a[0].equalsIgnoreCase("inscrire")) {
+            if (!p.hasPermissions(3)) { Msg.err(p, "Réservé aux opérateurs."); return; }
+            String rest = String.join(" ", java.util.Arrays.copyOfRange(a, Math.min(a.length, 2), a.length));
+            String[] parts = rest.split("\\|", 2);
+            if (a.length < 3 || parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
+                Msg.err(p, "Usage : /notation inscrire <joueur> <nom de la construction> | <thème>");
+                return;
+            }
+            java.util.UUID u = s.uuidByName(a[1]);
+            if (u == null && !s.server().usesAuthentication()) u = net.minecraft.core.UUIDUtil.createOfflinePlayerUUID(a[1]);
+            if (u == null) { Msg.err(p, "Joueur inconnu : " + a[1]); return; }
+            var b = s.ratings().register(p, u, a[1], parts[0], parts[1]);
+            Msg.ok(p, "Construction n°" + b.id + " « " + Txt.esc(b.name) + " » inscrite pour " + Txt.esc(a[1]) + ".");
+            return;
+        }
+        if (a.length >= 2 && a[0].equalsIgnoreCase("jury")) {
+            if (!p.hasPermissions(3)) { Msg.err(p, "Réservé aux opérateurs."); return; }
+            var rm = s.ratings();
+            if (a[1].equalsIgnoreCase("liste")) {
+                StringBuilder sb = new StringBuilder();
+                for (java.util.UUID u : rm.jury()) sb.append(sb.isEmpty() ? "" : ", ").append(s.name(u));
+                Msg.send(p, "<#8C96FF>Jury : <white>" + (sb.isEmpty() ? "aucun juré nommé (les opérateurs en font partie)" : Txt.esc(sb.toString())));
+                return;
+            }
+            if (a.length < 3) { Msg.err(p, "Usage : /notation jury <ajouter|retirer|liste> <joueur>"); return; }
+            java.util.UUID u = s.uuidByName(a[2]);
+            if (u == null) { Msg.err(p, "Joueur inconnu : " + a[2]); return; }
+            boolean add = a[1].equalsIgnoreCase("ajouter");
+            boolean changed = add ? rm.addJury(u) : rm.removeJury(u);
+            rm.save();
+            Msg.ok(p, Txt.esc(s.name(u)) + (changed ? (add ? " rejoint le jury." : " quitte le jury.") : add ? " fait déjà partie du jury." : " n'est pas juré."));
+            return;
+        }
+        ui(p, "notation");
+    }
+
     private static void market(ServerPlayer p, String[] a) {
         FnServer s = s();
         if (a.length >= 2 && a[0].equalsIgnoreCase("vendre")) {

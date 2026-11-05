@@ -49,10 +49,25 @@ public final class CraftingStation {
 
     public StationRecipe get(String id) { return recipes.get(id); }
 
+    /** Recette de la Station qui fabrique cet objet (id du mod, sans « fnations: »), ou null. */
+    public StationRecipe forResult(String result) {
+        StationRecipe r = recipes.get(result);
+        if (r != null && r.result().equals(result)) return r;
+        for (StationRecipe x : recipes.values()) if (x.result().equals(result)) return x;
+        return null;
+    }
+
     public boolean craft(ServerPlayer p, StationRecipe r, boolean feedback) {
         Technology t = plugin.research().requiredFor(r.result());
         if (t != null && !plugin.research().playerCanUse(p, t.id())) {
             if (feedback) Msg.err(p, "Votre nation doit rechercher : " + t.name());
+            return false;
+        }
+        String itemId = "fnations:" + r.result();
+        if (!plugin.jobs().canCraft(p, itemId)) {
+            var q = plugin.jobs().requirement(itemId);
+            if (feedback) Msg.err(p, fr.fnations.job.JobManager.label(q) + " requis pour fabriquer <item:" + itemId + "> (vous : palier "
+                    + plugin.jobs().palier(p.getUUID(), q.job()) + ").");
             return false;
         }
         if (!Inv.takeAll(p, r.ingredients())) {

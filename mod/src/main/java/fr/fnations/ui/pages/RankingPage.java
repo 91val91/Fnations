@@ -41,7 +41,8 @@ public final class RankingPage extends UiPage {
                 btn("Nations", a("tab", "nations")).withIcon("flag").style("tab").selected(tab.equals("nations")),
                 btn("Métiers", a("tab", "metiers")).withIcon("pickaxe").style("tab").selected(tab.equals("metiers")),
                 btn("Entreprises", a("tab", "entreprises")).withIcon("briefcase").style("tab").selected(tab.equals("entreprises")),
-                btn("HDV (semaine)", a("tab", "hdv")).withIcon("shop").style("tab").selected(tab.equals("hdv"))).gap(2);
+                btn("HDV (semaine)", a("tab", "hdv")).withIcon("shop").style("tab").selected(tab.equals("hdv")),
+                btn("Notation", a("tab", "notation")).withIcon("medal").style("tab").selected(tab.equals("notation"))).gap(2);
         UiNode list = list("rank").gap(4).flex(1);
         UiNode extra = null;
         int r = 1;
@@ -67,6 +68,20 @@ public final class RankingPage extends UiPage {
                 Company mine = s.companies().of(p.getUUID());
                 for (Company c : cs) list.add(line(r++, icon(c.type().icon).size(16).color(c.type().color), Txt.esc(c.name()),
                         c.type().display + " • " + c.members().size() + " employé(s) • " + money(c.balance()), TA + "<b>Niveau " + s.companies().level(c), c == mine));
+            }
+            case "notation" -> {
+                Nation mine = s.nations().of(p);
+                for (var e : s.ratings().nationRanking()) {
+                    Nation n = e.getKey();
+                    var sc = e.getValue();
+                    StringBuilder sub = new StringBuilder(sc.count() + " construction(s)");
+                    for (var c : fr.fnations.rating.RatingManager.Criterion.values())
+                        sub.append(" • ").append(c == fr.fnations.rating.RatingManager.Criterion.THEME ? "Thème" : c.display).append(" ")
+                                .append(fr.fnations.rating.RatingManager.fmt(sc.criteria()[c.ordinal()]));
+                    list.add(line(r++, space(4, 20).bg(NationPage.hex(n.color())).r(2), Txt.esc(n.name()) + " " + TM + "[" + n.tag() + "]", sub.toString(),
+                            "<b><" + NotationPage.color(sc.global()) + ">" + fr.fnations.rating.RatingManager.fmt(sc.global()) + "</b>" + TM + "/10", n == mine));
+                }
+                extra = row(text(T2 + "Moyenne des constructions notées par le jury."), flexSpace(), btn("Notation des constructions", "nav:notation").withIcon("medal")).gap(6);
             }
             case "hdv" -> {
                 for (Map.Entry<UUID, Double> e : s.market().weeklyTop(30)) list.add(line(r++, head(e.getKey(), s.name(e.getKey())).size(16), Txt.esc(s.name(e.getKey())),

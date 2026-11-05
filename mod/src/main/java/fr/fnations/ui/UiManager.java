@@ -30,6 +30,7 @@ public final class UiManager {
             new String[]{"banque", "bank", "Banque"},
             new String[]{"entreprise", "briefcase", "Entreprise"},
             new String[]{"metiers", "pickaxe", "Métiers"},
+            new String[]{"notation", "medal", "Notation des constructions"},
             new String[]{"hdv", "shop", "Hôtel des ventes"},
             new String[]{"recherche", "flask", "Recherche & Développement"},
             new String[]{"guerres", "swords", "Guerres"},

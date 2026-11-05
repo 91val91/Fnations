@@ -2,6 +2,12 @@
   "required": true,
   "package": "fr.fnations.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["ServerExplosionMixin", "BlockItemMixin"],
-  "injectors": { "defaultRequire": 1 }
+  "mixins": [
+    "ServerExplosionMixin",
+    "BlockItemMixin",
+    "CraftingMenuMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

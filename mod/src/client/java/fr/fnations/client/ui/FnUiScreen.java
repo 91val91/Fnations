@@ -138,6 +138,9 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
         nav.addProperty("gap", 2);
         nav.addProperty("align", "center");
         JsonArray navKids = new JsonArray();
+        // hauteur des boutons : tout doit tenir dans la barre (entrées + fermer)
+        int navCount = (page.has("nav") ? page.getAsJsonArray("nav").size() : 0) + 1;
+        int bh = Math.max(14, Math.min(20, (H - 2 * 7 - navCount * 2) / navCount));
         if (page.has("nav")) for (JsonElement e : page.getAsJsonArray("nav")) {
             JsonObject n = e.getAsJsonObject();
             JsonObject b = node("btn");
@@ -145,7 +148,7 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
             b.addProperty("a", "nav:" + n.get("id").getAsString());
             b.addProperty("style", "nav");
             b.addProperty("w", 22);
-            b.addProperty("h", 20);
+            b.addProperty("h", bh);
             if (n.get("id").getAsString().equals(sel)) b.addProperty("sel", true);
             JsonArray tip = new JsonArray();
             tip.add(n.get("tip").getAsString());
@@ -160,7 +163,7 @@ public final class FnUiScreen extends Screen implements UiView.Hooks {
         close.addProperty("a", "client:close");
         close.addProperty("style", "nav");
         close.addProperty("w", 22);
-        close.addProperty("h", 20);
+        close.addProperty("h", bh);
         JsonArray ctip = new JsonArray();
         ctip.add("Fermer");
         close.add("tip", ctip);

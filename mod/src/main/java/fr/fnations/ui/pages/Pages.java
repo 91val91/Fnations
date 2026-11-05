@@ -23,5 +23,6 @@ public final class Pages {
         ui.register(new LootboxPage(s));
         ui.register(new SpawnerPage(s));
         ui.register(new WorldMapPage(s));
+        ui.register(new NotationPage(s));
     }
 }

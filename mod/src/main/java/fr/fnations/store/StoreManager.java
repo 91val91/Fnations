@@ -154,8 +154,17 @@ public final class StoreManager {
         polling = true;
         nextPoll = System.currentTimeMillis() + Math.max(30, s.config().getInt("boutique.tebex-intervalle-secondes", 60)) * 1000L;
         if (http == null) http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
-        Thread.ofVirtual().name("fnations-tebex").start(this::poll);
+        // joueurs connectés (relevés ici, sur le fil du serveur) : seules leurs commandes « en ligne » sont exécutées
+        java.util.Set<String> online = new java.util.HashSet<>();
+        for (ServerPlayer p : s.server().getPlayerList().getPlayers()) {
+            online.add(p.getScoreboardName().toLowerCase(java.util.Locale.ROOT));
+            online.add(p.getUUID().toString().replace("-", ""));
+        }
+        Thread.ofVirtual().name("fnations-tebex").start(() -> poll(online));
     }
+
+    /** Commandes Tebex exécutées dont la confirmation n'a pas encore été acceptée (évite une double livraison). */
+    private final java.util.Set<Long> executed = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     private JsonObject get(String path) throws Exception {
         HttpRequest req = HttpRequest.newBuilder(URI.create("https://plugin.tebex.io" + path)).header("X-Tebex-Secret", secret())
@@ -165,7 +174,7 @@ public final class StoreManager {
         return JsonParser.parseString(r.body()).getAsJsonObject();
     }
 
-    private void poll() {
+    private void poll(java.util.Set<String> online) {
         try {
             JsonObject queue = get("/queue");
             JsonObject meta = queue.getAsJsonObject("meta");
@@ -178,17 +187,22 @@ public final class StoreManager {
                 for (JsonElement e : arr(off, "commands")) {
                     JsonObject c = e.getAsJsonObject();
                     JsonObject pl = c.getAsJsonObject("player");
-                    toRun.add(new String[]{c.get("command").getAsString(), pl.get("name").getAsString(), str(pl, "uuid")});
-                    done.add(c.get("id").getAsLong());
+                    long id = c.get("id").getAsLong();
+                    if (executed.add(id)) toRun.add(new String[]{c.get("command").getAsString(), pl.get("name").getAsString(), str(pl, "uuid")});
+                    done.add(id);
                 }
             }
             for (JsonElement e : arr(queue, "players")) {
                 JsonObject pl = e.getAsJsonObject();
+                String name = str(pl, "name"), uuid = str(pl, "uuid").replace("-", "").toLowerCase(java.util.Locale.ROOT);
+                // commande « en ligne » : elle attend que le joueur soit connecté (Tebex la garde en file)
+                if (!online.contains(name.toLowerCase(java.util.Locale.ROOT)) && !online.contains(uuid)) continue;
                 JsonObject on = get("/queue/online-commands/" + pl.get("id").getAsString());
                 for (JsonElement ce : arr(on, "commands")) {
                     JsonObject c = ce.getAsJsonObject();
-                    toRun.add(new String[]{c.get("command").getAsString(), pl.get("name").getAsString(), str(pl, "uuid")});
-                    done.add(c.get("id").getAsLong());
+                    long id = c.get("id").getAsLong();
+                    if (executed.add(id)) toRun.add(new String[]{c.get("command").getAsString(), name, str(pl, "uuid")});
+                    done.add(id);
                 }
             }
             if (!toRun.isEmpty()) s.server().execute(() -> toRun.forEach(c -> run(c[0], c[1], c[2])));
@@ -197,8 +211,14 @@ public final class StoreManager {
                 for (Long id : done) q.append(q.isEmpty() ? "?" : "&").append("ids[]=").append(id);
                 HttpRequest del = HttpRequest.newBuilder(URI.create("https://plugin.tebex.io/queue" + q)).header("X-Tebex-Secret", secret())
                         .header("User-Agent", "FNations").timeout(Duration.ofSeconds(15)).DELETE().build();
-                http.send(del, HttpResponse.BodyHandlers.discarding());
-                FNations.LOG.info("Boutique Tebex : {} commande(s) exécutée(s)", done.size());
+                HttpResponse<Void> dr = http.send(del, HttpResponse.BodyHandlers.discarding());
+                if (dr.statusCode() / 100 == 2) {
+                    executed.removeAll(done);
+                    FNations.LOG.info("Boutique Tebex : {} commande(s) exécutée(s)", done.size());
+                } else {
+                    // les commandes déjà exécutées ne le seront pas une seconde fois ; la confirmation sera renvoyée
+                    FNations.LOG.warn("Boutique Tebex : confirmation refusée (HTTP {}), nouvel essai au prochain passage", dr.statusCode());
+                }
             }
         } catch (Exception ex) {
             FNations.LOG.warn("Boutique Tebex : {}", ex.getMessage());

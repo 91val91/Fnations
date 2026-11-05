@@ -49,6 +49,7 @@ public final class ServerEvents {
                 s.jobs().onJoin(handler.player);
                 s.ranks().apply(handler.player);
                 s.store().onJoin(handler.player);
+                s.ratings().onJoin(handler.player);
             }
         });
         net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents.AFTER_RESPAWN.register((oldP, newP, alive) -> {

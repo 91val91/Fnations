@@ -101,3 +101,37 @@ ingenieur:
     MACHINE: [30, 8]
     MISSILE: [50, 12]
     FUSEE: [120, 30]
+
+# ------------------------------------------------------------ Crafts par palier
+# Palier de métier requis pour fabriquer un objet, à la Station de Craft (objets fnations:)
+# comme à l'établi (objets minecraft:). Palier 0 : craft du métier disponible dès le départ.
+# Un objet absent de cette liste se fabrique sans condition de métier.
+crafts:
+  ingenieur:
+    0: [fnations:crafting_station, fnations:steel_ingot, fnations:circuit, fnations:battery, fnations:compressor, fnations:coal_generator, fnations:switch]
+    1: [fnations:solar_cell, fnations:motor, fnations:tire, fnations:cockpit, fnations:electric_furnace, fnations:solar_panel_t1]
+    2: [fnations:advanced_circuit, fnations:rotor, fnations:track, fnations:crusher, fnations:solar_panel_t2]
+    3: [fnations:jet_engine, fnations:guidance_system, fnations:heat_shield, fnations:helicopter, fnations:tank]
+    4: [fnations:rocket, fnations:rocket_engine, fnations:rocket_fuel, fnations:plane, fnations:solar_panel_t3]
+    5: [fnations:missile_launcher, fnations:warhead, fnations:missile_tactical, fnations:missile_cruise]
+    6: [fnations:nuclear_core, fnations:missile_ballistic, fnations:missile_nuclear]
+  chasseur:
+    0: [fnations:gun_parts, fnations:gun_barrel, fnations:pistol, fnations:ammo_9mm]
+    1: [fnations:smg, fnations:shotgun, fnations:ammo_shotgun, minecraft:crossbow]
+    2: [fnations:assault_rifle, fnations:ammo_762]
+    3: [fnations:sniper, fnations:ammo_sniper, minecraft:spectral_arrow]
+    4: [fnations:rpg, fnations:rpg_rocket]
+    5: [fnations:tank_shell]
+  mineur:
+    2: [fnations:explosive_charge, minecraft:tnt]
+    3: [minecraft:anvil]
+  agriculteur:
+    0: [fnations:fuel_canister]
+    2: [fnations:tractor, minecraft:cake, minecraft:golden_carrot]
+    4: [minecraft:golden_apple]
+  bucheron:
+    2: [minecraft:bookshelf]
+    3: [minecraft:lectern, minecraft:chiseled_bookshelf]
+  builder:
+    3: [minecraft:sea_lantern]
+    5: [minecraft:beacon, minecraft:conduit]

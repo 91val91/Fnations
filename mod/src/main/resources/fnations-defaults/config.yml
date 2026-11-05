@@ -72,6 +72,19 @@ boutique:
     - {type: blaze, prix: "9,99 €"}
     - {type: iron_golem, prix: "14,99 €"}
 
+# ------------------------------------------------------------ Notation des constructions
+# Les joueurs soumettent leurs constructions (/notation) ; le jury les note de 0 à 10 sur cinq critères :
+# Build, Skill, Architecture, Respect du thème, R&D. La première note récompense l'auteur.
+notation:
+  jury: []                             # pseudos des jurés (les opérateurs du niveau ci-dessous le sont aussi)
+  niveau-op-jury: 2
+  max-en-attente: 3                    # constructions en attente du jury par joueur
+  note-minimale: 4                     # note globale minimale pour être récompensé
+  recompenses:                         # pour une note de 10/10, proportionnelles à la note
+    xp-builder: 2000
+    xp-ingenieur: 800                  # selon la note R&D
+    argent: 15000
+
 # ------------------------------------------------------------ Hôtel des ventes
 hdv:
   taxe-pourcent: 5                     # prélevée sur le vendeur (réduite pour le Trading)

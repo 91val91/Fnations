@@ -105,6 +105,15 @@ public final class NationPage extends UiPage {
                 text("<b>" + (int) lvl[0]).scale(1.5)).gap(2)).bg(ACCENT).r(6).pad(8).gap(8);
         UiNode techs = row(icon("medal").size(16).color(TEXT2), col(text(T2 + "Technologies"),
                 text("<b>" + n.researched().size() + "/" + s.research().all().size()).scale(1.5)).gap(2)).bg(ROW).r(6).pad(8).gap(8);
+        fr.fnations.rating.RatingManager.Score sc = s.ratings().nationScore(n.id());
+        java.util.List<String> noteTip = new java.util.ArrayList<>();
+        noteTip.add("<b>Notation des constructions");
+        for (var c : fr.fnations.rating.RatingManager.Criterion.values())
+            noteTip.add(T2 + c.display + " : <white>" + (sc.count() == 0 ? "—" : fr.fnations.rating.RatingManager.fmt(sc.criteria()[c.ordinal()]) + "/10"));
+        noteTip.add(TM + sc.count() + " construction(s) notée(s) • clic : ouvrir");
+        UiNode note = row(icon("medal").size(16).color(YELLOW), col(text(T2 + "Notation"),
+                text(sc.count() == 0 ? "<b>" + TM + "—" : "<b><" + NotationPage.color(sc.global()) + ">" + fr.fnations.rating.RatingManager.fmt(sc.global()) + "</b>" + TM + "/10").scale(1.5)).gap(2))
+                .bg(ROW).r(6).pad(8).gap(8).act("nav:notation").tip(noteTip).hover();
         UiNode statsA = col(
                 row(text(T2 + "Claims").flex(1), text("<b>" + n.claims().size() + "/" + s.nations().maxClaims(n))),
                 row(text(T2 + "Puissance").flex(1), text("<b>" + s.nations().power(n))),
@@ -121,7 +130,7 @@ public final class NationPage extends UiPage {
                     text((on ? "" : T2) + Txt.esc(s.name(e.getKey()))).flex(1), icon("dot").size(6).color(on ? GREEN : MUTED)).pad(3).gap(5).r(4).hover()
                     .tip("<b>" + Txt.esc(s.name(e.getKey())), e.getValue().display, on ? TG + "En ligne" : TM + "Hors ligne"));
         });
-        UiNode grid = row(col(level, techs).gap(6).w(108), card(sectionTitle("Territoire"), miniMap(n)).w(124).pad(6),
+        UiNode grid = row(col(level, techs, note).gap(6).w(108), card(sectionTitle("Territoire"), miniMap(n)).w(124).pad(6),
                 col(statsA, statsB).gap(6).flex(1), card(sectionTitle("Citoyens"), members).w(130).pad(6)).gap(6);
         return col(banner, text("<b>Informations").scale(1.25), grid.flex(1)).gap(8);
     }

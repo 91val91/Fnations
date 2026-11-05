@@ -80,13 +80,20 @@ public final class StationPage extends UiPage {
         UiNode grid = grid(6).gap(5);
         for (StationRecipe r : all) {
             if (!r.category().equals(cat.name())) continue;
-            boolean ok = Inv.has(p, r.ingredients()) && researched(p, r);
+            boolean job = s.jobs().canCraft(p, "fnations:" + r.result());
+            boolean ok = job && Inv.has(p, r.ingredients()) && researched(p, r);
             boolean on = r.id().equals(sel);
-            grid.add(col(item(ModItems.stack(r.result(), r.amount())).size(24)).str("align", "center").pad(5).h(34).r(6)
-                    .bg(on ? ACCENT : ok ? "#1F3A2C" : ROW).act(a("recipe", r.id())));
+            var q = s.jobs().requirement("fnations:" + r.result());
+            UiNode cell = col(item(ModItems.stack(r.result(), r.amount())).size(24).flag("notip")).str("align", "center").pad(5).h(34).r(6)
+                    .bg(on ? ACCENT : ok ? "#1F3A2C" : !job ? "#3A2427" : ROW).act(a("recipe", r.id()));
+            cell.tip("<b><item:fnations:" + r.result() + ">", q == null || q.palier() <= 0 ? TM + "Aucun palier requis"
+                    : (job ? TG + "✔ " : TR + "🔒 ") + fr.fnations.job.JobManager.label(q));
+            grid.add(cell);
         }
-        UiNode center = card(row(text("<b>Station de Craft").scale(1.25), flexSpace(), chip(TG + "Fabricable").bg("#1F3A2C").tip(T2 + "Fond vert : vous avez tout le nécessaire")).gap(5),
-                list("recipes").add(grid).flex(1)).flex(1);
+        UiNode center = card(text("<b>Station de Craft").scale(1.25),
+                list("recipes").add(grid).flex(1),
+                row(chip(TG + "Fabricable").bg("#1F3A2C").tip(T2 + "Vous avez tout le nécessaire"),
+                        chip(TR + "Palier de métier requis").bg("#3A2427").tip(T2 + "Votre palier de métier est trop bas (voir la page Métiers)")).gap(5)).flex(1);
         StationRecipe r = s.station().get(sel);
         UiNode right;
         if (r == null || !r.category().equals(cat.name())) {
@@ -105,9 +112,14 @@ public final class StationPage extends UiPage {
             Technology t = s.research().requiredFor(r.result());
             boolean res = researched(p, r);
             UiNode tech = t == null ? null : row(icon(res ? "check" : "lock").size(10).color(res ? GREEN : RED), text((res ? T2 : TR) + "Recherche : " + Txt.plain(t.name())).wrap().flex(1)).gap(5);
-            boolean can = ok && res && near;
+            var q = s.jobs().requirement("fnations:" + r.result());
+            boolean job = s.jobs().canCraft(p, "fnations:" + r.result());
+            UiNode jobRow = q == null || q.palier() <= 0 ? null : row(icon(job ? "check" : "lock").size(10).color(job ? GREEN : RED),
+                    text((job ? T2 : TR) + "Métier : " + fr.fnations.job.JobManager.label(q)
+                            + (job ? "" : " (vous : " + s.jobs().palier(p.getUUID(), q.job()) + ")")).wrap().flex(1)).gap(5).act("nav:metiers");
+            boolean can = ok && res && job && near;
             right = card(row(item(ModItems.stack(r.result(), r.amount())).size(32), col(text("<b><item:fnations:" + r.result() + ">").wrap(), text(T2 + "Quantité : " + r.amount())).gap(3).flex(1)).gap(8),
-                    sectionTitle("Ingrédients"), list("ings").add(ings).flex(1), tech,
+                    sectionTitle("Ingrédients"), list("ings").add(ings).flex(1), tech, jobRow,
                     row(btn("Fabriquer", a("craft", r.id() + ";1")).primary().disabled(!can).flex(1), btn("×5", a("craft", r.id() + ";5")).disabled(!can).w(34)).gap(5)).w(176);
         }
         return row(left, center, right).gap(8);

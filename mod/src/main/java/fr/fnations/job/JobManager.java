@@ -60,6 +60,9 @@ public final class JobManager {
 
     public record Rank(UUID player, double xp) {}
 
+    /** Palier de métier requis pour fabriquer un objet. */
+    public record CraftReq(Job job, int palier) {}
+
     private static final ResourceLocation REACH_ID = FNations.id("builder_reach");
 
     private final FnServer s;
@@ -75,6 +78,9 @@ public final class JobManager {
             saplings = new HashMap<>(), buildBonus = new HashMap<>();
     private final Map<EntityType<?>, Source> mobs = new HashMap<>();
     private final Map<String, Source> station = new HashMap<>();
+    /** id d'objet (fnations:rocket, minecraft:tnt) → métier et palier requis, dans l'ordre de metiers.yml. */
+    private final Map<String, CraftReq> crafts = new LinkedHashMap<>();
+    private final Map<UUID, Long> lockMsg = new HashMap<>();
     private Source build = new Source(1, 0.03), monster = new Source(5, 1), animal = new Source(1.5, 0.2), machine = new Source(5, 1);
 
     // revenus versés par lots (évite un historique bancaire à chaque bloc)
@@ -121,6 +127,87 @@ public final class JobManager {
         }
         Yaml st = y.getSection("ingenieur.station");
         if (st != null) for (String k : st.getKeys()) station.put(k.toUpperCase(), source(st.get(k), null));
+        crafts.clear();
+        Yaml cr = y.getSection("crafts");
+        if (cr != null) for (String jid : cr.getKeys()) {
+            Job job = Job.byId(jid);
+            Yaml js = cr.getSection(jid);
+            if (job == null || js == null) { FNations.LOG.warn("metiers.yml : métier inconnu dans crafts : {}", jid); continue; }
+            for (String tier : js.getKeys()) {
+                int pal;
+                try { pal = Math.max(0, Math.min(6, Integer.parseInt(tier.trim()))); } catch (NumberFormatException e) { continue; }
+                for (String raw : js.getStringList(tier)) {
+                    String id = itemId(raw);
+                    ResourceLocation rl = ResourceLocation.tryParse(id);
+                    if (rl == null || BuiltInRegistries.ITEM.getOptional(rl).isEmpty()) { FNations.LOG.warn("metiers.yml : objet inconnu dans crafts : {}", raw); continue; }
+                    crafts.put(id, new CraftReq(job, pal));
+                }
+            }
+        }
+    }
+
+    /** « rocket » → « fnations:rocket », « tnt » → « minecraft:tnt », les ids complets restent tels quels. */
+    public static String itemId(String raw) {
+        String k = raw.trim().toLowerCase(java.util.Locale.ROOT);
+        if (k.contains(":")) return k;
+        return fr.fnations.registry.ModItems.get(k) != null ? "fnations:" + k : "minecraft:" + k;
+    }
+
+    // ------------------------------------------------------------ crafts par palier
+    /** Condition de métier pour fabriquer cet objet (null : aucune). */
+    public CraftReq requirement(String itemId) { return crafts.get(itemId); }
+
+    /** Le joueur a-t-il le palier pour fabriquer cet objet ? (les joueurs en créatif ne sont pas limités) */
+    public boolean canCraft(ServerPlayer p, String itemId) {
+        CraftReq r = crafts.get(itemId);
+        return r == null || r.palier() <= 0 || p.isCreative() || palier(p.getUUID(), r.job()) >= r.palier();
+    }
+
+    /** Crafts d'un métier débloqués exactement à ce palier. */
+    public List<String> craftsAt(Job j, int palier) {
+        List<String> out = new ArrayList<>();
+        crafts.forEach((k, r) -> { if (r.job() == j && r.palier() == palier) out.add(k); });
+        return out;
+    }
+
+    /** Tous les crafts d'un métier, par palier croissant. */
+    public List<Map.Entry<String, CraftReq>> craftsOf(Job j) {
+        List<Map.Entry<String, CraftReq>> out = new ArrayList<>();
+        for (var e : crafts.entrySet()) if (e.getValue().job() == j) out.add(e);
+        out.sort(java.util.Comparator.comparingInt(e -> e.getValue().palier()));
+        return out;
+    }
+
+    /** Texte de la condition : « Ingénieur palier 4 ». */
+    public static String label(CraftReq r) { return r.job().display + " palier " + r.palier(); }
+
+    /** Résultat de l'établi : vide si le joueur n'a pas le palier (avec un message dans la barre d'action). */
+    public ItemStack craftLock(ServerPlayer p, ItemStack result) {
+        if (result.isEmpty()) return result;
+        String id = BuiltInRegistries.ITEM.getKey(result.getItem()).toString();
+        if (canCraft(p, id)) return result;
+        CraftReq r = crafts.get(id);
+        long now = System.currentTimeMillis();
+        Long last = lockMsg.get(p.getUUID());
+        if (last == null || now - last > 1500) {
+            lockMsg.put(p.getUUID(), now);
+            Msg.bar(p, "<red>🔒 <item:" + id + "> : " + label(r) + " requis <gray>(vous : palier " + palier(p.getUUID(), r.job()) + ")");
+        }
+        return ItemStack.EMPTY;
+    }
+
+    /**
+     * XP gagnée hors action de jeu (notation du jury) : fonctionne aussi pour un joueur hors ligne,
+     * dont les paliers seront annoncés et payés à la prochaine connexion.
+     */
+    public void award(UUID u, Job job, double amount) {
+        if (amount <= 0) return;
+        double[] a = xp.computeIfAbsent(u, k -> new double[Job.values().length]);
+        int before = palier(a[job.ordinal()]);
+        a[job.ordinal()] += amount * xpMul;
+        int after = palier(a[job.ordinal()]);
+        ServerPlayer p = s.player(u);
+        if (p != null) for (int k = before + 1; k <= after; k++) palierUp(p, job, k);
     }
 
     private static Source source(Object o, Source def) {
@@ -239,6 +326,12 @@ public final class JobManager {
         Msg.sound(p, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1.1f);
         Msg.ok(p, job.display + " : palier " + palier + " atteint, " + Txt.money(money) + " versés.");
         for (String perk : job.perks(palier)) Msg.send(p, "<#8C96FF>✦ <white>" + perk);
+        List<String> unlocked = craftsAt(job, palier);
+        if (!unlocked.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String id : unlocked) sb.append(sb.isEmpty() ? "" : "<gray>, <white>").append("<item:").append(id).append(">");
+            Msg.send(p, "<#8C96FF>✦ <white>Nouveaux crafts : " + sb);
+        }
         if (palier == 6) Msg.broadcast(s.server(), "<gold>" + Txt.esc(p.getScoreboardName()) + " a atteint le palier maximal en " + job.display + " !");
         applyAttributes(p);
     }
@@ -443,7 +536,12 @@ public final class JobManager {
         }
     }
 
-    public void onJoin(ServerPlayer p) { applyAttributes(p); }
+    public void onJoin(ServerPlayer p) {
+        // paliers atteints hors ligne (XP de notation) : annonce et récompense
+        int[] done = rewarded.computeIfAbsent(p.getUUID(), k -> new int[Job.values().length]);
+        for (Job j : Job.values()) for (int k = done[j.ordinal()] + 1; k <= palier(p.getUUID(), j); k++) palierUp(p, j, k);
+        applyAttributes(p);
+    }
 
     public void onQuit(ServerPlayer p) {
         flush(p.getUUID());

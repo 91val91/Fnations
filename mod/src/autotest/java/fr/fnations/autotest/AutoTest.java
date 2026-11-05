@@ -43,6 +43,7 @@ public final class AutoTest implements ClientModInitializer {
         if ("showcase".equals(scenario)) showcase();
         else if ("terre".equals(scenario)) earth();
         else if ("boutique".equals(scenario)) boutique();
+        else if ("metiers".equals(scenario)) metiers();
         else script();
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
     }
@@ -93,11 +94,11 @@ public final class AutoTest implements ClientModInitializer {
         });
         Object[][] places = {
                 {"paris", 48.86, 2.35, 96, 0f, 34f},
-                {"alpes", 45.7, 6.2, 196, -90f, 24f},
-                {"himalaya", 27.3, 86.9, 238, 180f, 20f},
+                {"alpes", 45.7, 6.2, 190, -90f, 36f},
+                {"himalaya", 27.3, 86.9, 232, 180f, 34f},
                 {"sahara", 25.0, 10.0, 112, 0f, 30f},
                 {"amazonie", -3.0, -60.0, 100, 0f, 32f},
-                {"groenland", 70.5, -42.0, 205, 180f, 24f},
+                {"groenland", 70.5, -42.0, 200, 180f, 36f},
                 {"fuji", 34.9, 138.7, 135, 180f, 22f},
                 {"gibraltar", 35.95, -6.3, 150, -90f, 32f},
                 {"australie", -25.0, 133.0, 108, 0f, 32f},
@@ -115,6 +116,159 @@ public final class AutoTest implements ClientModInitializer {
             });
             step(520, () -> shot("terre_" + name));
         }
+        step(20, () -> {
+            try {
+                Files.write(mc().gameDirectory.toPath().resolve("autotest-result.txt"), report);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            log("FIN");
+            mc().stop();
+        });
+    }
+
+    private void rclick(int slot) {
+        var p = mc().player;
+        mc().gameMode.handleInventoryMouseClick(p.containerMenu.containerId, slot, 1, ClickType.PICKUP, p);
+    }
+
+    /** Case d'un objet de l'inventaire dans un établi ouvert (0 résultat, 1-9 grille, 10-36 sac, 37-45 barre). */
+    private int tableSlot(net.minecraft.world.item.Item item) {
+        var items = mc().player.getInventory().items;
+        for (int i = 0; i < items.size(); i++) if (items.get(i).is(item)) return i < 9 ? 37 + i : 10 + (i - 9);
+        return -1;
+    }
+
+    private String tableResult() {
+        var st = mc().player.containerMenu.getSlot(0).getItem();
+        return st.isEmpty() ? "vide" : st.getCount() + "× " + st.getHoverName().getString();
+    }
+
+    /**
+     * Scénario « metiers » : crafts par palier (TNT à l'établi, fusée à la Station), nouvelle page Métiers,
+     * notation des constructions (soumission, inscription par un opérateur, note du jury, classements).
+     */
+    private void metiers() {
+        int bx = 262, bz = -5439, y = 120;
+        BlockPos table = new BlockPos(bx + 2, y, bz + 2), station = new BlockPos(bx - 2, y, bz + 2);
+        step(40, () -> {
+            cmd("gamemode creative");
+            cmd("time set 6000");
+            cmd("gamerule doDaylightCycle false");
+            cmd("weather clear");
+            cmd("gamerule doMobSpawning false");
+            cmd("forceload add " + (bx - 24) + " " + (bz - 24) + " " + (bx + 24) + " " + (bz + 24));
+            cmd("fill " + (bx - 12) + " " + (y - 1) + " " + (bz - 12) + " " + (bx + 12) + " " + (y - 1) + " " + (bz + 12) + " minecraft:smooth_stone");
+            cmd("fill " + (bx - 12) + " " + y + " " + (bz - 12) + " " + (bx + 12) + " " + (y + 8) + " " + (bz + 12) + " minecraft:air");
+            cmd("tp @s " + (bx + 0.5) + " " + y + " " + (bz + 0.5) + " 0 15");
+            cmd("clear @s");
+            cmd("banque donner FnTester 500000");
+        });
+        // ---------- pays (pour la notation et la recherche de la fusée)
+        step(20, () -> cmd("menu"));
+        step(20, () -> press("nav:pays"));
+        step(20, () -> { type("name", "Francia"); press("pays.create"); });
+        step(20, () -> { cmd("fnations recherche Francia tout"); cmd("gamemode survival"); });
+        // ---------- établi : la TNT demande Mineur palier 2
+        step(10, () -> {
+            mc().setScreen(null);
+            cmd("setblock " + table.getX() + " " + y + " " + table.getZ() + " minecraft:crafting_table");
+            cmd("setblock " + station.getX() + " " + y + " " + station.getZ() + " fnations:crafting_station[facing=north]");
+            cmd("give @s minecraft:gunpowder 5");
+            cmd("give @s minecraft:sand 4");
+            cmd("tp @s " + (bx + 2.5) + " " + y + " " + (bz + 0.5) + " 0 35");
+        });
+        step(20, () -> use(table));
+        step(20, () -> {
+            log("menu ouvert : " + mc().player.containerMenu.getClass().getSimpleName());
+            click(tableSlot(net.minecraft.world.item.Items.GUNPOWDER));
+            for (int sl : new int[]{1, 3, 5, 7, 9}) rclick(sl);
+            click(tableSlot(net.minecraft.world.item.Items.SAND));
+            for (int sl : new int[]{2, 4, 6, 8}) rclick(sl);
+        });
+        step(15, () -> { log("TNT sans palier : " + tableResult()); shot("etabli_tnt_verrouillee"); });
+        step(5, () -> cmd("metier set FnTester mineur 2600"));
+        step(20, () -> { click(5); click(5); });
+        step(15, () -> {
+            log("TNT au palier 2 de Mineur : " + tableResult());
+            shot("etabli_tnt_debloquee");
+            var p = mc().player;
+            mc().gameMode.handleInventoryMouseClick(p.containerMenu.containerId, 0, 0, ClickType.QUICK_MOVE, p);
+        });
+        step(10, () -> {
+            log("TNT obtenue : " + mc().player.getInventory().countItem(net.minecraft.world.item.Items.TNT));
+            mc().player.closeContainer();
+        });
+        // ---------- Station : la fusée demande Ingénieur palier 4
+        step(10, () -> cmd("tp @s " + (bx - 1.5) + " " + y + " " + (bz + 0.5) + " 0 35"));
+        step(15, () -> use(station));
+        step(25, () -> { page("station"); press("station.cat:FUSEE"); });
+        step(10, () -> press("station.recipe:rocket"));
+        step(25, () -> shot("station_fusee_verrouillee"));
+        step(5, () -> ui().sendAction("station.craft:rocket;1"));
+        step(20, () -> shot("station_fusee_refus"));
+        step(5, () -> cmd("metier set FnTester ingenieur 12500"));
+        step(20, () -> ui().sendAction("refresh"));
+        step(110, () -> press("station.recipe:rocket"));
+        step(25, () -> shot("station_fusee_debloquee"));
+        // ---------- nouvelle page Métiers
+        step(5, () -> { mc().setScreen(null); cmd("metier"); });
+        step(30, () -> { page("metiers"); press("metiers.job:ingenieur"); });
+        step(25, () -> shot("ui_metiers_paliers"));
+        step(5, () -> press("metiers.tab:crafts"));
+        step(25, () -> shot("ui_metiers_crafts"));
+        step(5, () -> press("metiers.craft:fnations:rocket"));
+        step(25, () -> shot("ui_metiers_fiche_fusee"));
+        step(5, () -> { press("dialog:close"); press("metiers.job:mineur"); });
+        step(25, () -> shot("ui_metiers_crafts_mineur"));
+        step(5, () -> { press("metiers.job:builder"); press("metiers.tab:gains"); });
+        step(25, () -> shot("ui_metiers_gains"));
+        step(5, () -> press("metiers.tab:notation"));
+        step(25, () -> shot("ui_metiers_notation"));
+        // ---------- notation des constructions
+        step(5, () -> press("nav:notation"));
+        step(25, () -> { page("notation"); shot("ui_notation_vide"); });
+        step(5, () -> press("notation.submitdlg"));
+        step(20, () -> {
+            type("bname", "Tour Eiffel");
+            type("btheme", "Paris, fin du XIXe siècle");
+            type("bdesc", "Réplique en fer puddlé, 324 blocs de haut");
+            check("bnation", true);
+        });
+        step(5, () -> shot("ui_notation_soumission"));
+        step(5, () -> press("notation.submit"));
+        step(25, () -> shot("ui_notation_mes"));
+        step(5, () -> cmd("notation inscrire Bob Château de Versailles | Palais classique français"));
+        step(20, () -> press("notation.tab:jury"));
+        step(25, () -> shot("ui_notation_jury"));
+        step(5, () -> press("notation.ratedlg:2"));
+        step(15, () -> {
+            String[][] notes = {{"build", "8"}, {"skill", "7"}, {"architecture", "9"}, {"theme", "9"}, {"rd", "6"}};
+            for (String[] n : notes) ui().sendAction("notation.val:" + n[0] + ":" + n[1]);
+        });
+        step(20, () -> type("ncomment", "Très belle symétrie, jardins à compléter."));
+        step(5, () -> shot("ui_notation_noter"));
+        step(5, () -> press("notation.rate:2"));
+        step(25, () -> press("notation.tab:top"));
+        step(25, () -> shot("ui_notation_meilleures"));
+        step(5, () -> press("notation.detail:2"));
+        step(25, () -> shot("ui_notation_detail"));
+        step(5, () -> { press("dialog:close"); press("notation.tab:pays"); });
+        step(25, () -> shot("ui_notation_pays"));
+        step(5, () -> press("nav:pays"));
+        step(30, () -> shot("ui_pays_notation"));
+        step(5, () -> press("nav:classements"));
+        step(10, () -> press("classements.tab:notation"));
+        step(25, () -> shot("ui_classements_notation"));
+        step(5, () -> { press("classements.tab:metiers"); press("classements.job:builder"); });
+        step(25, () -> shot("ui_classements_builder"));
+        // visite d'une construction par un juré
+        step(5, () -> { press("nav:notation"); cmd("tp @s " + (bx + 8.5) + " " + y + " " + (bz + 8.5)); });
+        step(20, () -> {
+            log("position avant visite : " + mc().player.blockPosition().toShortString());
+            ui().sendAction("notation.tp:1");
+        });
+        step(20, () -> log("position après visite : " + mc().player.blockPosition().toShortString() + ", tablette " + (ui() == null ? "fermée" : "ouverte")));
         step(20, () -> {
             try {
                 Files.write(mc().gameDirectory.toPath().resolve("autotest-result.txt"), report);
@@ -447,7 +601,7 @@ public final class AutoTest implements ClientModInitializer {
         step(10, () -> { cmd("gamemode creative"); cmd("metier set FnTester agriculteur 2600"); cmd("metier set FnTester mineur 5200"); cmd("metier"); });
         step(40, () -> { page("metiers"); shot("ui_metiers_builder"); });
         step(5, () -> press("metiers.job:mineur"));
-        step(10, () -> press("metiers.how"));
+        step(10, () -> press("metiers.tab:gains"));
         step(30, () -> shot("ui_metiers_mineur"));
         step(5, () -> press("metiers.top"));
         step(30, () -> shot("ui_metiers_classement"));

@@ -6,7 +6,8 @@ import java.util.List;
 public enum Job {
     BUILDER("builder", "Builder", "hammer", "minecraft:bricks",
             "La compétence Builder récompense les blocs posés pour bâtir votre pays. Ses paliers augmentent votre portée de construction et vous font parfois économiser des blocs.",
-            List.of("Poser des blocs (une fois par emplacement)", "Les escaliers, dalles, vitres et lanternes rapportent plus")),
+            List.of("Poser des blocs (une fois par emplacement)", "Les escaliers, dalles, vitres et lanternes rapportent plus",
+                    "Faire noter vos constructions par le jury (/notation) : jusqu'à 2 000 XP selon la note")),
     AGRICULTEUR("agriculteur", "Agriculteur", "wheat", "minecraft:wheat",
             "Récoltez les cultures arrivées à maturité pour nourrir votre nation. Les paliers débloquent la double récolte et la replantation automatique.",
             List.of("Récolter blé, carottes, pommes de terre, betteraves mûrs", "Melons, citrouilles, verrues du Nether, cacao", "Canne à sucre, cactus et bambou (pousses naturelles)")),
@@ -18,7 +19,8 @@ public enum Job {
             List.of("Couper des bûches naturelles", "Planter des pousses d'arbre")),
     INGENIEUR("ingenieur", "Ingénieur", "cog", "fnations:circuit",
             "Fabriquez le matériel du mod à la Station de Craft et installez des machines. Les paliers vous font parfois récupérer des ingrédients.",
-            List.of("Fabriquer à la Station de Craft (plus l'objet est complexe, plus il rapporte)", "Installer des machines")),
+            List.of("Fabriquer à la Station de Craft (plus l'objet est complexe, plus il rapporte)", "Installer des machines",
+                    "Note R&D de vos constructions notées par le jury : jusqu'à 800 XP")),
     MINEUR("mineur", "Mineur", "pickaxe", "minecraft:iron_pickaxe",
             "Extrayez la pierre et les minerais naturels du sous-sol. Les paliers débloquent le double minerai et l'effet Célérité.",
             List.of("Miner la pierre, l'ardoise des profondeurs, la netherrack", "Minerais : charbon, fer, cuivre, or, redstone, lapis, diamant, émeraude", "Débris antiques et quartz du Nether"));
